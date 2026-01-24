@@ -1,11 +1,14 @@
-
 import { useState, useEffect } from "react";
 import { api } from "../services/api";
-import { User, Shield, Calendar, Activity } from "lucide-react";
+import { User, Activity } from "lucide-react";
+
+import PlayerStatsModal from "../components/PlayerStatsModal"; 
 
 export default function ListarJogadores() {
   const [jogadores, setJogadores] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
 
   useEffect(() => {
     async function loadJogadores() {
@@ -30,11 +33,11 @@ export default function ListarJogadores() {
   }
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-8 space-y-6 relative">
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-white mb-2">Meu Elenco</h1>
         <p className="text-slate-400">
-          Gerencie e visualize os jogadores do seu time.
+          Gerencie e visualize os jogadores do seu time. Clique no card para ver detalhes.
         </p>
       </header>
 
@@ -42,7 +45,8 @@ export default function ListarJogadores() {
         {jogadores.map((jogador) => (
           <div
             key={jogador.id}
-            className="bg-[#0f172a] border border-slate-800 rounded-xl overflow-hidden hover:border-green-500/50 transition-all group"
+            onClick={() => setSelectedPlayer(jogador)}
+            className="bg-[#0f172a] border border-slate-800 rounded-xl overflow-hidden hover:border-green-500/50 hover:cursor-pointer hover:-translate-y-1 transition-all group shadow-lg"
           >
             <div className="aspect-[3/4] bg-slate-800 relative">
               {jogador.foto ? (
@@ -52,7 +56,7 @@ export default function ListarJogadores() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-slate-600">
+                <div className="w-full h-full flex items-center justify-center text-slate-600 bg-slate-900">
                   <User className="w-20 h-20" />
                 </div>
               )}
@@ -65,26 +69,8 @@ export default function ListarJogadores() {
               <h3 className="text-lg font-bold text-white truncate mb-1">
                 {jogador.nome}
               </h3>
-              
-              <div className="space-y-2 mt-4">
-                <div className="flex items-center justify-between text-sm text-slate-400">
-                  <span className="flex items-center gap-2">
-                    <Shield className="w-4 h-4" /> Clube
-                  </span>
-                  <span className="text-slate-200">
-                     {/* Se o serializer retornar o objeto clube, usamos .nome, senão usamos o próprio user.clube do contexto ou ajustamos o serializer */}
-                     {/* Por enquanto, vou omitir ou assumir que o serializer traga o ID ou nome se disponível. */}
-                     {/* Como filtramos por clube no backend, todos devem ser do mesmo clube. */}
-                     Meu Clube
-                  </span>
-                </div>
-                
-                <div className="flex items-center justify-between text-sm text-slate-400">
-                  <span className="flex items-center gap-2">
-                    <Activity className="w-4 h-4" /> Idade
-                  </span>
-                  <span className="text-slate-200">{jogador.idade} anos</span>
-                </div>
+              <div className="text-sm text-green-400 font-medium flex items-center gap-1">
+                 Ver estatísticas <Activity className="w-3 h-3" />
               </div>
             </div>
           </div>
@@ -97,6 +83,14 @@ export default function ListarJogadores() {
             </div>
         )}
       </div>
+
+      {selectedPlayer && (
+        <PlayerStatsModal 
+            player={selectedPlayer} 
+            onClose={() => setSelectedPlayer(null)} 
+        />
+      )}
+
     </div>
   );
 }
