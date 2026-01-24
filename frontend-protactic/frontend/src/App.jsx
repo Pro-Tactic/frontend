@@ -14,6 +14,7 @@ import TempoReal from "./pages/TempoReal";
 import Clube from "./pages/Clube";
 import CriarPartida from "./pages/CriarPartida";
 import ListarJogadores from "./pages/ListarJogadores";
+import Notas from "./pages/Notas";
 
 import "./index.css"
 
@@ -44,6 +45,7 @@ export default function App() {
           <Route path="/registro/competicoes" element={<RegistroCompeticoes />} />
           <Route path="/listar-jogadores" element={<ListarJogadores />} />
           <Route path="/registro/partidas" element={<CriarPartida />} />
+          <Route path="/notas" element={<Notas />} />
         </Route>
 
         <Route path="/admin" element={<Admin />} />
