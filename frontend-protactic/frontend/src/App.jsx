@@ -15,6 +15,7 @@ import Clube from "./pages/Clube";
 import CriarPartida from "./pages/CriarPartida";
 import ListarJogadores from "./pages/ListarJogadores";
 import Notas from "./pages/Notas";
+import Escalacao from "./pages/Escalacao";
 
 import "./index.css"
 
@@ -46,6 +47,7 @@ export default function App() {
           <Route path="/listar-jogadores" element={<ListarJogadores />} />
           <Route path="/registro/partidas" element={<CriarPartida />} />
           <Route path="/notas" element={<Notas />} />
+          <Route path="/escalacao/:partidaId" element={<Escalacao />} />
         </Route>
 
         <Route path="/admin" element={<Admin />} />
