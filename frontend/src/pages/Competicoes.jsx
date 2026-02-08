@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useMemo, useState } from "react";
 import { Trophy, Users, AlertCircle } from "lucide-react";
 import { api } from "../services/api";
