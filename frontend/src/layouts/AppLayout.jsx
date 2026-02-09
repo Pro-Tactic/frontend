@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { fetchNavigation } from "../services/navigation";
 
-import { Home, Users, Target, Activity, Building, Shield, LogOut } from "lucide-react";
+import { Home, Users, Target, Activity, Building, Shield, LogOut, Trophy } from "lucide-react";
 
 const ICONS = {
   home: Home,
@@ -11,6 +11,7 @@ const ICONS = {
   activity: Activity,
   building: Building,
   shield: Shield,
+  trophy: Trophy,
 };
 
 function SidebarItem({ item }) {
