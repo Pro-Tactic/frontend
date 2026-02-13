@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
-// Adicionei apenas 'Swords' aqui
-import { Search, SlidersHorizontal, UserPlus, Trophy, Building2, Swords } from "lucide-react";
+import { UserPlus, Trophy, Building2, Swords } from "lucide-react";
 
 export default function Registro() {
   const navigate = useNavigate();
@@ -121,26 +120,6 @@ export default function Registro() {
           </div>
         </button>
 
-      </div>
-
-      {/* Search + Filters */}
-      <div className="mt-8 flex flex-col md:flex-row gap-3">
-        <div className="flex-1 relative">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder="Pesquisar (jogadores, competições...)"
-            className="w-full bg-[#0f172a] border border-slate-800 rounded-xl py-3 pl-10 pr-3 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/30 transition"
-          />
-        </div>
-
-        <button
-          type="button"
-          className="inline-flex items-center justify-center gap-2 bg-[#0f172a] border border-slate-800 rounded-xl px-4 py-3 text-slate-200 hover:bg-slate-800/40 transition"
-        >
-          <SlidersHorizontal className="w-4 h-4" />
-          Filtros
-        </button>
       </div>
     </div>
   );

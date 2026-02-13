@@ -115,8 +115,15 @@ export default function RegistroCompeticoes() {
 
             <Field
               label={labelLocalidade || "Localidade"}
-              placeholder={labelLocalidade || "—"}
-              disabled={form.tamanho === "Mundial" || !labelLocalidade}
+              placeholder={
+                form.tamanho === "Mundial" ? "Não aplicável" :
+                form.tamanho === "Continental" ? "Ex: América do Sul" :
+                form.tamanho === "Nacional" ? "Ex: Brasil" :
+                form.tamanho === "Regional" ? "Ex: Região Sul" :
+                form.tamanho === "Estadual" ? "Ex: São Paulo" :
+                "Selecione o tamanho primeiro"
+              }
+              disabled={form.tamanho === "Mundial" || !form.tamanho}
               name="localidade"
               value={form.localidade}
               onChange={handleChange}

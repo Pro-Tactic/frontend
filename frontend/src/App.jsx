@@ -17,6 +17,7 @@ import ListarJogadores from "./pages/ListarJogadores";
 import Notas from "./pages/Notas";
 import Escalacao from "./pages/Escalacao";
 import Competicoes from "./pages/Competicoes";
+import Partidas from "./pages/Partidas";
 
 import "./index.css"
 
@@ -42,6 +43,7 @@ export default function App() {
           <Route path="/tempo-real" element={<TempoReal />} />
           <Route path="/competicoes" element={<Competicoes />} />
           <Route path="/clube" element={<Clube />} />
+          <Route path="/partidas" element={<Partidas />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/registro/jogadores" element={<RegistroJogadores />} />
           <Route path="/registro/clube" element={<RegistroClube />} />
