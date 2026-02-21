@@ -53,7 +53,18 @@ export default function Login() {
 
       const nav = await fetchNavigation();
       console.log("NAV:", nav);
-      navigate("/inicio", { replace: true });
+
+      // If navigation contains only 'registro' in place of 'inicio', send user there.
+      const items = Array.isArray(nav?.items) ? nav.items : [];
+      const hasRegistro = items.some((it) => it.key === 'registro');
+      const hasInicio = items.some((it) => it.key === 'inicio');
+
+      if (hasRegistro && !hasInicio) {
+        // superuser layout: go straight to registro
+        navigate('/registro', { replace: true });
+      } else {
+        navigate('/inicio', { replace: true });
+      }
       
     } catch (err) {
       console.error(err);
