@@ -112,7 +112,7 @@ export default function AppLayout() {
           ))}
         </nav>
         
-          <div className="px-4 pt-3 pb-8 md:pb-6 border-t border-slate-800/60">
+          <div className="px-4 pt-3 pb-4 border-t border-slate-800/60">
             <button
                 onClick={handleLogout}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-red-500/10 transition"

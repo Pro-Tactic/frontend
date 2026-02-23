@@ -40,7 +40,9 @@ function ProtectedRoute({ children }) {
 
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
-    return <Navigate to="/inicio" replace />;
+    const userType = localStorage.getItem("user_type");
+    const target = userType === "ADMIN" ? "/registro" : "/inicio";
+    return <Navigate to={target} replace />;
   }
 
   return children;
