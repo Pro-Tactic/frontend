@@ -107,13 +107,11 @@ export default function AppLayout() {
             </div>
           )}
 
-          {/* Se nav existir, renderiza itens */}
           {nav?.items?.map((item) => (
             <SidebarItem key={item.key} item={item} />
           ))}
         </nav>
         
-        {/* Botão Sair */}
           <div className="px-4 pt-3 pb-8 md:pb-6 border-t border-slate-800/60">
             <button
                 onClick={handleLogout}
@@ -126,10 +124,8 @@ export default function AppLayout() {
 
       </aside>
 
-      {/* Conteúdo */}
       <main className="flex-1 bg-[#020617]">
         <div className="min-h-screen px-10 py-8">
-          {/* Se não houver nav, ainda mostra algo */}
           {!loading && !nav && (
             <div className="text-slate-300">
               Não consegui carregar a navegação. Veja o erro na sidebar.
