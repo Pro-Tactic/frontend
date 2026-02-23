@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { fetchNavigation } from "../services/navigation";
+import { clearSession } from "../services/auth";
 
 import { Home, Users, Target, Activity, Building, Shield, LogOut, Trophy } from "lucide-react";
 
@@ -42,10 +43,9 @@ export default function AppLayout() {
   const [loading, setLoading] = useState(true);
 
   function handleLogout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user_type");
-    window.location.href = "/";
-}
+    clearSession();
+    window.location.replace("/");
+  }
 
   useEffect(() => {
     let mounted = true;

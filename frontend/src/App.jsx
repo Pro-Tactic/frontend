@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
+import { isAuthenticated } from "./services/auth";
 
 import Login from "./pages/Login";
 import Sobre from "./pages/Sobre";
@@ -29,14 +30,43 @@ function Treinador() {
   return <h1>Área do Treinador</h1>;
 }
 
+function ProtectedRoute({ children }) {
+  if (!isAuthenticated()) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+}
+
+function GuestRoute({ children }) {
+  if (isAuthenticated()) {
+    return <Navigate to="/inicio" replace />;
+  }
+
+  return children;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route
+          path="/"
+          element={
+            <GuestRoute>
+              <Login />
+            </GuestRoute>
+          }
+        />
         <Route path="/sobre" element={<Sobre />} />
 
-        <Route element={<AppLayout />}>
+        <Route
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route path="/inicio" element={<Inicio />} />
           <Route path="/elenco" element={<Elenco />} />
           <Route path="/adversario" element={<Adversario />} />
