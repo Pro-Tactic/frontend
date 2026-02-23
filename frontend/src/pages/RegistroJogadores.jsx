@@ -20,7 +20,7 @@ export default function RegistroJogadores() {
   const [fotoFile, setFotoFile] = useState(null);
 
   const [formData, setFormData] = useState({
-    nome: "", cpf: "", idade: "", peso: "", altura: "",
+    nome: "", cpf: "", data_nascimento: "", peso: "", altura: "",
     nacionalidade: [], clube: "", posicao: [], perna: "",
   });
 
@@ -82,7 +82,7 @@ export default function RegistroJogadores() {
       });
 
       setFormData({
-        nome: "", cpf: "", idade: "", peso: "", altura: "",
+        nome: "", cpf: "", data_nascimento: "", peso: "", altura: "",
         nacionalidade: [], clube: "", posicao: [], perna: "",
       });
       setFotoPreview(null);
@@ -147,11 +147,10 @@ export default function RegistroJogadores() {
 
           <div className="mt-6 space-y-4">
             <Field
-              label="Idade"
-              placeholder="Ex.: 19"
-              type="number"
-              name="idade"
-              value={formData.idade}
+              label="Data de nascimento"
+              type="date"
+              name="data_nascimento"
+              value={formData.data_nascimento}
               onChange={handleInputChange}
             />
             <Field
@@ -164,10 +163,10 @@ export default function RegistroJogadores() {
               onChange={handleInputChange}
             />
             <Field
-              label="Altura"
-              placeholder="Ex.: 1.78 (m)"
+              label="Altura (cm)"
+              placeholder="Ex.: 178"
               type="number"
-              step="0.01"
+              step="1"
               name="altura"
               value={formData.altura}
               onChange={handleInputChange}

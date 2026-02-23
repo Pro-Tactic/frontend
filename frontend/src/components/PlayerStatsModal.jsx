@@ -6,6 +6,19 @@ export default function PlayerStatsModal({ player, onClose }) {
   const [stats, setStats] = useState({ gols: 0, assistencias: 0, media: 0, jogos: 0 });
   const [loading, setLoading] = useState(true);
 
+  function calcularIdade(dataNascimento) {
+    if (!dataNascimento) return null;
+    const nascimento = new Date(dataNascimento);
+    if (Number.isNaN(nascimento.getTime())) return null;
+    const hoje = new Date();
+    let idade = hoje.getFullYear() - nascimento.getFullYear();
+    const mes = hoje.getMonth() - nascimento.getMonth();
+    if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
+      idade -= 1;
+    }
+    return idade;
+  }
+
   useEffect(() => {
     // Busca dados assim que o componente é montado
     async function fetchStats() {
@@ -76,7 +89,9 @@ export default function PlayerStatsModal({ player, onClose }) {
                 <span className="bg-slate-800 px-2 py-1 rounded text-white font-semibold border border-slate-700">
                   {player.posicao}
                 </span>
-                <span>{player.idade} anos</span>
+                {calcularIdade(player.data_nascimento) !== null && (
+                  <span>{calcularIdade(player.data_nascimento)} anos</span>
+                )}
               </div>
             </div>
 
