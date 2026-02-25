@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { ImagePlus, Plus, X } from "lucide-react";
 import { api } from "../services/api";
 import Swal from 'sweetalert2';
@@ -8,7 +8,7 @@ export default function RegistroClube() {
   const [escudoFile, setEscudoFile] = useState(null);
   const [nomeClube, setNomeClube] = useState("");
   const [pais, setPais] = useState("");
-  const [anoFundacao, setAnoFundacao] = useState("");
+  const [dataCriacao, setDataCriacao] = useState("");
   const [competicaoSelecionada, setCompeticaoSelecionada] = useState("");
   const [competicoes, setCompeticoes] = useState([]);
   const [competicoesDisponiveis, setCompeticoesDisponiveis] = useState([]);
@@ -76,11 +76,27 @@ export default function RegistroClube() {
       return;
     }
 
-    if (!anoFundacao || anoFundacao < 1800 || anoFundacao > new Date().getFullYear()) {
+    if (!dataCriacao) {
       Swal.fire({
         icon: 'warning',
-        title: 'Ano inválido',
-        text: 'Informe um ano de fundação válido.',
+        title: 'Campo obrigatório',
+        text: 'Informe a data de criação do clube.',
+        background: '#0f172a',
+        color: '#e2e8f0',
+        confirmButtonColor: '#f59e0b',
+      });
+      return;
+    }
+
+    const dataCriacaoObj = new Date(dataCriacao);
+    const anoAtual = new Date().getFullYear();
+    const anoCriacao = dataCriacaoObj.getFullYear();
+
+    if (Number.isNaN(dataCriacaoObj.getTime()) || anoCriacao < 1800 || anoCriacao > anoAtual) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Data inválida',
+        text: 'Informe uma data de criação válida.',
         background: '#0f172a',
         color: '#e2e8f0',
         confirmButtonColor: '#f59e0b',
@@ -104,7 +120,7 @@ export default function RegistroClube() {
         const formData = new FormData();
         formData.append("nome", nomeClube);
         formData.append("pais", pais);
-        formData.append("ano_fundacao", anoFundacao);
+        formData.append("data_criacao", dataCriacao);
         if (escudoFile) {
             formData.append("escudo", escudoFile);
         }
@@ -127,7 +143,7 @@ export default function RegistroClube() {
         // Reset form
         setNomeClube("");
         setPais("");
-        setAnoFundacao("");
+        setDataCriacao("");
         setCompeticoes([]);
         setEscudoPreview(null);
         setEscudoFile(null);
@@ -241,11 +257,10 @@ export default function RegistroClube() {
             </SelectField>
 
             <Field
-              label="Ano de Fundação"
-              placeholder="Ex.: 1998"
-              value={anoFundacao}
-              onChange={setAnoFundacao}
-              type="number"
+              label="Data de criação"
+              value={dataCriacao}
+              onChange={setDataCriacao}
+              type="date"
               required
             />
 

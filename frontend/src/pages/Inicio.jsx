@@ -68,7 +68,8 @@ export default function Inicio() {
               <div>
                 <h2 className="text-lg font-semibold text-slate-100">{data?.clube?.nome}</h2>
                 <p className="text-xs text-slate-400">
-                  {data?.clube?.pais} • Desde {data?.clube?.ano_fundacao}
+                  {data?.clube?.pais}
+                  {data?.clube?.data_criacao ? ` • Criado em ${new Date(data.clube.data_criacao).toLocaleDateString("pt-BR")}` : ""}
                 </p>
               </div>
             </div>
