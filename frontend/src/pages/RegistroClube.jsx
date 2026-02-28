@@ -38,7 +38,7 @@ export default function RegistroClube() {
 
   function addCompeticao() {
     if (!competicaoSelecionada) return;
-    const competicaoObj = competicoesDisponiveis.find(c => c.id === parseInt(competicaoSelecionada));
+    const competicaoObj = competicoesDisponiveis.find(c => String(c.id) === String(competicaoSelecionada));
     if (!competicaoObj) return;
     if (competicoes.find(c => c.id === competicaoObj.id)) return;
     setCompeticoes((prev) => [...prev, competicaoObj]);

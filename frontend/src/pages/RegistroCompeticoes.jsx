@@ -42,7 +42,17 @@ export default function RegistroCompeticoes() {
         headers: { Authorization: `Bearer ${token}` }
       };
 
-      await axios.post("http://127.0.0.1:8000/competicoes/", form, config);
+      const payload = {
+        nome: form.nome,
+        tamanho: form.tamanho,
+        localidade: form.localidade || null,
+        tipo_participantes: form.tipo_participantes,
+        divisao: form.divisao || null,
+        tipo_formato: form.tipo_formato || null,
+        qtd_participantes: Number(form.qtd_participantes || 0),
+      };
+
+      await axios.post("http://127.0.0.1:8000/competicoes/", payload, config);
       
       Swal.fire({
         title: 'Sucesso!',

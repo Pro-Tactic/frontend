@@ -50,13 +50,13 @@ export default function Partidas() {
             <div key={partida.id} className="bg-[#0b1220] border border-slate-800 rounded-xl p-6 flex flex-col md:flex-row justify-between items-center hover:border-slate-700 transition">
               <div className="flex items-center gap-4 mb-4 md:mb-0">
                 <div className="text-right">
-                  <p className="font-bold text-lg text-white">{partida.mandante.nome}</p>
+                  <p className="font-bold text-lg text-white">{partida.nome_mandante || partida?.mandante?.nome || '-'}</p>
                 </div>
                 <div className="bg-slate-800 px-3 py-1 rounded text-xs font-bold text-slate-400">
                   {partida.placar_mandante} x {partida.placar_visitante}
                 </div>
                 <div>
-                  <p className="font-bold text-lg text-white">{partida.visitante.nome}</p>
+                  <p className="font-bold text-lg text-white">{partida.nome_visitante || partida?.visitante?.nome || '-'}</p>
                 </div>
               </div>
 
