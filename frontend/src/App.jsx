@@ -8,6 +8,7 @@ import Registro from "./pages/Registro";
 import RegistroJogadores from "./pages/RegistroJogadores";
 import RegistroClube from "./pages/RegistroClube";
 import RegistroCompeticoes from "./pages/RegistroCompeticoes";
+import RegistroTecnico from "./pages/RegistroTecnico";
 import Inicio from "./pages/Inicio";
 import Elenco from "./pages/Elenco";
 import Adversario from "./pages/Adversario";
@@ -80,6 +81,7 @@ export default function App() {
           <Route path="/registro/jogadores" element={<RegistroJogadores />} />
           <Route path="/registro/clube" element={<RegistroClube />} />
           <Route path="/registro/competicoes" element={<RegistroCompeticoes />} />
+          <Route path="/registro/tecnico" element={<RegistroTecnico />} />
           <Route path="/listar-jogadores" element={<ListarJogadores />} />
           <Route path="/registro/partidas" element={<CriarPartida />} />
           <Route path="/notas" element={<Notas />} />

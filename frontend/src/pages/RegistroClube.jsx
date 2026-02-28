@@ -155,7 +155,6 @@ export default function RegistroClube() {
                         error.response?.data?.detail ||
                         'Não foi possível registrar o clube. Verifique os dados.';
         
-        // ALERTA DE ERRO
         Swal.fire({
             icon: 'error',
             title: 'Ops!',
@@ -168,9 +167,7 @@ export default function RegistroClube() {
   }
 
   return (
-    <div className="max-w-5xl">
-       {/* ... JSX INALTERADO ... */}
-       {/* Header padrão */}
+    <div className="max-w-5xl mx-auto w-full">
       <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">
         Registrar Clube
       </h1>
@@ -179,7 +176,6 @@ export default function RegistroClube() {
       </p>
 
       <div className="mt-8 grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
-        {/* Coluna esquerda - Escudo */}
         <div className="bg-[#0b1220] border border-slate-800 rounded-2xl p-5 h-full">
             <label className="block text-sm text-slate-300 font-medium mb-3 text-center">
               Escudo do Clube
@@ -213,7 +209,6 @@ export default function RegistroClube() {
             </div>
         </div>
 
-        {/* Coluna direita - Form */}
         <div className="h-full flex flex-col gap-6">
           <div className="bg-[#0b1220] border border-slate-800 rounded-2xl p-5 space-y-4 flex-1">
             <Field
@@ -313,7 +308,6 @@ export default function RegistroClube() {
                 )}
             </div>
 
-            {/* Modal de Adicionar Competição */}
             {showCompeticaoModal && (
               <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" onClick={() => setShowCompeticaoModal(false)}>
                 <div className="bg-[#0b1220] border border-slate-800 rounded-2xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>

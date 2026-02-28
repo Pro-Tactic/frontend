@@ -1,12 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { UserPlus, Trophy, Building2, Swords } from "lucide-react";
+import { UserPlus, Trophy, Building2, Swords, UserCog } from "lucide-react";
 
 export default function Registro() {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-5xl">
-      {/* Header */}
+    <div className="max-w-6xl mx-auto w-full">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">
           Registro
@@ -16,9 +15,7 @@ export default function Registro() {
         </p>
       </div>
 
-      {/* Cards */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card - Jogadores */}
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         <button
           type="button"
           onClick={() => navigate("/registro/jogadores")}
@@ -90,6 +87,32 @@ export default function Registro() {
 
               <div className="mt-4 text-sm text-emerald-300 group-hover:text-emerald-200">
                 Abrir registro →
+              </div>
+            </div>
+          </div>
+        </button>
+
+        {/* Card - Técnico */}
+        <button
+          type="button"
+          onClick={() => navigate("/registro/tecnico")}
+          className="group text-left bg-[#0b1220] border border-slate-800 rounded-2xl p-5 hover:border-emerald-500/40 hover:bg-slate-900/30 transition"
+        >
+          <div className="flex items-start gap-4">
+            <div className="w-11 h-11 rounded-xl bg-amber-500/15 ring-1 ring-amber-500/25 flex items-center justify-center">
+              <UserCog className="w-5 h-5 text-amber-300" />
+            </div>
+
+            <div className="flex-1">
+              <h2 className="text-lg font-semibold text-white">
+                Cadastrar Técnico
+              </h2>
+              <p className="text-sm text-slate-400 mt-1">
+                Crie usuário treinador e vincule a um clube.
+              </p>
+
+              <div className="mt-4 text-sm text-emerald-300 group-hover:text-emerald-200">
+                Abrir cadastro →
               </div>
             </div>
           </div>

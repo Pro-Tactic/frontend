@@ -106,7 +106,7 @@ export default function RegistroJogadores() {
   }
 
   return (
-    <div className="max-w-5xl">
+    <div className="max-w-5xl mx-auto w-full">
        <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">
         Registrar Jogadores
       </h1>

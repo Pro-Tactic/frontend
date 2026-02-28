@@ -89,7 +89,7 @@ export default function RegistroCompeticoes() {
       : ["Nacional", "Regional", "Estadual"].includes(form.tamanho) ? "País" : "";
 
   return (
-    <div className="max-w-6xl">
+    <div className="max-w-6xl mx-auto w-full">
        <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">
         Registrar Competições
       </h1>
