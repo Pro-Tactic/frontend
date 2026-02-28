@@ -1,9 +1,15 @@
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ChevronDown } from "lucide-react";
 import axios from "axios";
 import Swal from 'sweetalert2';
+import { COUNTRIES } from "../data/countries";
+import { CONTINENTS } from "../data/continents";
+import { BRAZIL_REGIONS } from "../data/brazilRegions";
+import { BRAZIL_STATES } from "../data/brazilStates";
 
 export default function RegistroCompeticoes() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     nome: "", tamanho: "", localidade: "", tipo_participantes: "",
     divisao: "", tipo_formato: "", qtd_participantes: "",
@@ -13,7 +19,11 @@ export default function RegistroCompeticoes() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+      ...(name === 'tamanho' ? { localidade: '' } : {}),
+    }));
   };
 
   const handleCheckbox = (e) => {
@@ -86,16 +96,48 @@ export default function RegistroCompeticoes() {
 
   const labelLocalidade =
     form.tamanho === "Continental" ? "Continente"
-      : ["Nacional", "Regional", "Estadual"].includes(form.tamanho) ? "País" : "";
+      : form.tamanho === "Nacional" ? "País"
+      : form.tamanho === "Regional" ? "Região (Brasil)"
+      : form.tamanho === "Estadual" ? "Estado (Brasil)"
+      : "";
+
+  const localidadeOptions =
+    form.tamanho === "Continental"
+      ? CONTINENTS
+      : form.tamanho === "Nacional"
+      ? COUNTRIES.map((country) => country.name)
+      : form.tamanho === "Regional"
+      ? BRAZIL_REGIONS
+      : form.tamanho === "Estadual"
+      ? BRAZIL_STATES
+      : [];
+
+  const placeholderLocalidade =
+    form.tamanho === "Mundial"
+      ? "Não aplicável"
+      : !form.tamanho
+      ? "Selecione o tamanho primeiro"
+      : "Selecione";
 
   return (
     <div className="max-w-6xl mx-auto w-full">
-       <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">
-        Registrar Competições
-      </h1>
-      <p className="text-sm text-slate-400 mt-2">
-        Cadastre campeonatos e torneios.
-      </p>
+      <div className="flex items-center gap-4 mb-8">
+        <button
+          onClick={() => navigate(-1)}
+          type="button"
+          className="p-2 rounded-xl bg-[#0f172a] border border-slate-800 text-slate-400 hover:text-white hover:border-emerald-500/40 transition"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <div>
+          <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">
+            Registrar Competições
+          </h1>
+          <p className="text-sm text-slate-400 mt-2">
+            Cadastre campeonatos e torneios.
+          </p>
+        </div>
+      </div>
 
       <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-[#0b1220] border border-slate-800 rounded-2xl p-5 space-y-4">
@@ -123,21 +165,20 @@ export default function RegistroCompeticoes() {
               <option>Estadual</option>
             </SelectField>
 
-            <Field
+            <SelectField
               label={labelLocalidade || "Localidade"}
-              placeholder={
-                form.tamanho === "Mundial" ? "Não aplicável" :
-                form.tamanho === "Continental" ? "Ex: América do Sul" :
-                form.tamanho === "Nacional" ? "Ex: Brasil" :
-                form.tamanho === "Regional" ? "Ex: Região Sul" :
-                form.tamanho === "Estadual" ? "Ex: São Paulo" :
-                "Selecione o tamanho primeiro"
-              }
-              disabled={form.tamanho === "Mundial" || !form.tamanho}
               name="localidade"
               value={form.localidade}
               onChange={handleChange}
-            />
+              disabled={form.tamanho === "Mundial" || !form.tamanho}
+            >
+              <option value="">{placeholderLocalidade}</option>
+              {localidadeOptions.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </SelectField>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

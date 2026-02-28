@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import Swal from "sweetalert2";
 import { api } from "../services/api";
 
 export default function RegistroTecnico() {
+  const navigate = useNavigate();
   const [clubes, setClubes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -98,8 +101,19 @@ export default function RegistroTecnico() {
 
   return (
     <div className="max-w-4xl mx-auto w-full">
-      <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">Cadastrar Técnico</h1>
-      <p className="text-sm text-slate-400 mt-2">Crie um usuário com perfil TREINADOR e vincule a um clube.</p>
+      <div className="flex items-center gap-4 mb-8">
+        <button
+          onClick={() => navigate(-1)}
+          type="button"
+          className="p-2 rounded-xl bg-[#0f172a] border border-slate-800 text-slate-400 hover:text-white hover:border-emerald-500/40 transition"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <div>
+          <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">Cadastrar Técnico</h1>
+          <p className="text-sm text-slate-400 mt-2">Crie um usuário com perfil TREINADOR e vincule a um clube.</p>
+        </div>
+      </div>
 
       <form
         onSubmit={handleSubmit}

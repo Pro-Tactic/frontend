@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { ImagePlus, Plus, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ImagePlus, Plus, X } from "lucide-react";
 import { api } from "../services/api";
 import Swal from 'sweetalert2';
+import { COUNTRIES } from "../data/countries";
 
 export default function RegistroClube() {
+  const navigate = useNavigate();
   const [escudoPreview, setEscudoPreview] = useState(null);
   const [escudoFile, setEscudoFile] = useState(null);
   const [nomeClube, setNomeClube] = useState("");
@@ -14,7 +17,6 @@ export default function RegistroClube() {
   const [competicoesDisponiveis, setCompeticoesDisponiveis] = useState([]);
   const [showCompeticaoModal, setShowCompeticaoModal] = useState(false);
 
-  // Buscar competições do banco ao carregar
   useEffect(() => {
     async function loadCompeticoes() {
       try {
@@ -168,12 +170,23 @@ export default function RegistroClube() {
 
   return (
     <div className="max-w-5xl mx-auto w-full">
-      <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">
-        Registrar Clube
-      </h1>
-      <p className="text-sm text-slate-400 mt-2">
-        Cadastre um clube no sistema. Todos os campos são obrigatórios. <span className="text-red-400">*</span>
-      </p>
+      <div className="flex items-center gap-4 mb-8">
+        <button
+          onClick={() => navigate(-1)}
+          type="button"
+          className="p-2 rounded-xl bg-[#0f172a] border border-slate-800 text-slate-400 hover:text-white hover:border-emerald-500/40 transition"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <div>
+          <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">
+            Registrar Clube
+          </h1>
+          <p className="text-sm text-slate-400 mt-2">
+            Cadastre um clube no sistema. Todos os campos são obrigatórios. <span className="text-red-400">*</span>
+          </p>
+        </div>
+      </div>
 
       <div className="mt-8 grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
         <div className="bg-[#0b1220] border border-slate-800 rounded-2xl p-5 h-full">
@@ -226,29 +239,11 @@ export default function RegistroClube() {
               required
             >
               <option value="">Selecione o país</option>
-              <option value="Brasil">Brasil</option>
-              <option value="Argentina">Argentina</option>
-              <option value="Uruguai">Uruguai</option>
-              <option value="Chile">Chile</option>
-              <option value="Colômbia">Colômbia</option>
-              <option value="Peru">Peru</option>
-              <option value="Equador">Equador</option>
-              <option value="Paraguai">Paraguai</option>
-              <option value="Venezuela">Venezuela</option>
-              <option value="Bolívia">Bolívia</option>
-              <option value="Portugal">Portugal</option>
-              <option value="Espanha">Espanha</option>
-              <option value="Inglaterra">Inglaterra</option>
-              <option value="França">França</option>
-              <option value="Itália">Itália</option>
-              <option value="Alemanha">Alemanha</option>
-              <option value="Holanda">Holanda</option>
-              <option value="Bélgica">Bélgica</option>
-              <option value="México">México</option>
-              <option value="Estados Unidos">Estados Unidos</option>
-              <option value="Japão">Japão</option>
-              <option value="Coreia do Sul">Coreia do Sul</option>
-              <option value="Outro">Outro</option>
+              {COUNTRIES.map((country) => (
+                <option key={country.code} value={country.name}>
+                  {country.name}
+                </option>
+              ))}
             </SelectField>
 
             <Field

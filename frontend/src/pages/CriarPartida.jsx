@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Calendar, MapPin, Trophy, Users, Save } from "lucide-react";
+import Swal from "sweetalert2";
 
 import { api } from "../services/api"; 
 
@@ -48,17 +49,46 @@ export default function CriarPartida() {
     e.preventDefault();
     
     if (formData.mandante === formData.visitante) {
-      alert("O time mandante não pode ser igual ao visitante!");
+      Swal.fire({
+        icon: "warning",
+        title: "Dados inválidos",
+        text: "O time mandante não pode ser igual ao visitante.",
+        background: "#0f172a",
+        color: "#e2e8f0",
+        confirmButtonColor: "#f59e0b",
+      });
       return;
     }
 
     try {
       await api.post("/partidas/", formData);
-      alert("Partida criada com sucesso!");
+
+      Swal.fire({
+        icon: "success",
+        title: "Partida criada",
+        text: "A partida foi registrada com sucesso.",
+        background: "#0f172a",
+        color: "#e2e8f0",
+        confirmButtonColor: "#10b981",
+      });
+
       navigate("/registro");
     } catch (error) {
       console.error("Erro ao salvar partida:", error);
-      alert("Erro ao salvar. Verifique se todos os campos estão preenchidos corretamente.");
+
+      const errorMessage =
+        error?.response?.data?.non_field_errors?.[0] ||
+        error?.response?.data?.detail ||
+        "Erro ao salvar. Verifique se todos os campos estão preenchidos corretamente.";
+
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao salvar",
+        text: errorMessage,
+        background: "#0f172a",
+        color: "#e2e8f0",
+        confirmButtonColor: "#ef4444",
+      });
     }
   };
 
