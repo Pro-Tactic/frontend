@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { api } from "../services/api";
 import { fetchNavigation } from "../services/navigation";
+import { clearSession, saveSession } from "../services/auth";
 import { User, Lock, Eye, EyeOff, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import logoImg from "../assets/logo-protactic.png";
@@ -36,15 +37,16 @@ export default function Login() {
     setLoading(true);
 
     try {
+      clearSession();
+
       const response = await api.post("/", {
         username,
         password,
       });
 
-      const { access, user_type } = response.data;
+      const { access, refresh, user_type } = response.data;
 
-      localStorage.setItem("token", access);
-      localStorage.setItem("user_type", user_type);
+      saveSession({ access, refresh, user_type });
 
       Toast.fire({
         icon: 'success',
@@ -53,7 +55,18 @@ export default function Login() {
 
       const nav = await fetchNavigation();
       console.log("NAV:", nav);
-      navigate("/inicio", { replace: true });
+
+      // If navigation contains only 'registro' in place of 'inicio', send user there.
+      const items = Array.isArray(nav?.items) ? nav.items : [];
+      const hasRegistro = items.some((it) => it.key === 'registro');
+      const hasInicio = items.some((it) => it.key === 'inicio');
+
+      if (hasRegistro && !hasInicio) {
+        // superuser layout: go straight to registro
+        navigate('/registro', { replace: true });
+      } else {
+        navigate('/inicio', { replace: true });
+      }
       
     } catch (err) {
       console.error(err);

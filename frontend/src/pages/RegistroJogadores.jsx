@@ -1,9 +1,12 @@
 import { useMemo, useState, useEffect } from "react";
-import { ChevronDown, ImagePlus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ChevronDown, ImagePlus } from "lucide-react";
 import { api } from "../services/api";
 import Swal from 'sweetalert2';
+import { COUNTRIES } from "../data/countries";
 
 export default function RegistroJogadores() {
+  const navigate = useNavigate();
   const posicoes = useMemo(
     () => [
       "Goleiro", "Zagueiro", "Lateral Esquerdo", "Lateral Direito",
@@ -20,8 +23,8 @@ export default function RegistroJogadores() {
   const [fotoFile, setFotoFile] = useState(null);
 
   const [formData, setFormData] = useState({
-    nome: "", cpf: "", idade: "", peso: "", altura: "",
-    nacionalidade: "", clube: "", posicao: "", perna: "",
+    nome: "", cpf: "", data_nascimento: "", peso: "", altura: "",
+    nacionalidade: [], clube: "", posicao: [], perna: "",
   });
 
   useEffect(() => {
@@ -52,7 +55,19 @@ export default function RegistroJogadores() {
   async function handleRegistrar() {
     try {
       const data = new FormData();
-      Object.keys(formData).forEach(key => data.append(key, formData[key]));
+      Object.keys(formData).forEach((key) => {
+        if (key === 'posicao') {
+          const val = formData.posicao;
+          if (Array.isArray(val)) data.append(key, val.join(', '));
+          else data.append(key, val);
+        } else if (key === 'nacionalidade') {
+          const val = formData.nacionalidade;
+          if (Array.isArray(val)) data.append(key, val.join(', '));
+          else data.append(key, val);
+        } else {
+          data.append(key, formData[key]);
+        }
+      });
       if (fotoFile) data.append("foto", fotoFile);
 
       await api.post("/jogadores/", data, {
@@ -70,8 +85,8 @@ export default function RegistroJogadores() {
       });
 
       setFormData({
-        nome: "", cpf: "", idade: "", peso: "", altura: "",
-        nacionalidade: "", clube: "", posicao: "", perna: "",
+        nome: "", cpf: "", data_nascimento: "", peso: "", altura: "",
+        nacionalidade: [], clube: "", posicao: [], perna: "",
       });
       setFotoPreview(null);
       setFotoFile(null);
@@ -94,13 +109,24 @@ export default function RegistroJogadores() {
   }
 
   return (
-    <div className="max-w-5xl">
-       <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">
-        Registrar Jogadores
-      </h1>
-      <p className="text-sm text-slate-400 mt-2">
-        Preencha os dados do atleta.
-      </p>
+    <div className="max-w-5xl mx-auto w-full">
+      <div className="flex items-center gap-4 mb-8">
+        <button
+          onClick={() => navigate(-1)}
+          type="button"
+          className="p-2 rounded-xl bg-[#0f172a] border border-slate-800 text-slate-400 hover:text-white hover:border-emerald-500/40 transition"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <div>
+          <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">
+            Registrar Jogadores
+          </h1>
+          <p className="text-sm text-slate-400 mt-2">
+            Preencha os dados do atleta.
+          </p>
+        </div>
+      </div>
 
       <div className="mt-8 grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
         <div className="bg-[#0b1220] border border-slate-800 rounded-2xl p-5">
@@ -135,11 +161,10 @@ export default function RegistroJogadores() {
 
           <div className="mt-6 space-y-4">
             <Field
-              label="Idade"
-              placeholder="Ex.: 19"
-              type="number"
-              name="idade"
-              value={formData.idade}
+              label="Data de nascimento"
+              type="date"
+              name="data_nascimento"
+              value={formData.data_nascimento}
               onChange={handleInputChange}
             />
             <Field
@@ -152,20 +177,18 @@ export default function RegistroJogadores() {
               onChange={handleInputChange}
             />
             <Field
-              label="Altura"
-              placeholder="Ex.: 1.78 (m)"
+              label="Altura (cm)"
+              placeholder="Ex.: 178"
               type="number"
-              step="0.01"
+              step="1"
               name="altura"
               value={formData.altura}
               onChange={handleInputChange}
             />
-            <Field
+            <CountryMultiSelect
               label="Nacionalidade"
-              placeholder="Ex.: Brasileiro"
-              name="nacionalidade"
               value={formData.nacionalidade}
-              onChange={handleInputChange}
+              onChange={(vals) => setFormData((p) => ({ ...p, nacionalidade: vals }))}
             />
           </div>
         </div>
@@ -218,37 +241,19 @@ export default function RegistroJogadores() {
             </div>
 
             <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-              <SelectField
+              <PositionMultiSelect
                 label="Posição"
-                name="posicao"
                 value={formData.posicao}
-                onChange={handleInputChange}
-              >
-                <option value="" disabled>
-                  Selecione
-                </option>
-                {posicoes.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </SelectField>
+                onChange={(vals) => setFormData((p) => ({ ...p, posicao: vals }))}
+                options={posicoes}
+              />
 
-              <SelectField
+              <PernaSelect
                 label="Perna"
-                name="perna"
                 value={formData.perna}
-                onChange={handleInputChange}
-              >
-                <option value="" disabled>
-                  Selecione
-                </option>
-                {pernas.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </SelectField>
+                onChange={(v) => setFormData((p) => ({ ...p, perna: v }))}
+                options={pernas}
+              />
             </div>
 
             <div className="mt-6 text-slate-300">
@@ -303,6 +308,203 @@ function SelectField({ label, children, ...props }) {
       </select>
 
       <ChevronDown className="w-4 h-4 text-slate-400 absolute right-4 top-[46px] pointer-events-none" />
+    </div>
+  );
+}
+
+function PositionMultiSelect({ label, value = [], onChange, options = [] }) {
+  const [open, setOpen] = useState(false);
+  const selected = Array.isArray(value) ? value : [];
+
+  function toggle(pos) {
+    const exists = selected.includes(pos);
+    let next;
+    if (exists) next = selected.filter((p) => p !== pos);
+    else next = [...selected, pos];
+    onChange(next);
+  }
+
+  return (
+    <div className="relative">
+      <label className="block text-sm text-slate-300 font-medium mb-2">{label}</label>
+      <div
+        className="w-full bg-[#0f172a] border border-slate-800 rounded-xl py-2 px-3 text-slate-200 flex flex-wrap gap-2 items-center justify-between cursor-pointer"
+        onClick={() => setOpen((s) => !s)}
+      >
+        {selected.length === 0 && <span className="text-slate-500">Selecione...</span>}
+        {selected.map((p) => (
+          <div key={p} className="inline-flex items-center gap-2 bg-slate-800 px-2 py-1 rounded-full text-xs">
+            <span>{p}</span>
+          </div>
+        ))}
+        <ChevronDown className="w-4 h-4 text-slate-400 ml-2" />
+      </div>
+
+      {open && (
+        <div className="absolute z-20 w-full max-h-60 overflow-auto bg-[#041025] border border-slate-800 rounded-lg p-2" style={{ bottom: 'calc(100% + 8px)' }}>
+          <div className="space-y-1">
+            {options.map((o) => {
+              const checked = selected.includes(o);
+              return (
+                <label key={o} className="flex items-center gap-3 px-2 py-1 hover:bg-slate-900 rounded">
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => toggle(o)}
+                    className="sr-only peer"
+                  />
+                  <span className="w-6 h-6 flex items-center justify-center rounded border border-slate-600 bg-[#07121a] peer-checked:bg-emerald-500 peer-checked:border-emerald-500 transition">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="hidden peer-checked:block w-4 h-4 text-white">
+                      <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                  <span className="text-slate-200">{o}</span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Helper to convert country ISO code to emoji flag
+function countryCodeToEmoji(cc) {
+  if (!cc) return "";
+  return cc
+    .toUpperCase()
+    .split("")
+    .map((c) => String.fromCodePoint(127397 + c.charCodeAt(0)))
+    .join("");
+}
+
+
+function CountryMultiSelect({ label, value = [], onChange }) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+
+  const selected = Array.isArray(value) ? value : [];
+
+  function toggleCountry(code) {
+    const exists = selected.includes(code);
+    let next;
+    if (exists) next = selected.filter((c) => c !== code);
+    else next = [...selected, code];
+    onChange(next);
+  }
+
+  const filtered = COUNTRIES.filter((c) =>
+    c.name.toLowerCase().includes(query.toLowerCase()) || c.code.toLowerCase().includes(query.toLowerCase())
+  );
+
+  return (
+    <div className="relative">
+      <label className="block text-sm text-slate-300 font-medium mb-2">{label}</label>
+      <div
+        className="w-full bg-[#0f172a] border border-slate-800 rounded-xl py-2 px-3 text-slate-200 flex flex-wrap gap-2 items-center justify-between cursor-pointer"
+        onClick={() => setOpen((s) => !s)}
+      >
+        {selected.length === 0 && <span className="text-slate-500">Selecione...</span>}
+        {selected.map((code) => (
+          <div key={code} className="inline-flex items-center gap-2 bg-slate-800 px-2 py-1 rounded-full text-xs">
+            <span>{countryCodeToEmoji(code)}</span>
+            <span>{(COUNTRIES.find((c) => c.code === code) || { name: code }).name}</span>
+          </div>
+        ))}
+        <ChevronDown className="w-4 h-4 text-slate-400 ml-2" />
+      </div>
+
+      {open && (
+        <div className="absolute z-20 w-full max-h-64 overflow-auto bg-[#041025] border border-slate-800 rounded-lg p-2" style={{ bottom: 'calc(100% + 8px)' }}>
+          <input
+            className="w-full bg-[#02131f] border border-slate-800 rounded px-3 py-2 text-slate-200 mb-2"
+            placeholder="Pesquisar..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+
+          <div className="space-y-1">
+            {filtered.map((c) => {
+              const checked = selected.includes(c.code);
+              return (
+                <label key={c.code} className="flex items-center gap-3 px-2 py-1 hover:bg-slate-900 rounded">
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => toggleCountry(c.code)}
+                    className="sr-only peer"
+                  />
+                  <span className="w-6 h-6 flex items-center justify-center rounded border border-slate-600 bg-[#07121a] peer-checked:bg-emerald-500 peer-checked:border-emerald-500 transition">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="hidden peer-checked:block w-4 h-4 text-white">
+                      <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                  <span className="w-6">{countryCodeToEmoji(c.code)}</span>
+                  <span className="text-slate-200">{c.name}</span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PernaSelect({ label, value = '', onChange, options = [] }) {
+  const [open, setOpen] = useState(false);
+
+  function choose(v) {
+    onChange(v);
+    setOpen(false);
+  }
+
+  return (
+    <div className="relative">
+      <label className="block text-sm text-slate-300 font-medium mb-2">{label}</label>
+      <div
+        className="w-full bg-[#0f172a] border border-slate-800 rounded-xl py-2 px-3 text-slate-200 flex items-center justify-between cursor-pointer"
+        onClick={() => setOpen((s) => !s)}
+      >
+        <div className="flex items-center gap-2">
+          {value ? (
+            <div className="inline-flex items-center gap-2 bg-slate-800 px-2 py-1 rounded-full text-xs">
+              <span>{value}</span>
+            </div>
+          ) : (
+            <span className="text-slate-500">Selecione...</span>
+          )}
+        </div>
+        <ChevronDown className="w-4 h-4 text-slate-400" />
+      </div>
+
+      {open && (
+        <div className="absolute z-20 w-full max-h-44 overflow-auto bg-[#041025] border border-slate-800 rounded-lg p-2" style={{ bottom: 'calc(100% + 8px)' }}>
+          <div className="space-y-1">
+            {options.map((o) => {
+              const active = value === o;
+              return (
+                <button
+                  key={o}
+                  type="button"
+                  onClick={() => choose(o)}
+                  className={`w-full text-left flex items-center gap-3 px-2 py-2 rounded ${active ? 'bg-emerald-600/20 border border-emerald-500' : 'hover:bg-slate-900'}`}
+                >
+                  <span className={`w-6 h-6 flex items-center justify-center rounded border ${active ? 'border-emerald-500 bg-emerald-500' : 'border-slate-600 bg-[#07121a]'}`}>
+                    {active ? (
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-white">
+                        <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    ) : null}
+                  </span>
+                  <span className="text-slate-200">{o}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -174,7 +174,6 @@ export default function Escalacao() {
                 if (origin === 'nao-relacionados') {
                     await api.post('/escalacoes/', {
                         partida: partidaId,
-                        clube: player.clube,
                         jogador: player.id,
                         ...payload
                     });
