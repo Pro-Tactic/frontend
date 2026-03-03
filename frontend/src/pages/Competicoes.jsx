@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Trophy, Users, AlertCircle } from "lucide-react";
 import { api } from "../services/api";
+import { resolveMediaUrl } from "../services/media";
 
 export default function Competicoes() {
   const [competicoes, setCompeticoes] = useState([]);
@@ -201,7 +202,7 @@ export default function Competicoes() {
                 >
                   {clube.escudo ? (
                     <img
-                      src={clube.escudo}
+                      src={resolveMediaUrl(clube.escudo)}
                       alt={clube.nome}
                       className="w-10 h-10 object-contain rounded-lg bg-white/5 p-1"
                     />
@@ -237,7 +238,7 @@ export default function Competicoes() {
               <div className="flex items-center gap-2">
                 {selectedClub.escudo && (
                   <img
-                    src={selectedClub.escudo}
+                    src={resolveMediaUrl(selectedClub.escudo)}
                     alt={selectedClub.nome}
                     className="w-8 h-8 object-contain rounded bg-white/5 p-0.5"
                   />
