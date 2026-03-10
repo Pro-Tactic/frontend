@@ -77,13 +77,15 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-screen bg-[#020617] text-white flex">
-      <aside className="w-[280px] md:w-[320px] h-screen border-r border-slate-800/60 bg-[#01040f] flex flex-col">
-        <div className="px-6 pt-6 pb-5 border-b border-slate-800/60">
+      {/* Adicionei 'sticky top-0' para a sidebar não rolar com o conteúdo principal */}
+      <aside className="w-[280px] md:w-[320px] h-screen sticky top-0 border-r border-slate-800/60 bg-[#01040f] flex flex-col">
+        
+        {/* Header da Sidebar */}
+        <div className="px-6 pt-6 pb-5 border-b border-slate-800/60 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-emerald-500/15 ring-1 ring-emerald-500/30 flex items-center justify-center">
               <span className="text-emerald-400 font-bold">PT</span>
             </div>
-
             <div className="leading-tight">
               <div className="text-lg font-semibold tracking-wide">PROTACTIC</div>
               <div className="text-xs text-slate-400">Assistente Técnico</div>
@@ -91,6 +93,7 @@ export default function AppLayout() {
           </div>
         </div>
 
+        {/* Links de Navegação - O 'flex-1' faz ele ocupar todo o espaço disponível */}
         <nav className="px-4 py-5 flex-1 min-h-0 overflow-y-auto flex flex-col gap-2">
           {loading && (
             <div className="text-slate-400 text-sm px-4">Carregando menu...</div>
@@ -100,9 +103,7 @@ export default function AppLayout() {
             <div className="mx-2 p-3 rounded-lg border border-red-500/40 bg-red-500/10 text-red-200 text-xs">
               {error}
               <div className="mt-2 text-slate-300">
-                Dica: confira se o backend está em{" "}
-                <span className="font-mono">http://127.0.0.1:8000</span> e se o
-                token está sendo enviado.
+                Dica: confira se o backend está em <span className="font-mono">8000</span>...
               </div>
             </div>
           )}
@@ -112,20 +113,19 @@ export default function AppLayout() {
           ))}
         </nav>
         
-          <div className="px-4 pt-3 pb-4 border-t border-slate-800/60">
-            <button
-                onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-red-500/10 transition"
-            >
-                <LogOut className="w-5 h-5" />
-                <span className="font-medium">Sair</span>
-            </button>
-            </div>
-
+        <div className="px-4 pt-3 pb-4 border-t border-slate-800/60 flex-shrink-0">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-red-500/10 transition"
+          >
+            <LogOut className="w-5 h-5" />
+            <span className="font-medium">Sair</span>
+          </button>
+        </div>
       </aside>
 
-      <main className="flex-1 bg-[#020617]">
-        <div className="min-h-screen px-10 py-8">
+      <main className="flex-1 bg-[#020617] min-h-screen overflow-y-auto">
+        <div className="px-10 py-8">
           {!loading && !nav && (
             <div className="text-slate-300">
               Não consegui carregar a navegação. Veja o erro na sidebar.
