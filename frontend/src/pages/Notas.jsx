@@ -49,18 +49,29 @@ export default function Notas() {
     async function loadDadosPartida() {
       setLoading(true);
       try {
-        const resJogadores = await api.get("/jogadores/"); 
-        const resDesempenhos = await api.get(`/desempenhos/?partida=${partidaSelecionada}`);
-        
-        setJogadores(resJogadores.data);
+        const [resJogadores, resDesempenhos, resEscalacoes] = await Promise.all([
+          api.get("/jogadores/"),
+          api.get(`/desempenhos/?partida=${partidaSelecionada}`),
+          api.get(`/escalacoes/?partida=${partidaSelecionada}`),
+        ]);
+
+        const titularesIds = new Set(
+          resEscalacoes.data
+            .filter((e) => e.status === "TITULAR")
+            .map((e) => (typeof e.jogador === "object" ? e.jogador.id : e.jogador))
+        );
+
+        const jogadoresTitulares = resJogadores.data.filter((j) => titularesIds.has(j.id));
+        setJogadores(jogadoresTitulares);
 
         const dadosIniciais = {};
         resDesempenhos.data.forEach(d => {
+            if (!titularesIds.has(d.jogador)) return;
             dadosIniciais[d.jogador] = {
                 id: d.id,
                 nota: d.nota,
                 gols: d.gols,
-            gols_contra: d.gols_contra,
+                gols_contra: d.gols_contra,
                 assistencias: d.assistencias
             };
         });
@@ -148,7 +159,12 @@ export default function Notas() {
         color: '#e2e8f0'
       });
     } catch (err) {
-      const apiMsg = err?.response?.data?.gols || err?.response?.data?.assistencias || err?.response?.data?.detail;
+      const apiMsg =
+        err?.response?.data?.desempenhos ||
+        err?.response?.data?.jogador ||
+        err?.response?.data?.gols ||
+        err?.response?.data?.assistencias ||
+        err?.response?.data?.detail;
       MySwal.fire({
         icon: 'error',
         title: 'Nao foi possivel salvar',
@@ -177,7 +193,7 @@ export default function Notas() {
             <Activity className="text-green-500" /> Avaliação de Desempenho
           </h1>
           <p className="text-slate-400 mt-2">
-            Atribua notas, gols, gols contra e assistencias para o elenco na partida selecionada.
+            Atribua notas, gols, gols contra e assistencias apenas para os 11 iniciais da partida selecionada.
           </p>
         </div>
       </div>
@@ -208,10 +224,10 @@ export default function Notas() {
         {partidaSelecionada && (
           <div className="bg-[#0f172a] border border-slate-800 rounded-2xl p-6 shadow-xl overflow-hidden">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-white">Elenco Relacionado</h2>
+              <h2 className="text-xl font-semibold text-white">11 Iniciais</h2>
               <button
                 onClick={handleSave}
-                disabled={loading}
+                disabled={loading || jogadores.length === 0}
                 className="bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-2 px-6 rounded-lg flex items-center gap-2 transition-all transform active:scale-95 disabled:opacity-50"
               >
                 {loading ? "Salvando..." : "Salvar Alterações"}
@@ -314,7 +330,7 @@ export default function Notas() {
               
               {jogadores.length === 0 && (
                 <div className="text-center py-10 text-slate-500">
-                  Nenhum jogador encontrado para o clube.
+                  Nenhum titular encontrado para esta partida.
                 </div>
               )}
             </div>
