@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { fetchNavigation } from "../services/navigation";
 import { clearSession } from "../services/auth";
+import { api } from "../services/api";
 
 import { Home, Users, Target, Activity, Building, Shield, LogOut, Trophy } from "lucide-react";
 
@@ -42,9 +43,18 @@ export default function AppLayout() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  function handleLogout() {
-    clearSession();
-    window.location.replace("/");
+  async function handleLogout() {
+    try {
+      const refresh = localStorage.getItem("refresh_token");
+      if (refresh) {
+        await api.post("/logout/", { refresh });
+      }
+    } catch (e) {
+      console.error("Erro ao fazer logout remoto:", e);
+    } finally {
+      clearSession();
+      window.location.replace("/");
+    }
   }
 
   useEffect(() => {
