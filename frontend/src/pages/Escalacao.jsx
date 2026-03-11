@@ -109,7 +109,6 @@ export default function Escalacao() {
     };
 
     const handleDragStart = (e, player, origin, escalacaoId = null, initialX = null, initialY = null) => {
-        // Save offset to mouse relative to element if needed, but centering is easier
         setDraggedItem({ player, origin, escalacaoId });
         e.dataTransfer.effectAllowed = "move";
     };
@@ -124,27 +123,49 @@ export default function Escalacao() {
         if (!draggedItem) return;
 
         const { player, origin, escalacaoId } = draggedItem;
+        const previousLineup = lineup;
 
-        // --- COORDINATE CALCULATION ---
         let newX = null;
         let newY = null;
 
         if (targetZone === 'titulares') {
             if (fieldRef.current) {
                 const rect = fieldRef.current.getBoundingClientRect();
-                // Calculate relative % position
-                // e.clientX is mouse pos.
                 const rawX = e.clientX - rect.left;
                 const rawY = e.clientY - rect.top;
 
-                // Constrain 0-100
                 newX = Math.max(0, Math.min(100, (rawX / rect.width) * 100));
                 newY = Math.max(0, Math.min(100, (rawY / rect.height) * 100));
             }
-        }
-        // ----------------------------
 
-        // LIMIT CHECK (Only if adding new titular)
+            const isGoleiro = (player?.posicao || '').trim() === 'Goleiro';
+            const naLinhaDoGoleiro = newY !== null && newY >= 90;
+
+            if (!isGoleiro && naLinhaDoGoleiro) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Posição inválida',
+                    text: 'A linha do goleiro aceita apenas jogadores da posição Goleiro.',
+                    background: '#1e293b',
+                    color: '#fff'
+                });
+                setDraggedItem(null);
+                return;
+            }
+
+            if (isGoleiro && !naLinhaDoGoleiro) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Posição inválida',
+                    text: 'O goleiro deve ser posicionado na linha do goleiro.',
+                    background: '#1e293b',
+                    color: '#fff'
+                });
+                setDraggedItem(null);
+                return;
+            }
+        }
+
         const currentTitulares = hydratedLineup.filter(l => l.status === 'TITULAR').length;
         const currentReservas = hydratedLineup.filter(l => l.status === 'RESERVA').length;
 
@@ -159,12 +180,10 @@ export default function Escalacao() {
 
         try {
             if (targetZone === 'nao-relacionados') {
+                setLineup(prev => prev.filter(item => item.id !== escalacaoId));
                 await api.delete(`/escalacoes/${escalacaoId}/`);
             } else {
                 const status = targetZone === 'titulares' ? 'TITULAR' : 'RESERVA';
-
-                // If we are dropping on grid (titulars), use calculated XY.
-                // If dropping on reserves, XY should be null or ignored.
                 const payload = { status };
                 if (targetZone === 'titulares' && newX !== null) {
                     payload.x = newX;
@@ -172,22 +191,52 @@ export default function Escalacao() {
                 }
 
                 if (origin === 'nao-relacionados') {
-                    await api.post('/escalacoes/', {
+                    const tempId = `tmp:${partidaId}:${player.id}`;
+
+                    setLineup(prev => ([
+                        ...prev,
+                        {
+                            id: tempId,
+                            partida: partidaId,
+                            jogador: player.id,
+                            status,
+                            x: payload.x ?? null,
+                            y: payload.y ?? null,
+                        }
+                    ]));
+
+                    const response = await api.post('/escalacoes/', {
                         partida: partidaId,
                         jogador: player.id,
                         ...payload
                     });
+
+                    setLineup(prev => prev.map(item => (
+                        item.id === tempId ? response.data : item
+                    )));
                 } else {
-                    await api.patch(`/escalacoes/${escalacaoId}/`, payload);
+                    setLineup(prev => prev.map(item => {
+                        if (item.id !== escalacaoId) return item;
+                        return {
+                            ...item,
+                            status,
+                            x: targetZone === 'titulares' ? (payload.x ?? item.x) : null,
+                            y: targetZone === 'titulares' ? (payload.y ?? item.y) : null,
+                        };
+                    }));
+
+                    const response = await api.patch(`/escalacoes/${escalacaoId}/`, payload);
+
+                    setLineup(prev => prev.map(item => (
+                        item.id === escalacaoId ? response.data : item
+                    )));
                 }
             }
-
-            await fetchData();
 
         } catch (error) {
             console.error("Erro ao mover:", error);
             Swal.fire({ icon: 'error', title: 'Erro', text: 'Falha ao salvar.', background: '#1e293b', color: '#fff' });
-            fetchData(); // Sync
+            setLineup(previousLineup);
         } finally {
             setDraggedItem(null);
         }
@@ -242,11 +291,9 @@ export default function Escalacao() {
                     </div>
                 </div>
 
-                {/* --- CAMPO --- */}
                 <div className="lg:col-span-2">
                     <div className="bg-[#1e293b] rounded-xl p-1 border border-slate-700 h-[600px] flex flex-col shadow-xl relative">
 
-                        {/* Header Info Layer */}
                         <div className="absolute top-4 left-4 z-20 bg-black/60 backdrop-blur px-3 py-1 rounded text-white text-xs font-mono">
                             {titulares.length}/11
                         </div>
@@ -263,11 +310,8 @@ export default function Escalacao() {
                                 backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(255,255,255,0.03) 20px), repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(255,255,255,0.03) 20px)'
                             }}
                         >
-                            {/* Field Markings */}
                             <div className="absolute top-1/2 left-1/2 w-32 h-32 border-2 border-white/20 rounded-full transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
                             <div className="absolute top-1/2 left-0 w-full h-px bg-white/20 transform -translate-y-1/2 pointer-events-none"></div>
-
-                            {/* Zones Helper (Optional visual guide) */}
                             <div className="absolute top-0 left-0 w-full h-[35%] border-b border-dashed border-white/5 pointer-events-none"></div>
                             <div className="absolute top-0 left-0 w-full h-[35%] border-b border-dashed border-white/5 pointer-events-none"></div>
                             <div className="absolute bottom-0 left-0 w-full h-[35%] border-t border-dashed border-white/5 pointer-events-none"></div>
