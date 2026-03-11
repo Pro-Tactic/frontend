@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { api } from "../services/api";
-import { Save, Search, Trophy, User as UserIcon, Activity } from "lucide-react";
+import { Save, Search, User as UserIcon, Activity } from "lucide-react";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
@@ -13,6 +13,23 @@ export default function Notas() {
   const [loading, setLoading] = useState(false);
   
   const [performanceData, setPerformanceData] = useState({});
+
+  const partidaAtual = partidas.find((p) => p.id === partidaSelecionada) || null;
+
+  const toInt = (value) => {
+    const parsed = parseInt(value, 10);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  };
+
+  const getGolsDoMeuTime = (partida, elenco) => {
+    if (!partida || !elenco?.length) return null;
+    const meuClubeId = elenco[0]?.clube;
+    if (!meuClubeId) return null;
+
+    if (partida.mandante === meuClubeId) return Number(partida.placar_mandante || 0);
+    if (partida.visitante === meuClubeId) return Number(partida.placar_visitante || 0);
+    return null;
+  };
 
   useEffect(() => {
     async function loadPartidas() {
@@ -43,6 +60,7 @@ export default function Notas() {
                 id: d.id,
                 nota: d.nota,
                 gols: d.gols,
+            gols_contra: d.gols_contra,
                 assistencias: d.assistencias
             };
         });
@@ -70,37 +88,58 @@ export default function Notas() {
   };
 
   const handleSave = async () => {
-    setLoading(true);
-    let erros = 0;
+    if (!partidaSelecionada) {
+      MySwal.fire({ icon: 'warning', title: 'Selecione uma partida', text: 'Escolha uma partida antes de salvar.' });
+      return;
+    }
 
-    const promises = Object.keys(performanceData).map(async (jogadorId) => {
-      const dados = performanceData[jogadorId];
-      if (!dados) return;
-
-      const payload = {
+    const desempenhosPayload = jogadores.map((jogador) => {
+      const dados = performanceData[jogador.id] || {};
+      return {
         partida: partidaSelecionada,
-        jogador: jogadorId,
-        nota: dados.nota,
-        gols: dados.gols || 0,
-        assistencias: dados.assistencias || 0
+        jogador: jogador.id,
+        nota: dados.nota === "" || dados.nota === undefined ? 0 : dados.nota,
+        gols: toInt(dados.gols),
+        gols_contra: toInt(dados.gols_contra),
+        assistencias: toInt(dados.assistencias),
       };
-
-      try {
-        if (dados.id) {
-           await api.patch(`/desempenhos/${dados.id}/`, payload);
-        } else {
-           await api.post("/desempenhos/", payload);
-        }
-      } catch (err) {
-        console.error(`Erro ao salvar jogador ${jogadorId}`, err);
-        erros++;
-      }
     });
 
-    await Promise.all(promises);
-    setLoading(false);
+    const golsDoTime = getGolsDoMeuTime(partidaAtual, jogadores);
+    if (golsDoTime === null) {
+      MySwal.fire({
+        icon: 'error',
+        title: 'Erro de validacao',
+        text: 'Nao foi possivel identificar os gols do seu time para esta partida.',
+      });
+      return;
+    }
 
-    if (erros === 0) {
+    const totalGols = desempenhosPayload.reduce((acc, item) => acc + item.gols, 0);
+    const totalGolsContra = desempenhosPayload.reduce((acc, item) => acc + item.gols_contra, 0);
+    const totalAssistencias = desempenhosPayload.reduce((acc, item) => acc + item.assistencias, 0);
+
+    if (totalGols + totalGolsContra !== golsDoTime) {
+      MySwal.fire({
+        icon: 'warning',
+        title: 'Gols inconsistentes',
+        text: `A soma de gols + gols contra (${totalGols + totalGolsContra}) deve ser igual aos gols do time (${golsDoTime}).`,
+      });
+      return;
+    }
+
+    if (totalAssistencias > golsDoTime) {
+      MySwal.fire({
+        icon: 'warning',
+        title: 'Assistencias inconsistentes',
+        text: `A soma de assistencias (${totalAssistencias}) deve ser menor ou igual aos gols do time (${golsDoTime}).`,
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await api.post('/desempenhos/bulk-save/', { desempenhos: desempenhosPayload });
       MySwal.fire({
         icon: 'success',
         title: 'Sucesso!',
@@ -108,14 +147,26 @@ export default function Notas() {
         background: '#0f172a',
         color: '#e2e8f0'
       });
-    } else {
+    } catch (err) {
+      const apiMsg = err?.response?.data?.gols || err?.response?.data?.assistencias || err?.response?.data?.detail;
       MySwal.fire({
-        icon: 'warning',
-        title: 'Atenção',
-        text: 'Alguns dados podem não ter sido salvos. Verifique a conexão.',
+        icon: 'error',
+        title: 'Nao foi possivel salvar',
+        text: Array.isArray(apiMsg) ? apiMsg[0] : (apiMsg || 'Valide gols/assistencias em relacao ao placar da partida.'),
       });
+    } finally {
+      setLoading(false);
     }
   };
+
+  const golsDoTime = getGolsDoMeuTime(partidaAtual, jogadores);
+  const resumoGols = jogadores.reduce((acc, jogador) => {
+    const dados = performanceData[jogador.id] || {};
+    acc.gols += toInt(dados.gols);
+    acc.golsContra += toInt(dados.gols_contra);
+    acc.assistencias += toInt(dados.assistencias);
+    return acc;
+  }, { gols: 0, golsContra: 0, assistencias: 0 });
 
   return (
     <div className="min-h-screen bg-[#020617] text-white p-6 lg:p-10">
@@ -126,7 +177,7 @@ export default function Notas() {
             <Activity className="text-green-500" /> Avaliação de Desempenho
           </h1>
           <p className="text-slate-400 mt-2">
-            Atribua notas, gols e assistências para o elenco na partida selecionada.
+            Atribua notas, gols, gols contra e assistencias para o elenco na partida selecionada.
           </p>
         </div>
       </div>
@@ -168,6 +219,20 @@ export default function Notas() {
               </button>
             </div>
 
+            {partidaAtual && (
+              <div className="mb-6 rounded-xl border border-slate-700 bg-slate-900/60 p-4 text-sm text-slate-300">
+                <div>
+                  Placar do time na partida: <span className="font-bold text-white">{golsDoTime ?? '-'} gol(s)</span>
+                </div>
+                <div className="mt-1">
+                  Soma atual: gols <span className="font-bold text-emerald-400">{resumoGols.gols}</span> + gols contra <span className="font-bold text-amber-400">{resumoGols.golsContra}</span> = <span className="font-bold text-white">{resumoGols.gols + resumoGols.golsContra}</span>
+                </div>
+                <div className="mt-1">
+                  Assistencias atuais: <span className="font-bold text-sky-400">{resumoGols.assistencias}</span>
+                </div>
+              </div>
+            )}
+
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -175,6 +240,7 @@ export default function Notas() {
                     <th className="p-4">Atleta</th>
                     <th className="p-4 text-center w-32">Nota (0-10)</th>
                     <th className="p-4 text-center w-24">Gols</th>
+                    <th className="p-4 text-center w-28">Gols Contra</th>
                     <th className="p-4 text-center w-24">Assis.</th>
                   </tr>
                 </thead>
@@ -216,6 +282,17 @@ export default function Notas() {
                             value={dados.gols || ""}
                             onChange={(e) => handleInputChange(jogador.id, "gols", e.target.value)}
                             className="w-full bg-[#1e293b] border border-slate-600 rounded p-2 text-center text-slate-200 focus:border-green-500 focus:outline-none"
+                          />
+                        </td>
+
+                        <td className="p-4 text-center">
+                          <input
+                            type="number"
+                            min="0"
+                            placeholder="0"
+                            value={dados.gols_contra || ""}
+                            onChange={(e) => handleInputChange(jogador.id, "gols_contra", e.target.value)}
+                            className="w-full bg-[#1e293b] border border-slate-600 rounded p-2 text-center text-amber-300 focus:border-green-500 focus:outline-none"
                           />
                         </td>
 
