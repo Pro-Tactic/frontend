@@ -52,7 +52,7 @@ export default function Notas() {
         const [resJogadores, resDesempenhos, resEscalacoes] = await Promise.all([
           api.get("/jogadores/"),
           api.get(`/desempenhos/?partida=${partidaSelecionada}`),
-          api.get(`/escalacoes/?partida=${partidaSelecionada}`),
+          api.get(`/escalacoes/?partida=${partidaSelecionada}&tipo=PADRAO`),
         ]);
 
         const titularesIds = new Set(
