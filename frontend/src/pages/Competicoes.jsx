@@ -296,12 +296,23 @@ export default function Competicoes() {
                     ))}
 
                     {(clubeStats.formacoes_partida || []).map((f) => (
-                      <div key={f.partida_id} className="text-sm border border-slate-700 rounded-lg px-3 py-2">
+                      <div key={f.partida_id} className="text-sm border border-slate-700 rounded-lg px-3 py-2 space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="font-semibold">{f.formacao}</span>
                           <span className="text-slate-400">{f.data}</span>
                         </div>
                         <div className="text-slate-500">vs {f.adversario}</div>
+                        <LineupFieldPreview titulares={f.titulares || []} />
+                        <div className="flex flex-wrap gap-1 pt-1">
+                          {(f.titulares || []).map((j) => (
+                            <span
+                              key={`${f.partida_id}-${j.jogador_id}`}
+                              className="px-2 py-0.5 rounded border border-slate-700 text-[11px] text-slate-300"
+                            >
+                              {j.nome}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -392,6 +403,71 @@ function StatBox({ label, value }) {
     <div className="rounded-xl border border-slate-800 bg-slate-900/40 px-4 py-3">
       <div className="text-xs text-slate-400 uppercase tracking-wide">{label}</div>
       <div className="text-2xl font-semibold text-slate-100">{value}</div>
+    </div>
+  );
+}
+
+const POSITION_FALLBACK_SLOTS = {
+  Goleiro: [{ x: 50, y: 92 }],
+  "Lateral Esquerdo": [{ x: 16, y: 74 }],
+  Zagueiro: [{ x: 32, y: 76 }, { x: 50, y: 76 }, { x: 68, y: 76 }],
+  "Lateral Direito": [{ x: 84, y: 74 }],
+  Volante: [{ x: 40, y: 62 }, { x: 60, y: 62 }],
+  "Meio-campista": [{ x: 33, y: 52 }, { x: 50, y: 50 }, { x: 67, y: 52 }],
+  "Meia Atacante": [{ x: 50, y: 42 }],
+  "Ponta Esquerda": [{ x: 24, y: 30 }],
+  "Ponta Direita": [{ x: 76, y: 30 }],
+  Centroavante: [{ x: 50, y: 20 }],
+};
+
+function getFallbackCoordinate(posicao, usedCountByPosicao) {
+  const slots = POSITION_FALLBACK_SLOTS[posicao] || [{ x: 50, y: 50 }];
+  const currentIndex = usedCountByPosicao[posicao] || 0;
+  usedCountByPosicao[posicao] = currentIndex + 1;
+
+  if (currentIndex < slots.length) {
+    return slots[currentIndex];
+  }
+
+  const base = slots[currentIndex % slots.length];
+  const stackOffset = Math.floor(currentIndex / slots.length) * 3;
+  return {
+    x: Math.max(5, Math.min(95, base.x + (currentIndex % 2 === 0 ? stackOffset : -stackOffset))),
+    y: Math.max(8, Math.min(95, base.y - stackOffset)),
+  };
+}
+
+function LineupFieldPreview({ titulares }) {
+  const usedCountByPosicao = {};
+
+  const players = (titulares || []).map((j) => {
+    const hasCoord = j?.x !== null && j?.x !== undefined && j?.y !== null && j?.y !== undefined;
+    const fallback = getFallbackCoordinate(j?.posicao, usedCountByPosicao);
+
+    return {
+      ...j,
+      x: hasCoord ? Number(j.x) : fallback.x,
+      y: hasCoord ? Number(j.y) : fallback.y,
+    };
+  });
+
+  return (
+    <div className="relative h-40 rounded-lg border border-slate-700 bg-[#1a472a] overflow-hidden">
+      <div className="absolute top-1/2 left-0 w-full h-px bg-white/20 -translate-y-1/2" />
+      <div className="absolute top-1/2 left-1/2 w-10 h-10 border border-white/20 rounded-full -translate-x-1/2 -translate-y-1/2" />
+
+      {players.map((j) => (
+        <div
+          key={j.jogador_id}
+          className="absolute -translate-x-1/2 -translate-y-1/2"
+          style={{ left: `${j.x}%`, top: `${j.y}%` }}
+          title={`${j.nome} (${j.posicao})`}
+        >
+          <div className="w-5 h-5 rounded-full bg-white text-[9px] text-slate-900 font-bold flex items-center justify-center border border-slate-200">
+            {(j.nome || "?").slice(0, 1).toUpperCase()}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

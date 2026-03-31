@@ -20,6 +20,8 @@ import Notas from "./pages/Notas";
 import Escalacao from "./pages/Escalacao";
 import Competicoes from "./pages/Competicoes";
 import Partidas from "./pages/Partidas";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 import "./index.css"
 
@@ -58,6 +60,22 @@ export default function App() {
           element={
             <GuestRoute>
               <Login />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <GuestRoute>
+              <ForgotPassword />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <GuestRoute>
+              <ResetPassword />
             </GuestRoute>
           }
         />

@@ -126,12 +126,14 @@ export default function RegistroClube() {
         if (escudoFile) {
             formData.append("escudo", escudoFile);
         }
+        competicoes.forEach((competicao) => {
+          formData.append("competicoes", competicao.id);
+        });
 
         await api.post("/clubes/", formData, {
             headers: { "Content-Type": "multipart/form-data" },
         });
 
-        // ALERTA DE SUCESSO
         Swal.fire({
             title: 'Clube Criado!',
             text: 'As informações do clube foram salvas.',
@@ -142,7 +144,6 @@ export default function RegistroClube() {
             confirmButtonText: 'Ótimo'
         });
 
-        // Reset form
         setNomeClube("");
         setPais("");
         setDataCriacao("");

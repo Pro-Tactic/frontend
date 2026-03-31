@@ -3,7 +3,7 @@ import { api } from "../services/api";
 import { fetchNavigation } from "../services/navigation";
 import { clearSession, saveSession } from "../services/auth";
 import { User, Lock, Eye, EyeOff, ChevronRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import logoImg from "../assets/logo-protactic.png";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -163,6 +163,14 @@ export default function Login() {
                       <Eye className="h-5 w-5" />
                     )}
                   </button>
+                </div>
+                <div className="flex justify-end">
+                  <Link 
+                    to="/forgot-password" 
+                    className="text-xs text-slate-400 hover:text-green-500 transition-colors"
+                  >
+                    Esqueci minha senha
+                  </Link>
                 </div>
               </div>
 

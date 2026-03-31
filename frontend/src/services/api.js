@@ -1,8 +1,10 @@
 import axios from "axios";
 import { clearSession, getAccessToken, isTokenExpired } from "./auth";
 
+const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000").replace(/\/+$/, "");
+
 export const api = axios.create({
-  baseURL: "http://127.0.0.1:8000",
+  baseURL: API_BASE_URL,
 });
 
 api.interceptors.request.use((config) => {
