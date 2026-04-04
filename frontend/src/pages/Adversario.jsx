@@ -10,7 +10,7 @@ function SelectField({ label, value, onChange, options, placeholder, disabled = 
         value={value}
         onChange={(event) => onChange(event.target.value)}
         disabled={disabled}
-        className="mt-2 w-full rounded-xl border border-slate-700 bg-[#0b1220] px-3 py-2.5 text-sm text-slate-200 outline-none transition focus:border-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-2 w-full rounded-xl border border-slate-700 bg-[#0b1220] px-3 py-2.5 text-sm text-slate-200 outline-none transition focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
       >
         <option value="">{placeholder}</option>
         {options.map((item) => (
@@ -24,13 +24,31 @@ function SelectField({ label, value, onChange, options, placeholder, disabled = 
 }
 
 function normalizeCoordinates(player, index, side) {
-  const baseX = side === "meu" ? 38 : 62;
-  const baseY = [90, 72, 72, 72, 58, 58, 58, 44, 44, 30, 16][index] ?? 50;
+  if (player.x !== undefined && player.y !== undefined && player.x !== null && player.y !== null) {
+    return player;
+  }
+
+  let x = 50;
+  let y = 50;
+
+  if (side === "meu") {
+    // Meu time (Lado Direito - Defesa na Direita, Ataca para Esquerda)
+    if (index === 0) { x = 93; y = 50; } // GK
+    else if (index <= 4) { x = 78; y = [15, 38, 62, 85][index - 1]; } // DEF
+    else if (index <= 8) { x = 62; y = [15, 38, 62, 85][index - 5]; } // MID
+    else { x = 52; y = [35, 65][index - 9]; } // ATT
+  } else {
+    // Adversário (Lado Esquerdo - Defesa na Esquerda, Ataca para Direita)
+    if (index === 0) { x = 7; y = 50; } // GK
+    else if (index <= 4) { x = 22; y = [15, 38, 62, 85][index - 1]; } // DEF
+    else if (index <= 8) { x = 38; y = [15, 38, 62, 85][index - 5]; } // MID
+    else { x = 48; y = [35, 65][index - 9]; } // ATT
+  }
 
   return {
     ...player,
-    x: player.x ?? baseX,
-    y: player.y ?? baseY,
+    x,
+    y,
   };
 }
 
@@ -43,11 +61,11 @@ function TacticBoard({ myLineup, oppLineup, myClubName, oppClubName, title }) {
       <div className="mb-4 flex items-center justify-between gap-3">
         <div>
           <h3 className="text-lg font-semibold text-white">{title}</h3>
-          <p className="text-xs text-slate-400">Sobreposição por posicionamento tático</p>
+          <p className="text-xs text-slate-400">Sobreposição por posicionamento tático (Horizontal)</p>
         </div>
         <div className="flex items-center gap-3 text-xs">
-          <span className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-emerald-300 ring-1 ring-emerald-500/25">
-            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+          <span className="inline-flex items-center gap-2 rounded-full bg-blue-500/10 px-3 py-1 text-blue-300 ring-1 ring-blue-500/25">
+            <span className="h-2 w-2 rounded-full bg-blue-400" />
             {myClubName || "Meu time"}
           </span>
           <span className="inline-flex items-center gap-2 rounded-full bg-red-500/10 px-3 py-1 text-red-300 ring-1 ring-red-500/30">
@@ -57,24 +75,35 @@ function TacticBoard({ myLineup, oppLineup, myClubName, oppClubName, title }) {
         </div>
       </div>
 
-      <div className="relative h-[560px] overflow-hidden rounded-xl border border-slate-700/70 bg-gradient-to-b from-[#1d4d2d] via-[#1f6f3f] to-[#15452a]">
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:48px_48px] opacity-30" />
-        <div className="pointer-events-none absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/35" />
-        <div className="pointer-events-none absolute left-1/2 top-1/2 h-36 w-36 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white/30" />
-        <div className="pointer-events-none absolute left-1/2 top-[18px] h-16 w-56 -translate-x-1/2 rounded-b-3xl border border-white/25" />
-        <div className="pointer-events-none absolute bottom-[18px] left-1/2 h-16 w-56 -translate-x-1/2 rounded-t-3xl border border-white/25" />
+      <div className="relative h-[520px] w-full overflow-hidden rounded-xl border border-slate-700/70 bg-[#1a472a] shadow-inner"
+        style={{
+          backgroundImage: 'repeating-linear-gradient(90deg, transparent, transparent 48px, rgba(255,255,255,0.02) 50px), repeating-linear-gradient(0deg, transparent, transparent 48px, rgba(255,255,255,0.02) 50px)'
+        }}
+      >
+        {/* Linhas do campo Horizontal */}
+        <div className="pointer-events-none absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/20" />
+        <div className="pointer-events-none absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white/20" />
+        
+        {/* Grandes Áreas (Designadas nos extremos Esquerdo e Direito) */}
+        {/* Esquerda (Adversário) */}
+        <div className="pointer-events-none absolute left-0 top-1/2 h-[50%] w-[15%] -translate-y-1/2 border-b border-r border-t border-white/25 rounded-r-xl" />
+        <div className="pointer-events-none absolute left-0 top-1/2 h-[22%] w-[6%] -translate-y-1/2 border-b border-r border-t border-white/30 rounded-r-lg" />
+        
+        {/* Direita (Meu Time) */}
+        <div className="pointer-events-none absolute right-0 top-1/2 h-[50%] w-[15%] -translate-y-1/2 border-b border-l border-t border-white/25 rounded-l-xl" />
+        <div className="pointer-events-none absolute right-0 top-1/2 h-[22%] w-[6%] -translate-y-1/2 border-b border-l border-t border-white/30 rounded-l-lg" />
 
         {mine.map((item) => (
           <div
             key={`my-${item.jogador_id}`}
-            className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
+            className="absolute z-20 -translate-x-1/2 -translate-y-1/2 transition-all duration-500"
             style={{ left: `${item.x}%`, top: `${item.y}%` }}
           >
-            <div className="flex flex-col items-center gap-1">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-emerald-300 bg-emerald-400 text-[11px] font-bold text-[#03220f] shadow-lg shadow-emerald-900/30">
+            <div className="flex flex-col items-center gap-1 group">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-blue-200 bg-blue-600 text-[11px] font-bold text-white shadow-lg shadow-blue-900/40 transition-transform group-hover:scale-110">
                 {item.posicao === "Goleiro" ? "GK" : item.nome.slice(0, 2).toUpperCase()}
               </span>
-              <span className="rounded bg-black/55 px-2 py-0.5 text-[10px] text-white">{item.nome}</span>
+              <span className="rounded bg-black/70 backdrop-blur px-2 py-0.5 text-[9px] font-medium text-white shadow-sm">{item.nome}</span>
             </div>
           </div>
         ))}
@@ -82,14 +111,14 @@ function TacticBoard({ myLineup, oppLineup, myClubName, oppClubName, title }) {
         {opp.map((item) => (
           <div
             key={`opp-${item.jogador_id}`}
-            className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
+            className="absolute z-10 -translate-x-1/2 -translate-y-1/2 transition-all duration-500"
             style={{ left: `${item.x}%`, top: `${item.y}%` }}
           >
-            <div className="flex flex-col items-center gap-1">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-red-300 bg-red-500 text-[11px] font-bold text-white shadow-lg shadow-red-900/40">
+            <div className="flex flex-col items-center gap-1 group">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-red-200 bg-red-600 text-[11px] font-bold text-white shadow-lg shadow-red-900/40 transition-transform group-hover:scale-110">
                 {item.posicao === "Goleiro" ? "GK" : item.nome.slice(0, 2).toUpperCase()}
               </span>
-              <span className="rounded bg-black/55 px-2 py-0.5 text-[10px] text-white">{item.nome}</span>
+              <span className="rounded bg-black/70 backdrop-blur px-2 py-0.5 text-[9px] font-medium text-white shadow-sm">{item.nome}</span>
             </div>
           </div>
         ))}
@@ -173,8 +202,8 @@ export default function Adversario() {
 
   return (
     <div className="mx-auto max-w-[1280px] pb-12">
-      <header className="relative overflow-hidden rounded-3xl border border-slate-700/60 bg-[radial-gradient(circle_at_10%_10%,rgba(16,185,129,0.2),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(239,68,68,0.2),transparent_45%),linear-gradient(140deg,#0b1220,#0f172a)] p-6 shadow-2xl">
-        <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-emerald-500/20 blur-2xl" />
+      <header className="relative overflow-hidden rounded-3xl border border-slate-700/60 bg-[radial-gradient(circle_at_10%_10%,rgba(59,130,246,0.2),transparent_40%),radial-gradient(circle_at_80%_80%,rgba(239,68,68,0.2),transparent_45%),linear-gradient(140deg,#0b1220,#0f172a)] p-6 shadow-2xl">
+        <div className="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-blue-500/20 blur-2xl" />
         <div className="absolute -bottom-14 left-16 h-40 w-40 rounded-full bg-red-500/15 blur-3xl" />
         <div className="relative z-10">
           <h1 className="text-3xl font-semibold tracking-wide text-white md:text-4xl">Previsões Táticas</h1>
@@ -220,7 +249,7 @@ export default function Adversario() {
         <button
           type="button"
           onClick={() => setTab("ataque_vs_defesa")}
-          className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition ${tab === "ataque_vs_defesa" ? "border-emerald-500 bg-emerald-500/20 text-emerald-200" : "border-slate-700 bg-[#0b1220] text-slate-300 hover:border-slate-500"}`}
+          className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition ${tab === "ataque_vs_defesa" ? "border-blue-500 bg-blue-500/20 text-blue-200" : "border-slate-700 bg-[#0b1220] text-slate-300 hover:border-slate-500"}`}
         >
           <Swords className="h-4 w-4" />
           Meu ataque x defesa deles
@@ -239,7 +268,7 @@ export default function Adversario() {
         <div className="rounded-xl border border-slate-700 bg-[#0b1220] p-4">
           <p className="text-xs uppercase tracking-wider text-slate-400">Meu clube</p>
           <p className="mt-1 text-lg font-semibold text-white">{payload?.meu_clube?.nome || "-"}</p>
-          <p className="mt-2 text-xs text-slate-400">Tipo utilizado: <span className="font-semibold text-emerald-300">{myTypeLabel}</span></p>
+          <p className="mt-2 text-xs text-slate-400">Tipo utilizado: <span className="font-semibold text-blue-400">{myTypeLabel}</span></p>
         </div>
         <div className="rounded-xl border border-slate-700 bg-[#0b1220] p-4">
           <p className="text-xs uppercase tracking-wider text-slate-400">Adversário</p>
