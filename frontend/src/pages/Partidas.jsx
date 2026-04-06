@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { api } from "../services/api";
+import { api, extractList } from "../services/api";
 
 export default function Partidas() {
   const [partidas, setPartidas] = useState([]);
@@ -10,7 +10,7 @@ export default function Partidas() {
     async function loadPartidas() {
       try {
         const response = await api.get("/partidas/");
-        setPartidas(response.data);
+        setPartidas(extractList(response.data));
       } catch (error) {
         console.error("Erro ao carregar partidas", error);
       } finally {

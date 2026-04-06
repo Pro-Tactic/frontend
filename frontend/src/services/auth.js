@@ -1,6 +1,7 @@
 const TOKEN_KEY = "token";
 const USER_TYPE_KEY = "user_type";
 const REFRESH_TOKEN_KEY = "refresh_token";
+const NAV_CACHE_KEY = "pt_navigation_cache_v1";
 
 function decodeToken(token) {
   try {
@@ -46,4 +47,5 @@ export function clearSession() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
   localStorage.removeItem(USER_TYPE_KEY);
+  sessionStorage.removeItem(NAV_CACHE_KEY);
 }

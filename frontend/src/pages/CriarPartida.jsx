@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Calendar, MapPin, Trophy, Users, Save } from "lucide-react";
 import Swal from "sweetalert2";
 
-import { api } from "../services/api"; 
+import { api, extractList } from "../services/api"; 
 
 export default function CriarPartida() {
   const navigate = useNavigate();
@@ -29,8 +29,8 @@ export default function CriarPartida() {
           api.get("/clubes/"),
           api.get("/competicoes/")
         ]);
-        setClubes(clubesRes.data);
-        setCompeticoes(competicoesRes.data);
+        setClubes(extractList(clubesRes.data));
+        setCompeticoes(extractList(competicoesRes.data));
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
       } finally {

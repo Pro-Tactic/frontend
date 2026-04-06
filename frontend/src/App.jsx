@@ -1,27 +1,29 @@
+import { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import AppLayout from "./layouts/AppLayout";
 import { isAuthenticated } from "./services/auth";
 
 import Login from "./pages/Login";
-import Sobre from "./pages/Sobre";
-import Registro from "./pages/Registro";
-import RegistroJogadores from "./pages/RegistroJogadores";
-import RegistroClube from "./pages/RegistroClube";
-import RegistroCompeticoes from "./pages/RegistroCompeticoes";
-import RegistroTecnico from "./pages/RegistroTecnico";
-import Inicio from "./pages/Inicio";
-import Elenco from "./pages/Elenco";
-import Adversario from "./pages/Adversario";
-import TempoReal from "./pages/TempoReal";
-import Clube from "./pages/Clube";
-import CriarPartida from "./pages/CriarPartida";
-import ListarJogadores from "./pages/ListarJogadores";
-import Notas from "./pages/Notas";
-import Escalacao from "./pages/Escalacao";
-import Competicoes from "./pages/Competicoes";
-import Partidas from "./pages/Partidas";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
+
+const AppLayout = lazy(() => import("./layouts/AppLayout"));
+const Sobre = lazy(() => import("./pages/Sobre"));
+const Registro = lazy(() => import("./pages/Registro"));
+const RegistroJogadores = lazy(() => import("./pages/RegistroJogadores"));
+const RegistroClube = lazy(() => import("./pages/RegistroClube"));
+const RegistroCompeticoes = lazy(() => import("./pages/RegistroCompeticoes"));
+const RegistroTecnico = lazy(() => import("./pages/RegistroTecnico"));
+const Inicio = lazy(() => import("./pages/Inicio"));
+const Elenco = lazy(() => import("./pages/Elenco"));
+const Adversario = lazy(() => import("./pages/Adversario"));
+const TempoReal = lazy(() => import("./pages/TempoReal"));
+const Clube = lazy(() => import("./pages/Clube"));
+const CriarPartida = lazy(() => import("./pages/CriarPartida"));
+const ListarJogadores = lazy(() => import("./pages/ListarJogadores"));
+const Notas = lazy(() => import("./pages/Notas"));
+const Escalacao = lazy(() => import("./pages/Escalacao"));
+const Competicoes = lazy(() => import("./pages/Competicoes"));
+const Partidas = lazy(() => import("./pages/Partidas"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 
 import "./index.css"
 
@@ -51,66 +53,76 @@ function GuestRoute({ children }) {
   return children;
 }
 
+function RouteFallback() {
+  return (
+    <div className="min-h-screen bg-[#020617] text-slate-300 flex items-center justify-center">
+      Carregando tela...
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <GuestRoute>
-              <Login />
-            </GuestRoute>
-          }
-        />
-        <Route
-          path="/forgot-password"
-          element={
-            <GuestRoute>
-              <ForgotPassword />
-            </GuestRoute>
-          }
-        />
-        <Route
-          path="/reset-password"
-          element={
-            <GuestRoute>
-              <ResetPassword />
-            </GuestRoute>
-          }
-        />
-        <Route path="/sobre" element={<Sobre />} />
+      <Suspense fallback={<RouteFallback />}>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <GuestRoute>
+                <Login />
+              </GuestRoute>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <GuestRoute>
+                <ForgotPassword />
+              </GuestRoute>
+            }
+          />
+          <Route
+            path="/reset-password"
+            element={
+              <GuestRoute>
+                <ResetPassword />
+              </GuestRoute>
+            }
+          />
+          <Route path="/sobre" element={<Sobre />} />
 
-        <Route
-          element={
-            <ProtectedRoute>
-              <AppLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="/inicio" element={<Inicio />} />
-          <Route path="/elenco" element={<Elenco />} />
-          <Route path="/adversario" element={<Adversario />} />
-          <Route path="/tempo-real" element={<TempoReal />} />
-          <Route path="/competicoes" element={<Competicoes />} />
-          <Route path="/clube" element={<Clube />} />
-          <Route path="/partidas" element={<Partidas />} />
-          <Route path="/registro" element={<Registro />} />
-          <Route path="/registro/jogadores" element={<RegistroJogadores />} />
-          <Route path="/registro/clube" element={<RegistroClube />} />
-          <Route path="/registro/competicoes" element={<RegistroCompeticoes />} />
-          <Route path="/registro/tecnico" element={<RegistroTecnico />} />
-          <Route path="/listar-jogadores" element={<ListarJogadores />} />
-          <Route path="/registro/partidas" element={<CriarPartida />} />
-          <Route path="/notas" element={<Notas />} />
-          <Route path="/escalacao/:partidaId" element={<Escalacao />} />
-        </Route>
+          <Route
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="/inicio" element={<Inicio />} />
+            <Route path="/elenco" element={<Elenco />} />
+            <Route path="/adversario" element={<Adversario />} />
+            <Route path="/tempo-real" element={<TempoReal />} />
+            <Route path="/competicoes" element={<Competicoes />} />
+            <Route path="/clube" element={<Clube />} />
+            <Route path="/partidas" element={<Partidas />} />
+            <Route path="/registro" element={<Registro />} />
+            <Route path="/registro/jogadores" element={<RegistroJogadores />} />
+            <Route path="/registro/clube" element={<RegistroClube />} />
+            <Route path="/registro/competicoes" element={<RegistroCompeticoes />} />
+            <Route path="/registro/tecnico" element={<RegistroTecnico />} />
+            <Route path="/listar-jogadores" element={<ListarJogadores />} />
+            <Route path="/registro/partidas" element={<CriarPartida />} />
+            <Route path="/notas" element={<Notas />} />
+            <Route path="/escalacao/:partidaId" element={<Escalacao />} />
+          </Route>
 
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/treinador" element={<Treinador />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/treinador" element={<Treinador />} />
 
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }

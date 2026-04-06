@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { api, extractList } from '../services/api';
 import { resolveMediaUrl } from '../services/media';
 
 const ClubeDashboard = () => {
@@ -13,11 +13,8 @@ const ClubeDashboard = () => {
   useEffect(() => {
     const fetchLista = async () => {
       try {
-        const token = localStorage.getItem('token'); 
-        const response = await axios.get('http://127.0.0.1:8000/clubes/', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const listaFinal = response.data.results || response.data;
+        const response = await api.get('/clubes/');
+        const listaFinal = extractList(response.data);
         setClubesDisponiveis(listaFinal);
         if (listaFinal.length > 0) setSelectedId(listaFinal[0].id);
       } catch (err) {
@@ -33,10 +30,7 @@ const ClubeDashboard = () => {
       if (!selectedId) return;
       setLoading(true);
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`http://127.0.0.1:8000/clubes/${selectedId}/dashboard/`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const response = await api.get(`/clubes/${selectedId}/dashboard/`);
         setData(response.data);
       } catch (err) {
         console.error("Erro ao carregar dados do dashboard.");

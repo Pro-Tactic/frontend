@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronDown } from "lucide-react";
-import axios from "axios";
+import { api } from "../services/api";
 import Swal from 'sweetalert2';
 import { COUNTRIES } from "../data/countries";
 import { CONTINENTS } from "../data/continents";
@@ -33,25 +33,6 @@ export default function RegistroCompeticoes() {
 
   async function handleRegistrar() {
     try {
-      const token = localStorage.getItem('token'); 
-      if (!token) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Sessão inválida',
-            text: 'Você precisa estar logado.',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            background: '#0f172a', color: '#e2e8f0'
-        });
-        return;
-      }
-
-      const config = {
-        headers: { Authorization: `Bearer ${token}` }
-      };
-
       const payload = {
         nome: form.nome,
         tamanho: form.tamanho,
@@ -62,7 +43,7 @@ export default function RegistroCompeticoes() {
         qtd_participantes: Number(form.qtd_participantes || 0),
       };
 
-      await axios.post("http://127.0.0.1:8000/competicoes/", payload, config);
+      await api.post("/competicoes/", payload);
       
       Swal.fire({
         title: 'Sucesso!',

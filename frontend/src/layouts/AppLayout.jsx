@@ -62,7 +62,7 @@ export default function AppLayout() {
 
     async function load() {
       try {
-        const data = await fetchNavigation();
+        const data = await fetchNavigation({ preferCache: true });
         if (!mounted) return;
         setNav(data);
       } catch (err) {

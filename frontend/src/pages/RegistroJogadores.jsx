@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronDown, ImagePlus } from "lucide-react";
-import { api } from "../services/api";
+import { api, extractList } from "../services/api";
 import Swal from 'sweetalert2';
 import { COUNTRIES } from "../data/countries";
 
@@ -31,7 +31,7 @@ export default function RegistroJogadores() {
     async function fetchClubes() {
       try {
         const response = await api.get("/clubes/");
-        setClubes(response.data);
+        setClubes(extractList(response.data));
       } catch (error) {
         console.error("Erro ao buscar clubes:", error);
       }
