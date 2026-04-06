@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, Shield, Swords, Sparkles } from "lucide-react";
 import { api } from "../services/api";
 
@@ -128,9 +128,16 @@ function TacticBoard({ myLineup, oppLineup, myClubName, oppClubName, title }) {
 }
 
 export default function Adversario() {
-  const [loading, setLoading] = useState(true);
+  const [loadingMetadata, setLoadingMetadata] = useState(true);
+  const [loadingComparison, setLoadingComparison] = useState(false);
   const [error, setError] = useState("");
-  const [payload, setPayload] = useState(null);
+  const [metadata, setMetadata] = useState({
+    meu_clube: null,
+    meus_jogos: [],
+    adversarios: [],
+    jogos_adversario: [],
+  });
+  const [comparison, setComparison] = useState(null);
   const [tab, setTab] = useState("ataque_vs_defesa");
   const [filters, setFilters] = useState({
     meu_jogo_id: "",
@@ -138,67 +145,135 @@ export default function Adversario() {
     jogo_adversario_id: "",
   });
 
-  const loadData = useCallback(async (nextFilters = filters) => {
-    setLoading(true);
+  async function loadMetadata(adversarioId = "") {
+    setLoadingMetadata(true);
     setError("");
 
     try {
       const params = {};
-      if (nextFilters.meu_jogo_id) params.meu_jogo_id = nextFilters.meu_jogo_id;
-      if (nextFilters.adversario_id) params.adversario_id = nextFilters.adversario_id;
-      if (nextFilters.jogo_adversario_id) params.jogo_adversario_id = nextFilters.jogo_adversario_id;
+      if (adversarioId) params.adversario_id = adversarioId;
 
-      const response = await api.get("/previsoes/", { params });
-      setPayload(response.data);
+      const response = await api.get("/previsoes/metadata/", { params });
+      setMetadata(response.data || { meu_clube: null, meus_jogos: [], adversarios: [], jogos_adversario: [] });
     } catch (requestError) {
-      const detail = requestError?.response?.data?.detail || "Falha ao carregar previsões.";
-      setError(detail);
+      const status = requestError?.response?.status;
+      if (status === 404) {
+        try {
+          const params = {};
+          if (adversarioId) params.adversario_id = adversarioId;
+          const legacyResponse = await api.get("/previsoes/", { params });
+          setMetadata({
+            meu_clube: legacyResponse.data?.meu_clube || null,
+            meus_jogos: legacyResponse.data?.meus_jogos || [],
+            adversarios: legacyResponse.data?.adversarios || [],
+            jogos_adversario: legacyResponse.data?.jogos_adversario || [],
+          });
+          setComparison(legacyResponse.data?.comparativo || null);
+          return;
+        } catch (legacyError) {
+          const detail = legacyError?.response?.data?.detail || "Falha ao carregar previsões.";
+          setError(detail);
+        }
+      } else {
+        const detail = requestError?.response?.data?.detail || "Falha ao carregar previsões.";
+        setError(detail);
+      }
     } finally {
-      setLoading(false);
+      setLoadingMetadata(false);
     }
-  }, [filters]);
+  }
+
+  async function loadComparison(nextFilters) {
+    if (!nextFilters.meu_jogo_id || !nextFilters.adversario_id || !nextFilters.jogo_adversario_id) {
+      setComparison(null);
+      return;
+    }
+
+    setLoadingComparison(true);
+    setError("");
+
+    try {
+      const response = await api.get("/previsoes/comparativo/", {
+        params: {
+          meu_jogo_id: nextFilters.meu_jogo_id,
+          adversario_id: nextFilters.adversario_id,
+          jogo_adversario_id: nextFilters.jogo_adversario_id,
+        },
+      });
+      setComparison(response.data?.comparativo || null);
+    } catch (requestError) {
+      const status = requestError?.response?.status;
+      if (status === 404) {
+        try {
+          const legacyResponse = await api.get("/previsoes/", {
+            params: {
+              meu_jogo_id: nextFilters.meu_jogo_id,
+              adversario_id: nextFilters.adversario_id,
+              jogo_adversario_id: nextFilters.jogo_adversario_id,
+            },
+          });
+          setComparison(legacyResponse.data?.comparativo || null);
+          return;
+        } catch (legacyError) {
+          const detail = legacyError?.response?.data?.detail || "Falha ao carregar comparativo.";
+          setError(detail);
+          setComparison(null);
+        }
+      } else {
+        const detail = requestError?.response?.data?.detail || "Falha ao carregar comparativo.";
+        setError(detail);
+        setComparison(null);
+      }
+    } finally {
+      setLoadingComparison(false);
+    }
+  }
 
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    loadMetadata();
+  }, []);
 
   const myMatchOptions = useMemo(() => (
-    (payload?.meus_jogos || []).map((item) => ({
+    (metadata?.meus_jogos || []).map((item) => ({
       id: item.id,
       label: `${new Date(item.data_hora).toLocaleDateString("pt-BR")} - ${item.local} vs ${item.adversario_nome}${item.futuro ? " (Futuro)" : " (Passado)"}`,
     }))
-  ), [payload]);
+  ), [metadata]);
 
   const oppOptions = useMemo(() => (
-    (payload?.adversarios || []).map((item) => ({ id: item.id, label: item.nome }))
-  ), [payload]);
+    (metadata?.adversarios || []).map((item) => ({ id: item.id, label: item.nome }))
+  ), [metadata]);
 
   const oppMatchOptions = useMemo(() => (
-    (payload?.jogos_adversario || []).map((item) => ({
+    (metadata?.jogos_adversario || []).map((item) => ({
       id: item.id,
       label: `${new Date(item.data_hora).toLocaleDateString("pt-BR")} - ${item.local} vs ${item.adversario_nome}`,
     }))
-  ), [payload]);
+  ), [metadata]);
 
   const selectedOpp = useMemo(() => (
-    (payload?.adversarios || []).find((club) => club.id === filters.adversario_id)
-  ), [payload, filters.adversario_id]);
+    (metadata?.adversarios || []).find((club) => club.id === filters.adversario_id)
+  ), [metadata, filters.adversario_id]);
 
   const handleChangeFilter = async (field, value) => {
     const next = { ...filters, [field]: value };
 
     if (field === "adversario_id") {
       next.jogo_adversario_id = "";
+      setComparison(null);
+      setFilters(next);
+      await loadMetadata(value);
+      return;
     }
 
     setFilters(next);
-    await loadData(next);
+    await loadComparison(next);
   };
 
-  const comparison = payload?.comparativo;
   const current = comparison?.[tab];
   const myTypeLabel = current?.meu_time?.tipo_efetivo || "-";
   const oppTypeLabel = current?.adversario?.tipo_efetivo || "-";
+  const loading = loadingMetadata || loadingComparison;
 
   return (
     <div className="mx-auto max-w-[1280px] pb-12">
@@ -267,7 +342,7 @@ export default function Adversario() {
       <section className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
         <div className="rounded-xl border border-slate-700 bg-[#0b1220] p-4">
           <p className="text-xs uppercase tracking-wider text-slate-400">Meu clube</p>
-          <p className="mt-1 text-lg font-semibold text-white">{payload?.meu_clube?.nome || "-"}</p>
+          <p className="mt-1 text-lg font-semibold text-white">{metadata?.meu_clube?.nome || "-"}</p>
           <p className="mt-2 text-xs text-slate-400">Tipo utilizado: <span className="font-semibold text-blue-400">{myTypeLabel}</span></p>
         </div>
         <div className="rounded-xl border border-slate-700 bg-[#0b1220] p-4">
@@ -293,7 +368,7 @@ export default function Adversario() {
             title={tab === "ataque_vs_defesa" ? "Meu ataque vs defesa adversária" : "Minha defesa vs ataque adversário"}
             myLineup={current?.meu_time?.jogadores || []}
             oppLineup={current?.adversario?.jogadores || []}
-            myClubName={payload?.meu_clube?.nome}
+            myClubName={metadata?.meu_clube?.nome}
             oppClubName={selectedOpp?.nome}
           />
         </div>

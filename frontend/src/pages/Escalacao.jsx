@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { api } from "../services/api";
+import { api, extractList } from "../services/api";
 import Swal from 'sweetalert2';
 
 const TIPOS_ESCALACAO = [
@@ -67,9 +67,9 @@ export default function Escalacao() {
             }
 
             setMatch(matchRes.data);
-            setAllPlayers(playersRes.data);
-            setBaseLineup(baseLineupRes.data);
-            setLineup(lineupRes.data);
+            setAllPlayers(extractList(playersRes.data));
+            setBaseLineup(extractList(baseLineupRes.data));
+            setLineup(extractList(lineupRes.data));
 
         } catch (error) {
             console.error("Erro ao carregar dados:", error);

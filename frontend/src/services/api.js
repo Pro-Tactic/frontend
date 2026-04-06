@@ -1,11 +1,22 @@
 import axios from "axios";
 import { clearSession, getAccessToken, isTokenExpired } from "./auth";
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000").replace(/\/+$/, "");
+const USE_LOCAL_API = String(import.meta.env.VITE_USE_LOCAL_API || "false").toLowerCase() === "true";
+const API_BASE_URL = (
+  USE_LOCAL_API
+    ? (import.meta.env.VITE_LOCAL_API_URL || "http://127.0.0.1:8000")
+    : (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000")
+).replace(/\/+$/, "");
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
 });
+
+export function extractList(data) {
+  if (Array.isArray(data?.results)) return data.results;
+  if (Array.isArray(data)) return data;
+  return [];
+}
 
 api.interceptors.request.use((config) => {
   const token = getAccessToken();

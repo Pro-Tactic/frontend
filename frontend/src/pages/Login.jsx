@@ -2,6 +2,7 @@ import { useState } from "react";
 import { api } from "../services/api";
 import { fetchNavigation } from "../services/navigation";
 import { clearSession, saveSession } from "../services/auth";
+import { prefetchAdminLandingRoute, prefetchCoachLandingRoute } from "../services/routePrefetch";
 import { User, Lock, Eye, EyeOff, ChevronRight } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import logoImg from "../assets/logo-protactic.png";
@@ -48,25 +49,25 @@ export default function Login() {
 
       saveSession({ access, refresh, user_type });
 
+      if (user_type === "ADMIN") {
+        prefetchAdminLandingRoute();
+      } else {
+        prefetchCoachLandingRoute();
+      }
+
       Toast.fire({
         icon: 'success',
         title: 'Login realizado com sucesso!'
       });
 
-      const nav = await fetchNavigation();
-      console.log("NAV:", nav);
+      // Navigate immediately to avoid blocking login on an extra API call.
+      const target = user_type === "ADMIN" ? "/registro" : "/inicio";
+      navigate(target, { replace: true });
 
-      // If navigation contains only 'registro' in place of 'inicio', send user there.
-      const items = Array.isArray(nav?.items) ? nav.items : [];
-      const hasRegistro = items.some((it) => it.key === 'registro');
-      const hasInicio = items.some((it) => it.key === 'inicio');
-
-      if (hasRegistro && !hasInicio) {
-        // superuser layout: go straight to registro
-        navigate('/registro', { replace: true });
-      } else {
-        navigate('/inicio', { replace: true });
-      }
+      // Warm up sidebar navigation in background for the first protected screen.
+      fetchNavigation({ preferCache: false }).catch((navErr) => {
+        console.error("Falha ao pré-carregar navegação:", navErr);
+      });
       
     } catch (err) {
       console.error(err);

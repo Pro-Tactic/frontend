@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { api } from "../services/api";
+import { api, extractList } from "../services/api";
 import { Save, Search, User as UserIcon, Activity } from "lucide-react";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -35,7 +35,7 @@ export default function Notas() {
     async function loadPartidas() {
       try {
         const response = await api.get("/partidas/");
-        setPartidas(response.data);
+        setPartidas(extractList(response.data));
       } catch (error) {
         console.error("Erro ao carregar partidas", error);
       }
@@ -55,17 +55,21 @@ export default function Notas() {
           api.get(`/escalacoes/?partida=${partidaSelecionada}&tipo=PADRAO`),
         ]);
 
+        const escalacoes = extractList(resEscalacoes.data);
+        const jogadores = extractList(resJogadores.data);
+        const desempenhos = extractList(resDesempenhos.data);
+
         const titularesIds = new Set(
-          resEscalacoes.data
+          escalacoes
             .filter((e) => e.status === "TITULAR")
             .map((e) => (typeof e.jogador === "object" ? e.jogador.id : e.jogador))
         );
 
-        const jogadoresTitulares = resJogadores.data.filter((j) => titularesIds.has(j.id));
+        const jogadoresTitulares = jogadores.filter((j) => titularesIds.has(j.id));
         setJogadores(jogadoresTitulares);
 
         const dadosIniciais = {};
-        resDesempenhos.data.forEach(d => {
+        desempenhos.forEach(d => {
             if (!titularesIds.has(d.jogador)) return;
             dadosIniciais[d.jogador] = {
                 id: d.id,

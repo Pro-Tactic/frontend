@@ -1,4 +1,9 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
+const USE_LOCAL_API = String(import.meta.env.VITE_USE_LOCAL_API || "false").toLowerCase() === "true";
+const API_BASE_URL = (
+  USE_LOCAL_API
+    ? (import.meta.env.VITE_LOCAL_API_URL || "http://127.0.0.1:8000")
+    : (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000")
+).replace(/\/+$/, "");
 
 export function resolveMediaUrl(pathOrUrl) {
   if (!pathOrUrl) return "";

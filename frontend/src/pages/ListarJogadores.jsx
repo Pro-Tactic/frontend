@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { api } from "../services/api";
+import { api, extractList } from "../services/api";
 import { User, Activity } from "lucide-react";
 
 import PlayerStatsModal from "../components/PlayerStatsModal"; 
@@ -14,7 +14,7 @@ export default function ListarJogadores() {
     async function loadJogadores() {
       try {
         const response = await api.get("/jogadores/");
-        setJogadores(response.data);
+        setJogadores(extractList(response.data));
       } catch (err) {
         console.error("Erro ao carregar jogadores", err);
       } finally {
