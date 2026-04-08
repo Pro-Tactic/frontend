@@ -53,8 +53,57 @@ function normalizeCoordinates(player, index, side) {
 }
 
 function TacticBoard({ myLineup, oppLineup, myClubName, oppClubName, title }) {
-  const mine = (myLineup || []).map((player, index) => normalizeCoordinates(player, index, "meu"));
-  const opp = (oppLineup || []).map((player, index) => normalizeCoordinates(player, index, "adv"));
+  const { resolvedMine, resolvedOpp } = useMemo(() => {
+    const initialMine = (myLineup || []).map((player, index) => normalizeCoordinates(player, index, "meu"));
+    const initialOpp = (oppLineup || []).map((player, index) => normalizeCoordinates(player, index, "adv"));
+
+    let allPlayers = [
+      ...initialMine.map((p) => ({ ...p, isMine: true })),
+      ...initialOpp.map((p) => ({ ...p, isMine: false })),
+    ];
+
+    const radius = 8; // Distância mínima (em %)
+    const pushFactor = 0.3; // Força de repulsão
+    
+    // Algoritmo simples de relaxamento (anti-sobreposição)
+    for (let iter = 0; iter < 100; iter++) {
+      for (let i = 0; i < allPlayers.length; i++) {
+        for (let j = i + 1; j < allPlayers.length; j++) {
+          let p1 = allPlayers[i];
+          let p2 = allPlayers[j];
+          
+          let dx = (p1.x - p2.x) * 1.5; // compensa a proporção retangular do campo
+          let dy = p1.y - p2.y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < radius) {
+            if (dist === 0) {
+              dx = (Math.random() - 0.5) * 2;
+              dy = (Math.random() - 0.5) * 2;
+              dist = Math.sqrt(dx * dx + dy * dy);
+            }
+            let angle = Math.atan2(dy, dx);
+            let push = (radius - dist) * pushFactor;
+            
+            p1.x += (Math.cos(angle) * push) / 1.5;
+            p1.y += Math.sin(angle) * push;
+            p2.x -= (Math.cos(angle) * push) / 1.5;
+            p2.y -= Math.sin(angle) * push;
+          }
+        }
+      }
+      // Evitar que os jogadores saiam das bordas do campo
+      allPlayers.forEach(p => {
+        p.x = Math.max(3, Math.min(97, p.x));
+        p.y = Math.max(5, Math.min(95, p.y));
+      });
+    }
+
+    return {
+      resolvedMine: allPlayers.filter(p => p.isMine),
+      resolvedOpp: allPlayers.filter(p => !p.isMine)
+    };
+  }, [myLineup, oppLineup]);
 
   return (
     <section className="rounded-2xl border border-slate-700 bg-[#111827] p-4 shadow-2xl">
@@ -93,7 +142,7 @@ function TacticBoard({ myLineup, oppLineup, myClubName, oppClubName, title }) {
         <div className="pointer-events-none absolute right-0 top-1/2 h-[50%] w-[15%] -translate-y-1/2 border-b border-l border-t border-white/25 rounded-l-xl" />
         <div className="pointer-events-none absolute right-0 top-1/2 h-[22%] w-[6%] -translate-y-1/2 border-b border-l border-t border-white/30 rounded-l-lg" />
 
-        {mine.map((item) => (
+        {resolvedMine.map((item) => (
           <div
             key={`my-${item.jogador_id}`}
             className="absolute z-20 -translate-x-1/2 -translate-y-1/2 transition-all duration-500"
@@ -103,12 +152,12 @@ function TacticBoard({ myLineup, oppLineup, myClubName, oppClubName, title }) {
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-blue-200 bg-blue-600 text-[11px] font-bold text-white shadow-lg shadow-blue-900/40 transition-transform group-hover:scale-110">
                 {item.posicao === "Goleiro" ? "GK" : item.nome.slice(0, 2).toUpperCase()}
               </span>
-              <span className="rounded bg-black/70 backdrop-blur px-2 py-0.5 text-[9px] font-medium text-white shadow-sm">{item.nome}</span>
+              <span className="rounded bg-black/70 backdrop-blur px-2 py-0.5 text-[9px] font-medium text-white shadow-sm whitespace-nowrap">{item.nome}</span>
             </div>
           </div>
         ))}
 
-        {opp.map((item) => (
+        {resolvedOpp.map((item) => (
           <div
             key={`opp-${item.jogador_id}`}
             className="absolute z-10 -translate-x-1/2 -translate-y-1/2 transition-all duration-500"
@@ -118,7 +167,7 @@ function TacticBoard({ myLineup, oppLineup, myClubName, oppClubName, title }) {
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-red-200 bg-red-600 text-[11px] font-bold text-white shadow-lg shadow-red-900/40 transition-transform group-hover:scale-110">
                 {item.posicao === "Goleiro" ? "GK" : item.nome.slice(0, 2).toUpperCase()}
               </span>
-              <span className="rounded bg-black/70 backdrop-blur px-2 py-0.5 text-[9px] font-medium text-white shadow-sm">{item.nome}</span>
+              <span className="rounded bg-black/70 backdrop-blur px-2 py-0.5 text-[9px] font-medium text-white shadow-sm whitespace-nowrap">{item.nome}</span>
             </div>
           </div>
         ))}
