@@ -61,7 +61,7 @@ export default function Login() {
       });
 
       // Navigate immediately to avoid blocking login on an extra API call.
-      const target = user_type === "ADMIN" ? "/registro" : "/inicio";
+      const target = user_type === "ADMIN" ? "/registro" : "/clube";
       navigate(target, { replace: true });
 
       // Warm up sidebar navigation in background for the first protected screen.
