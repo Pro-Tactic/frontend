@@ -3,8 +3,9 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { fetchNavigation } from "../services/navigation";
 import { clearSession } from "../services/auth";
 import { api } from "../services/api";
+import Swal from "sweetalert2";
 
-import { Home, Users, Target, Activity, Building, Shield, LogOut, Trophy, Menu, X } from "lucide-react";
+import { Home, Users, Target, Activity, Building, Shield, LogOut, Trophy, Menu, X, Settings, User } from "lucide-react";
 
 const ICONS = {
   home: Home,
@@ -46,11 +47,32 @@ export default function AppLayout() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
+  
   const userType = localStorage.getItem("user_type");
   const isAdmin = userType === "ADMIN";
 
   async function handleLogout() {
+    const result = await Swal.fire({
+      title: "Deseja realmente sair?",
+      text: "Sua sessão será encerrada e você precisará logar novamente.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#A2FF01",
+      cancelButtonColor: "#1e293b",
+      confirmButtonText: "Sim, quero sair",
+      cancelButtonText: "Cancelar",
+      background: "#0B0B0B",
+      color: "#FEFEFE",
+      iconColor: "#A2FF01",
+      customClass: {
+        popup: "rounded-[32px] border border-pt-white/5",
+        confirmButton: "rounded-xl text-pt-bg font-black px-8 py-3",
+        cancelButton: "rounded-xl text-pt-white font-bold px-8 py-3",
+      }
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       const refresh = localStorage.getItem("refresh_token");
       if (refresh) {
@@ -87,8 +109,12 @@ export default function AppLayout() {
     return () => { mounted = false; };
   }, []);
 
-  // --- Layout para Treinador (Sidebar) ---
-  const renderSidebarLayout = () => (
+  const renderSidebarLayout = () => {
+    const firstName = localStorage.getItem("first_name") || "Treinador";
+    const lastName = localStorage.getItem("last_name") || "";
+    const clubeNome = localStorage.getItem("clube_nome") || "ProTactic";
+
+    return (
     <div className="min-h-screen bg-pt-bg text-pt-text flex">
       <aside className="w-[260px] h-screen sticky top-0 border-r border-pt-white/10 bg-pt-surface flex flex-col z-50 shadow-2xl">
         <div className="px-6 pt-8 pb-8 flex-shrink-0">
@@ -98,7 +124,6 @@ export default function AppLayout() {
             </div>
             <div className="leading-none text-left">
               <div className="text-sm font-black tracking-[0.2em] text-pt-primary">PROTACTIC</div>
-              <div className="text-[10px] text-pt-text-muted font-bold uppercase tracking-widest mt-0.5">Coach Alpha</div>
             </div>
           </div>
         </div>
@@ -123,14 +148,30 @@ export default function AppLayout() {
           ))}
         </nav>
         
+        {/* Rodapé Redesenhado como User Card */}
         <div className="p-4 border-t border-pt-white/10">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-pt-text-muted hover:text-white hover:bg-white/5 transition-all group"
-          >
-            <LogOut className="w-4 h-4 group-hover:text-pt-primary transition-colors" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Encerrar Sessão</span>
-          </button>
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-pt-white/5 group relative overflow-hidden">
+            <div className="w-10 h-10 rounded-xl bg-pt-bg flex items-center justify-center text-pt-primary border border-pt-white/5">
+              <User className="w-5 h-5" />
+            </div>
+            
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] font-black uppercase tracking-widest text-pt-primary truncate">
+                {firstName} {lastName}
+              </div>
+              <div className="text-[9px] text-pt-text-muted font-bold truncate">
+                Treinador do {clubeNome}
+              </div>
+            </div>
+
+            <button
+               onClick={handleLogout}
+               title="Encerrar Sessão"
+               className="w-8 h-8 flex items-center justify-center rounded-lg text-pt-text-muted hover:text-red-400 hover:bg-red-500/10 transition-all ml-auto"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </aside>
 
@@ -146,8 +187,8 @@ export default function AppLayout() {
       </main>
     </div>
   );
+};
 
-  // --- Layout para Administrador (Top Bar) ---
   const renderAdminLayout = () => (
     <div className="min-h-screen bg-pt-bg text-pt-text">
       <header className="h-[72px] sticky top-0 bg-pt-surface border-b border-pt-white/10 z-50 px-6 lg:px-12 shadow-xl">

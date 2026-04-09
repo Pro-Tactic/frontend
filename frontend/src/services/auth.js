@@ -37,15 +37,21 @@ export function isAuthenticated() {
   return !!token && !isTokenExpired(token);
 }
 
-export function saveSession({ access, refresh, user_type }) {
+export function saveSession({ access, refresh, user_type, first_name, last_name, clube_nome }) {
   if (access) localStorage.setItem(TOKEN_KEY, access);
   if (refresh) localStorage.setItem(REFRESH_TOKEN_KEY, refresh);
   if (user_type) localStorage.setItem(USER_TYPE_KEY, user_type);
+  if (first_name) localStorage.setItem("first_name", first_name);
+  if (last_name) localStorage.setItem("last_name", last_name);
+  if (clube_nome) localStorage.setItem("clube_nome", clube_nome);
 }
 
 export function clearSession() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
   localStorage.removeItem(USER_TYPE_KEY);
+  localStorage.removeItem("first_name");
+  localStorage.removeItem("last_name");
+  localStorage.removeItem("clube_nome");
   sessionStorage.removeItem(NAV_CACHE_KEY);
 }

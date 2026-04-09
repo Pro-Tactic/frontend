@@ -94,7 +94,7 @@ export default function Sobre() {
       </div>
 
       <footer className="text-center text-[10px] text-pt-text-muted/40 mt-12 mb-8 font-black uppercase tracking-[0.3em]">
-        © 2025 ProTactic. Tech for the Win.
+            © 2026 ProTactic. Todos os direitos reservados.
       </footer>
     </div>
   );

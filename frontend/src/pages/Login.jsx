@@ -45,9 +45,9 @@ export default function Login() {
         password,
       });
 
-      const { access, refresh, user_type } = response.data;
+      const { access, refresh, user_type, first_name, last_name, clube_nome } = response.data;
 
-      saveSession({ access, refresh, user_type });
+      saveSession({ access, refresh, user_type, first_name, last_name, clube_nome });
 
       if (user_type === "ADMIN") {
         prefetchAdminLandingRoute();
@@ -186,7 +186,7 @@ export default function Login() {
             </form>
           </div>
           <div className="text-center absolute bottom-6 text-[10px] text-pt-text-muted/50 font-bold uppercase tracking-widest w-full lg:w-auto">
-            © 2025 ProTactic. Todos os direitos reservados.
+            © 2026 ProTactic. Todos os direitos reservados.
           </div>
         </div>
       </main>
