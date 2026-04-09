@@ -8,6 +8,6 @@ export function prefetchAdminLandingRoute() {
 export function prefetchCoachLandingRoute() {
   return Promise.allSettled([
     import("../layouts/AppLayout"),
-    import("../pages/Clube"),
+    import("../pages/Inicio"),
   ]);
 }

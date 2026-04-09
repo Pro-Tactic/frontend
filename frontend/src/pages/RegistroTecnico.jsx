@@ -145,7 +145,7 @@ export default function RegistroTecnico() {
           <Field label="Código de Acesso" name="password" type="password" value={form.password} onChange={handleChange} icon={<Lock className="w-4 h-4" />} />
 
           <div className="space-y-2.5">
-            <label className="block text-[10px] font-black text-pt-text-muted uppercase tracking-[0.25em] ml-1">Clube de Comando</label>
+            <label className="block text-[10px] font-black text-pt-text-muted uppercase tracking-[0.25em] ml-1">Clube</label>
             <div className="relative">
               <select
                 name="clube"

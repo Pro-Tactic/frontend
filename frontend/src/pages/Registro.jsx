@@ -45,14 +45,14 @@ export default function Registro() {
           onClick={() => navigate("/registro/tecnico")}
           icon={<UserCog className="w-7 h-7" />}
           title="Comissão"
-          desc="Vínculo de novos perfis de comando."
+          desc="Vínculo de novos perfis."
         />
 
         <RegistryCard 
           onClick={() => navigate("/registro/partidas")}
           icon={<Swords className="w-7 h-7" />}
           title="Partidas"
-          desc="Agendamento e protocolos de combate."
+          desc="Agendamento e protocolos de jogos."
         />
 
       </div>

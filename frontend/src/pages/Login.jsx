@@ -32,7 +32,7 @@ export default function Login() {
       toast.addEventListener('mouseleave', Swal.resumeTimer)
     }
   });
-  
+
   async function handleLogin(e) {
     e.preventDefault();
     setLoading(true);
@@ -57,16 +57,16 @@ export default function Login() {
 
       Toast.fire({
         icon: 'success',
-        title: 'ACESSO VALIDADO. BEM-VINDO AO COMANDO.'
+        title: 'ACESSO VALIDADO. BEM-VINDO!.'
       });
 
-      const target = user_type === "ADMIN" ? "/registro" : "/clube";
+      const target = user_type === "ADMIN" ? "/registro" : "/inicio";
       navigate(target, { replace: true });
 
       fetchNavigation({ preferCache: false }).catch((navErr) => {
         console.error("Falha ao pré-carregar navegação:", navErr);
       });
-      
+
     } catch (err) {
       console.error(err);
       Toast.fire({
@@ -79,36 +79,34 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-pt-bg text-pt-text flex items-center justify-center p-6 lg:p-12 relative overflow-hidden font-sans selection:bg-pt-primary selection:text-pt-bg">
-      {/* Dynamic Background Elements */}
+    <div className="h-screen bg-pt-bg text-pt-text flex items-center justify-center p-6 lg:p-12 relative overflow-hidden font-sans selection:bg-pt-primary selection:text-pt-bg">
       <div className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-pt-primary/5 rounded-full blur-[140px] animate-pulse pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-pt-primary/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <main className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-16 items-center z-10 animate-in fade-in zoom-in-95 duration-700">
-        
-        {/* Left Side: Branding & Intelligence */}
+      <main className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-16 items-center z-10 animate-in fade-in zoom-in-95 duration-700 lg:scale-[0.8] origin-center">
+
         <div className="flex flex-col items-center lg:items-start space-y-12">
-          <div className="flex flex-col items-center lg:items-start scale-110 lg:scale-125 origin-left">
+          <div className="flex flex-col items-center lg:items-start origin-left">
             <img src={logoImg} alt="ProTactic" className="w-64 h-auto brightness-110 drop-shadow-2xl mb-2" />
           </div>
 
           <div className="space-y-6 max-w-xl text-center lg:text-left pt-6">
             <div className="flex items-center justify-center lg:justify-start gap-3 opacity-80">
-               <Zap className="w-5 h-5 text-pt-primary animate-pulse" />
-               <h2 className="text-[10px] font-black tracking-[0.4em] uppercase text-pt-primary italic leading-none">
-                 Comando de Inteligência Artificial
-               </h2>
+              <Zap className="w-5 h-5 text-pt-primary animate-pulse" />
+              <h2 className="text-[10px] font-black tracking-[0.4em] uppercase text-pt-primary italic leading-none">
+                Comando de Inteligência Artificial
+              </h2>
             </div>
-            
+
             <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-white uppercase italic leading-[0.9]">
               Decodificando <br />
               <span className="text-pt-primary">a Vitória.</span>
             </h1>
-            
+
             <p className="text-pt-text-muted text-sm md:text-base leading-relaxed font-bold uppercase tracking-widest opacity-60 max-w-md">
               Geração de táticas avançadas, gestão preditiva de elenco e inteligência estatística para o futebol de elite.
             </p>
-            
+
             <div className="pt-4">
               <button
                 onClick={() => navigate("/sobre")}
@@ -122,22 +120,20 @@ export default function Login() {
           </div>
 
           {/* Stats Bar */}
-          <div className="grid grid-cols-3 gap-6 w-full max-w-xl pt-8 hidden md:grid">
+          <div className="grid grid-cols-3 gap-6 w-full max-w-xl pt-16 hidden md:grid">
             <StatCard icon={<Brain className="w-4 h-4" />} value="1.2M+" label="SIMULAÇÕES" />
             <StatCard icon={<Activity className="w-4 h-4" />} value="85k+" label="ATLETAS" />
             <StatCard icon={<ShieldCheck className="w-4 h-4" />} value="99.9%" label="PRECISÃO" />
           </div>
         </div>
 
-        {/* Right Side: Login Terminal */}
         <div className="flex justify-center w-full">
           <div className="w-full max-w-lg bg-pt-surface border border-pt-white/10 rounded-[44px] p-12 md:p-16 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8)] backdrop-blur-md relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-pt-primary/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none group-hover:opacity-100 opacity-50 transition-opacity" />
-            
+
             <div className="mb-14 text-center">
-              <h2 className="text-4xl font-black text-white tracking-tighter italic uppercase">Comando</h2>
               <p className="text-pt-text-muted text-[10px] mt-2 font-black uppercase tracking-[0.3em] italic">
-                Acesse o Terminal Estratégico
+                Acesse a plataforma
               </p>
             </div>
 
@@ -150,10 +146,10 @@ export default function Login() {
                   <User className="absolute left-5 top-1/2 -translate-y-1/2 text-pt-primary h-5 w-5 z-10 group-focus-within/field:scale-110 transition-transform" />
                   <input
                     type="text"
-                    placeholder="LOGIN_ID"
+                    placeholder="LOGIN"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full bg-pt-bg border border-pt-white/10 rounded-[22px] py-5 pl-14 pr-6 text-pt-text font-black text-xs uppercase tracking-widest placeholder:text-pt-white/5 focus:outline-none focus:border-pt-primary transition-all shadow-inner"
+                    className="w-full bg-pt-bg border border-pt-white/10 rounded-[22px] py-5 pl-14 pr-6 text-pt-text font-black text-xs tracking-widest placeholder:text-pt-white/5 focus:outline-none focus:border-pt-primary transition-all shadow-inner"
                     required
                   />
                 </div>
@@ -167,10 +163,10 @@ export default function Login() {
                   <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-pt-primary h-5 w-5 z-10 group-focus-within/field:scale-110 transition-transform" />
                   <input
                     type={showPassword ? "text" : "password"}
-                    placeholder="SECURITY_PASSWORD"
+                    placeholder="SENHA"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-pt-bg border border-pt-white/10 rounded-[22px] py-5 pl-14 pr-16 text-pt-text font-black text-xs uppercase tracking-widest placeholder:text-pt-white/5 focus:outline-none focus:border-pt-primary transition-all shadow-inner"
+                    className="w-full bg-pt-bg border border-pt-white/10 rounded-[22px] py-5 pl-14 pr-16 text-pt-text font-black text-xs tracking-widest placeholder:text-pt-white/5 focus:outline-none focus:border-pt-primary transition-all shadow-inner"
                     required
                   />
                   <button
@@ -182,8 +178,8 @@ export default function Login() {
                   </button>
                 </div>
                 <div className="flex justify-end pr-2">
-                  <Link 
-                    to="/forgot-password" 
+                  <Link
+                    to="/forgot-password"
                     className="text-[9px] text-pt-text-muted font-black hover:text-pt-primary transition-all uppercase tracking-widest italic hover:translate-x-1"
                   >
                     Recuperar Acesso //
@@ -200,7 +196,7 @@ export default function Login() {
                   <div className="w-5 h-5 border-2 border-pt-bg/30 border-t-pt-bg rounded-full animate-spin" />
                 ) : (
                   <>
-                    AUTENTICAR COMANDO
+                    FAZER LOGIN
                     <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </>
                 )}
@@ -208,17 +204,15 @@ export default function Login() {
             </form>
 
             <div className="mt-14 pt-8 border-t border-pt-white/5 flex items-center justify-between opacity-30">
-               <ShieldCheck className="w-4 h-4 text-pt-primary" />
-               <span className="text-[8px] font-black uppercase tracking-[0.3em] font-mono italic">Encryption Stack: V4-AES</span>
+              <ShieldCheck className="w-4 h-4 text-pt-primary" />
+              <span className="text-[8px] font-black uppercase tracking-[0.3em] font-mono italic">Protocolo de Segurança: V4-AES</span>
             </div>
           </div>
         </div>
       </main>
 
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-10 text-[9px] text-pt-text-muted/20 font-black uppercase tracking-[0.4em] pointer-events-none whitespace-nowrap hidden lg:flex">
-          <span>ProTactic © 2026</span>
-          <span className="w-1 h-1 bg-pt-primary/20 rounded-full" />
-          <span>Nó Institucional // Operacional</span>
+      <div className="absolute bottom-6 w-full flex items-center justify-center gap-6 text-[9px] text-pt-text-muted/40 font-black uppercase tracking-[0.4em] pointer-events-none whitespace-nowrap hidden lg:flex">
+        <span>ProTactic © 2026</span>
       </div>
     </div>
   );
