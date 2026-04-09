@@ -1,148 +1,98 @@
 import { useNavigate } from "react-router-dom";
-import { UserPlus, Trophy, Building2, Swords, UserCog } from "lucide-react";
+import { UserPlus, Trophy, Building2, Swords, UserCog, ChevronRight, Zap } from "lucide-react";
 
 export default function Registro() {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-6xl mx-auto w-full">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-pt-primary">
-          Registro
-        </h1>
-        <p className="text-sm text-pt-text-muted font-medium">
-          Cadastre jogadores e competições manualmente.
+    <div className="max-w-6xl mx-auto w-full space-y-12 animate-in fade-in duration-700">
+      <header className="space-y-3">
+        <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-[24px] bg-pt-primary/10 flex items-center justify-center border border-pt-primary/30 shadow-xl shadow-pt-primary/10">
+                <Zap className="text-pt-primary w-8 h-8" />
+            </div>
+            <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic">Registro Central</h1>
+        </div>
+        <p className="text-pt-text-muted font-black text-[10px] uppercase tracking-[0.4em] ml-2">
+            Protocolos de inserção de dados e gestão institucional.
         </p>
+      </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <RegistryCard 
+          onClick={() => navigate("/registro/jogadores")}
+          icon={<UserPlus className="w-7 h-7" />}
+          title="Atletas"
+          desc="Inserção de novas unidades táticas e status."
+        />
+
+        <RegistryCard 
+          onClick={() => navigate("/registro/clube")}
+          icon={<Building2 className="w-7 h-7" />}
+          title="Clube"
+          desc="Gestão de identidades e infraestrutura."
+        />
+
+        <RegistryCard 
+          onClick={() => navigate("/registro/competicoes")}
+          icon={<Trophy className="w-7 h-7" />}
+          title="Competições"
+          desc="Arquivamento de torneios e ligas."
+        />
+
+        <RegistryCard 
+          onClick={() => navigate("/registro/tecnico")}
+          icon={<UserCog className="w-7 h-7" />}
+          title="Comissão"
+          desc="Vínculo de novos perfis de comando."
+        />
+
+        <RegistryCard 
+          onClick={() => navigate("/registro/partidas")}
+          icon={<Swords className="w-7 h-7" />}
+          title="Partidas"
+          desc="Agendamento e protocolos de combate."
+        />
+
       </div>
 
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        <button
-          type="button"
-          onClick={() => navigate("/registro/jogadores")}
-          className="group text-left bg-pt-surface border border-pt-slate/10 rounded-2xl p-6 hover:shadow-xl hover:shadow-pt-primary/5 hover:border-pt-primary/40 transition-all shadow-sm shadow-black/5"
-        >
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-pt-primary/10 ring-2 ring-pt-primary/30 flex items-center justify-center">
-              <UserPlus className="w-6 h-6 text-pt-primary" />
-            </div>
-
-            <div className="flex-1">
-              <h2 className="text-xl font-black text-pt-text tracking-tight">
-                Registrar Jogadores
-              </h2>
-              <p className="text-xs text-pt-text-muted mt-1 font-bold">
-                Adicione atletas com informações básicas e status.
-              </p>
-              <div className="mt-4 text-xs text-pt-primary font-black uppercase tracking-widest group-hover:translate-x-1 transition-transform">
-                Abrir registro →
-              </div>
-            </div>
-          </div>
-        </button>
-
-        {/* Card - Clube */}
-        <button
-          type="button"
-          onClick={() => navigate("/registro/clube")}
-          className="group text-left bg-pt-surface border border-pt-slate/10 rounded-2xl p-6 hover:shadow-xl hover:shadow-pt-primary/5 hover:border-pt-primary/40 transition-all shadow-sm shadow-black/5"
-        >
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-pt-primary/10 ring-2 ring-pt-primary/30 flex items-center justify-center">
-              <Building2 className="w-6 h-6 text-pt-primary" />
-            </div>
-
-            <div className="flex-1">
-              <h2 className="text-xl font-black text-pt-text tracking-tight">
-                Registrar Clube
-              </h2>
-              <p className="text-xs text-pt-text-muted mt-1 font-bold">
-                Cadastre clubes e informações institucionais.
-              </p>
-              <div className="mt-4 text-xs text-pt-primary font-black uppercase tracking-widest group-hover:translate-x-1 transition-transform">
-                Abrir registro →
-              </div>
-            </div>
-          </div>
-        </button>
-
-        {/* Card - Competições */}
-        <button
-          type="button"
-          onClick={() => navigate("/registro/competicoes")}
-          className="group text-left bg-pt-surface border border-pt-slate/10 rounded-2xl p-6 hover:shadow-xl hover:shadow-pt-primary/5 hover:border-pt-primary/40 transition-all shadow-sm shadow-black/5"
-        >
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-pt-primary/10 ring-2 ring-pt-primary/30 flex items-center justify-center">
-              <Trophy className="w-6 h-6 text-pt-primary" />
-            </div>
-
-            <div className="flex-1">
-              <h2 className="text-xl font-black text-pt-text tracking-tight">
-                Registrar Competições
-              </h2>
-              <p className="text-xs text-pt-text-muted mt-1 font-bold">
-                Cadastre campeonatos e torneios.
-              </p>
-
-              <div className="mt-4 text-xs text-pt-primary font-black uppercase tracking-widest group-hover:translate-x-1 transition-transform">
-                Abrir registro →
-              </div>
-            </div>
-          </div>
-        </button>
-
-        {/* Card - Técnico */}
-        <button
-          type="button"
-          onClick={() => navigate("/registro/tecnico")}
-          className="group text-left bg-pt-surface border border-pt-slate/10 rounded-2xl p-6 hover:shadow-xl hover:shadow-pt-primary/5 hover:border-pt-primary/40 transition-all shadow-sm shadow-black/5"
-        >
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-pt-primary/10 ring-2 ring-pt-primary/30 flex items-center justify-center">
-              <UserCog className="w-6 h-6 text-pt-primary" />
-            </div>
-
-            <div className="flex-1">
-              <h2 className="text-xl font-black text-pt-text tracking-tight">
-                Cadastrar Técnico
-              </h2>
-              <p className="text-xs text-pt-text-muted mt-1 font-bold">
-                Crie usuário treinador e vincule a um clube.
-              </p>
-
-              <div className="mt-4 text-xs text-pt-primary font-black uppercase tracking-widest group-hover:translate-x-1 transition-transform">
-                Abrir cadastro →
-              </div>
-            </div>
-          </div>
-        </button>
-
-        {/*Card - Partida */}
-        <button
-          type="button"
-          onClick={() => navigate("/registro/partidas")}
-          className="group text-left bg-pt-surface border border-pt-slate/10 rounded-2xl p-6 hover:shadow-xl hover:shadow-pt-primary/5 hover:border-pt-primary/40 transition-all shadow-sm shadow-black/5"
-        >
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-pt-primary/10 ring-2 ring-pt-primary/30 flex items-center justify-center">
-              <Swords className="w-6 h-6 text-pt-primary" />
-            </div>
-
-            <div className="flex-1">
-              <h2 className="text-xl font-black text-pt-text tracking-tight">
-                Criar Partida
-              </h2>
-              <p className="text-xs text-pt-text-muted mt-1 font-bold">
-                Agende novos jogos e gerencie placares.
-              </p>
-              <div className="mt-4 text-xs text-pt-primary font-black uppercase tracking-widest group-hover:translate-x-1 transition-transform">
-                Abrir registro →
-              </div>
-            </div>
-          </div>
-        </button>
-
+      <div className="flex items-center gap-4 opacity-20 justify-center pt-8">
+          <div className="w-1.5 h-1.5 rounded-full bg-pt-white/40" />
+          <div className="w-1.5 h-1.5 rounded-full bg-pt-white/40" />
       </div>
     </div>
+  );
+}
+
+function RegistryCard({ onClick, icon, title, desc }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group text-left bg-pt-surface border border-pt-white/10 rounded-[32px] p-8 hover:border-pt-primary/40 transition-all shadow-2xl relative overflow-hidden active:scale-[0.98]"
+    >
+      <div className="absolute top-0 right-0 w-32 h-32 bg-pt-primary/5 rounded-full blur-[80px] -mr-16 -mt-16 group-hover:bg-pt-primary/10 transition-all duration-700" />
+      
+      <div className="relative z-10 flex flex-col h-full">
+        <div className="w-16 h-16 rounded-[22px] bg-pt-bg border border-pt-white/10 flex items-center justify-center text-pt-primary mb-8 group-hover:border-pt-primary/30 transition-all shadow-inner group-hover:bg-pt-primary/5">
+          {icon}
+        </div>
+
+        <div className="flex-1 space-y-2">
+          <h2 className="text-2xl font-black text-white tracking-tighter uppercase italic">
+            {title}
+          </h2>
+          <p className="text-[10px] text-pt-text-muted font-bold uppercase tracking-widest leading-relaxed">
+            {desc}
+          </p>
+        </div>
+
+        <div className="mt-8 flex items-center gap-2 text-[10px] font-black text-pt-primary uppercase tracking-[0.2em] transform group-hover:translate-x-2 transition-all">
+          Protocolo de Acesso
+          <ChevronRight className="w-4 h-4" />
+        </div>
+      </div>
+    </button>
   );
 }

@@ -5,7 +5,7 @@ import { clearSession } from "../services/auth";
 import { api } from "../services/api";
 import Swal from "sweetalert2";
 
-import { Home, Users, Target, Activity, Building, Shield, LogOut, Trophy, Menu, X, Settings, User } from "lucide-react";
+import { Home, Users, Target, Activity, Building, Shield, LogOut, Trophy,User, ClipboardList } from "lucide-react";
 
 const ICONS = {
   home: Home,
@@ -15,6 +15,7 @@ const ICONS = {
   building: Building,
   shield: Shield,
   trophy: Trophy,
+  notas: ClipboardList,
 };
 
 function SidebarItem({ item }) {
