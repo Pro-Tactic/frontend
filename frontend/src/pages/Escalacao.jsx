@@ -87,11 +87,11 @@ export default function Escalacao() {
             if (l.y === null || l.y === undefined) return;
             if (l.jogador.posicao === 'Goleiro') return;
 
-            if (l.y < 35) {
+            if (l.y < 30) {
                 att++;
-            } else if (l.y < 65) {
+            } else if (l.y < 60) {
                 mid++;
-            } else if (l.y < 90) {
+            } else if (l.y < 85) {
                 def++;
             }
         });
@@ -138,7 +138,7 @@ export default function Escalacao() {
             newY = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
 
             const isGoleiro = (player?.posicao || '').trim() === 'Goleiro';
-            const naLinhaDoGoleiro = newY >= 90;
+            const naLinhaDoGoleiro = newY >= 85;
 
             if (!isGoleiro && naLinhaDoGoleiro) {
                 Swal.fire({ icon: 'warning', title: 'POSICIONAMENTO ILÍCITO', text: 'Esta zona é exclusiva para a heráldica de Goleiro.', ...swalConfig });
@@ -199,7 +199,7 @@ export default function Escalacao() {
     if (loading && allPlayers.length === 0) return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-pt-bg text-pt-primary gap-4">
         <div className="w-12 h-12 border-4 border-pt-primary/30 border-t-pt-primary rounded-full animate-spin" />
-        <span className="font-black text-[10px] uppercase tracking-[0.3em] italic">Carregando Sala de Comando...</span>
+        <span className="font-black text-[10px] uppercase tracking-[0.3em] italic">Carregando...</span>
       </div>
     );
 
@@ -279,28 +279,74 @@ export default function Escalacao() {
 
                 <div className="flex flex-col gap-6 relative">
                     <div className="bg-pt-surface border border-pt-white/10 rounded-[40px] p-4 flex-1 shadow-2xl relative overflow-hidden flex flex-col">
-                        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-12 pointer-events-none">
+                        <div className="flex items-center justify-center gap-10 mb-6 animate-in slide-in-from-top-4 duration-1000">
                             <div className="flex flex-col items-center">
-                                <span className="text-[40px] font-black italic text-white/5 leading-none">{titulares.length}</span>
-                                <span className="text-[9px] font-black text-pt-primary tracking-[0.3em] -mt-2">UNID. ATIVAS</span>
+                                <span className="text-3xl font-black italic text-pt-primary leading-none tabular-nums">{titulares.length}</span>
+                                <span className="text-[8px] font-black text-pt-text-muted tracking-[0.3em] uppercase mt-1">Jogadores no time</span>
                             </div>
-                            <div className="bg-pt-bg border border-pt-primary/20 px-6 py-4 rounded-[24px] shadow-2xl flex flex-col items-center gap-1">
+                            
+                            <div className="h-10 w-px bg-pt-white/5" />
+
+                            <div className="flex flex-col items-center">
                                 <span className="text-3xl font-black italic text-pt-primary tracking-tighter tabular-nums leading-none">{formationName}</span>
-                                <span className="text-[8px] font-black text-pt-text-muted tracking-[0.2em] uppercase">Set-up Tático</span>
+                                <span className="text-[8px] font-black text-pt-text-muted tracking-[0.2em] uppercase mt-1">Set-up Tático</span>
                             </div>
                         </div>
 
                         <div
-                            ref={fieldRef} onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, 'titulares')}
-                            className="relative flex-1 bg-gradient-to-b from-[#090909] to-[#0D150B] rounded-[32px] overflow-hidden border border-pt-white/5 m-2 shadow-inner group"
-                            style={{ backgroundImage: 'radial-gradient(circle at center, rgba(162, 255, 1, 0.03) 0%, transparent 70%), repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(255,255,255,0.01) 20px), repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(255,255,255,0.01) 20px)' }}
+                            ref={fieldRef}
+                            onDragOver={handleDragOver}
+                            onDrop={(e) => handleDrop(e, 'titulares')}
+                            className="relative flex-1 bg-[#1a3a14] rounded-[32px] overflow-hidden border-4 border-pt-white/10 m-2 shadow-inner group select-none shadow-[inset_0_0_100px_rgba(0,0,0,0.5)]"
                         >
-                            <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
-                                <Shield className="w-96 h-96 text-pt-primary" />
+                            {/* Grama Realista com Padrão de Faixas e Zonas */}
+                            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                                {/* Padrão de Faixas (Mowed Grass) */}
+                                <div className="absolute inset-0 opacity-40 bg-[repeating-linear-gradient(0deg,#244919,#244919_40px,#2d5a1f_40px,#2d5a1f_80px)]" />
+                                
+                                {/* Overlay das Zonas (Goleiro, Defesa, Meio, Ataque) */}
+                                {/* Zona Goleiro (Bottom 15%) */}
+                                <div className="absolute bottom-0 left-0 w-full h-[15%] bg-pt-primary/5 border-t border-pt-primary/10 shadow-[inset_0_20px_40px_rgba(0,0,0,0.3)]" />
+                                {/* Zona Defesa (15% to 40%) */}
+                                <div className="absolute bottom-[15%] left-0 w-full h-[25%] bg-sky-500/[0.03] border-t border-white/5" />
+                                {/* Zona Meio (40% to 70%) */}
+                                <div className="absolute bottom-[40%] left-0 w-full h-[30%] bg-pt-primary/5 border-t border-white/5" />
+                                {/* Zona Ataque (70% to 100%) */}
+                                <div className="absolute bottom-[70%] left-0 w-full h-[30%] bg-red-500/[0.03] border-t border-white/5" />
                             </div>
-                            <div className="absolute top-1/2 left-1/2 w-48 h-48 border border-pt-primary/20 rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-                            <div className="absolute top-1/2 left-0 w-full h-px bg-pt-primary/10 -translate-y-1/2 pointer-events-none" />
-                            <div className="absolute inset-y-0 left-1/2 w-px bg-pt-primary/5 pointer-events-none" />
+
+                            {/* Marcações do Campo (SVG) */}
+                            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                {/* Linha Lateral e de Fundo */}
+                                <rect x="5" y="5" width="90" height="90" fill="none" stroke="white" strokeWidth="0.5" />
+                                
+                                {/* Linha de Meio Campo */}
+                                <line x1="5" y1="50" x2="95" y2="50" stroke="white" strokeWidth="0.5" />
+                                <circle cx="50" cy="50" r="10" fill="none" stroke="white" strokeWidth="0.5" />
+                                <circle cx="50" cy="50" r="0.5" fill="white" />
+
+                                {/* Área de Ataque (Topo) */}
+                                <rect x="25" y="5" width="50" height="15" fill="none" stroke="white" strokeWidth="0.5" /> {/* Grande Área */}
+                                <rect x="37" y="5" width="26" height="5" fill="none" stroke="white" strokeWidth="0.5" />  {/* Pequena Área */}
+                                <path d="M 40 20 Q 50 25 60 20" fill="none" stroke="white" strokeWidth="0.5" /> {/* Meia Lua */}
+                                
+                                {/* Área de Defesa (Fundo) */}
+                                <rect x="25" y="80" width="50" height="15" fill="none" stroke="white" strokeWidth="0.5" /> {/* Grande Área */}
+                                <rect x="37" y="90" width="26" height="5" fill="none" stroke="white" strokeWidth="0.5" />  {/* Pequena Área */}
+                                <path d="M 40 80 Q 50 75 60 80" fill="none" stroke="white" strokeWidth="0.5" /> {/* Meia Lua */}
+
+                                {/* Pontos de Pênalti */}
+                                <circle cx="50" cy="15" r="0.3" fill="white" />
+                                <circle cx="50" cy="85" r="0.3" fill="white" />
+
+                                {/* Escanteios */}
+                                <path d="M 5 6 A 1 1 0 0 0 6 5" fill="none" stroke="white" strokeWidth="0.5" />
+                                <path d="M 94 5 A 1 1 0 0 0 95 6" fill="none" stroke="white" strokeWidth="0.5" />
+                                <path d="M 95 94 A 1 1 0 0 0 94 95" fill="none" stroke="white" strokeWidth="0.5" />
+                                <path d="M 6 95 A 1 1 0 0 0 5 94" fill="none" stroke="white" strokeWidth="0.5" />
+                            </svg>
+
+                            <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_120px_rgba(0,0,0,0.6)]" />
 
                             {titulares.map((escalacao) => (
                                 <div
@@ -310,15 +356,32 @@ export default function Escalacao() {
                                     onDragStart={(e) => podeEditarEscalacao && handleDragStart(e, escalacao.jogador, 'titulares', escalacao.id)}
                                     className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group/player z-10 p-2 cursor-grab active:cursor-grabbing hover:scale-110 transition-transform duration-300"
                                 >
-                                    <div className={`relative w-14 h-14 rounded-[20px] bg-pt-bg border-4 transition-all shadow-2xl flex items-center justify-center group-hover/player:shadow-pt-primary/20 ${escalacao.jogador.posicao === 'Goleiro' ? 'border-pt-primary bg-pt-primary/5 shadow-pt-primary/10' : 'border-pt-white/10 group-hover/player:border-pt-primary/40'}`}>
-                                        <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-pt-primary blur-[4px] opacity-0 group-hover/player:opacity-100 transition-opacity" />
-                                        <Users className={`w-5 h-5 ${escalacao.jogador.posicao === 'Goleiro' ? 'text-pt-primary' : 'text-pt-text-muted'}`} />
+                                    <div className={`relative w-14 h-14 rounded-full border-4 transition-all shadow-2xl flex items-center justify-center overflow-hidden group-hover/player:shadow-pt-primary/40 ${escalacao.jogador.posicao === 'Goleiro' ? 'bg-yellow-500 border-yellow-300' : 'bg-pt-bg border-pt-primary/60 group-hover/player:border-pt-primary'}`}>
+                                        {escalacao.jogador.foto ? (
+                                            <img 
+                                                src={escalacao.jogador.foto} 
+                                                alt={escalacao.jogador.nome} 
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => {
+                                                    e.currentTarget.style.display = 'none';
+                                                    e.currentTarget.nextSibling.style.display = 'flex';
+                                                }}
+                                            />
+                                        ) : null}
+                                        <div className={`w-full h-full flex items-center justify-center ${escalacao.jogador.foto ? 'hidden' : 'flex'}`}>
+                                            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-black/20 to-white/20 pointer-events-none" />
+                                            <span className={`font-black text-xs ${escalacao.jogador.posicao === 'Goleiro' ? 'text-pt-bg' : 'text-pt-primary'}`}>
+                                                {escalacao.jogador.posicao === 'Goleiro' ? 'GK' : (escalacao.jogador.numero || '??')}
+                                            </span>
+                                        </div>
+                                        {/* Glow effect overlay */}
+                                        <div className="absolute -inset-1 rounded-full bg-pt-primary/10 blur-md opacity-0 group-hover/player:opacity-100 transition-opacity" />
                                     </div>
-                                    <div className="mt-3 px-3 py-1.5 bg-pt-bg/90 backdrop-blur-md border border-pt-white/10 rounded-xl text-center shadow-2xl relative min-w-[80px]">
-                                        <p className="text-[10px] font-black text-white uppercase tracking-tighter whitespace-nowrap">{escalacao.jogador.nome.split(' ')[0]}</p>
-                                        <div className="flex items-center justify-center gap-1 mt-0.5 opacity-60">
-                                            <Target className="w-2 h-2 text-pt-primary" />
-                                            <span className="text-[7px] font-black text-pt-primary uppercase tracking-[0.1em]">{escalacao.jogador.posicao}</span>
+                                    <div className="mt-3 px-3 py-1 bg-pt-bg/95 backdrop-blur-md border border-pt-white/20 rounded-lg text-center shadow-2xl relative min-w-[90px]">
+                                        <p className="text-[10px] font-black text-white uppercase tracking-tighter whitespace-nowrap drop-shadow-md">{escalacao.jogador.nome.split(' ')[0]}</p>
+                                        <div className="flex items-center justify-center gap-1 mt-0.5 opacity-80">
+                                            <div className={`w-1.5 h-1.5 rounded-full ${escalacao.jogador.posicao === 'Goleiro' ? 'bg-yellow-400' : 'bg-pt-primary'}`} />
+                                            <span className="text-[7px] font-black text-pt-text-muted uppercase tracking-[0.1em]">{escalacao.jogador.posicao}</span>
                                         </div>
                                     </div>
                                 </div>
