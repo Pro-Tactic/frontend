@@ -2,7 +2,7 @@ import { useState } from "react";
 import { api } from "../services/api";
 import { User, ChevronRight, ArrowLeft, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import logoImg from "../assets/logo-protactic.png";
+import logoImg from "../../icon/logo-protactic.png";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 

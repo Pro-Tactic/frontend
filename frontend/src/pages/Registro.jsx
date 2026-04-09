@@ -7,10 +7,10 @@ export default function Registro() {
   return (
     <div className="max-w-6xl mx-auto w-full">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">
+        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-pt-primary">
           Registro
         </h1>
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-pt-text-muted font-medium">
           Cadastre jogadores e competições manualmente.
         </p>
       </div>
@@ -19,21 +19,21 @@ export default function Registro() {
         <button
           type="button"
           onClick={() => navigate("/registro/jogadores")}
-          className="group text-left bg-[#0b1220] border border-slate-800 rounded-2xl p-5 hover:border-emerald-500/40 hover:bg-slate-900/30 transition"
+          className="group text-left bg-pt-surface border border-pt-slate/10 rounded-2xl p-6 hover:shadow-xl hover:shadow-pt-primary/5 hover:border-pt-primary/40 transition-all shadow-sm shadow-black/5"
         >
           <div className="flex items-start gap-4">
-            <div className="w-11 h-11 rounded-xl bg-emerald-500/15 ring-1 ring-emerald-500/25 flex items-center justify-center">
-              <UserPlus className="w-5 h-5 text-emerald-300" />
+            <div className="w-12 h-12 rounded-2xl bg-pt-primary/10 ring-2 ring-pt-primary/30 flex items-center justify-center">
+              <UserPlus className="w-6 h-6 text-pt-primary" />
             </div>
 
             <div className="flex-1">
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-xl font-black text-pt-text tracking-tight">
                 Registrar Jogadores
               </h2>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-xs text-pt-text-muted mt-1 font-bold">
                 Adicione atletas com informações básicas e status.
               </p>
-              <div className="mt-4 text-sm text-emerald-300 group-hover:text-emerald-200">
+              <div className="mt-4 text-xs text-pt-primary font-black uppercase tracking-widest group-hover:translate-x-1 transition-transform">
                 Abrir registro →
               </div>
             </div>
@@ -44,18 +44,18 @@ export default function Registro() {
         <button
           type="button"
           onClick={() => navigate("/registro/clube")}
-          className="group text-left bg-[#0b1220] border border-slate-800 rounded-2xl p-5 hover:border-emerald-500/40 hover:bg-slate-900/30 transition"
+          className="group text-left bg-pt-surface border border-pt-slate/10 rounded-2xl p-6 hover:shadow-xl hover:shadow-pt-primary/5 hover:border-pt-primary/40 transition-all shadow-sm shadow-black/5"
         >
           <div className="flex items-start gap-4">
-            <div className="w-11 h-11 rounded-xl bg-indigo-500/15 ring-1 ring-indigo-500/25 flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-indigo-300" />
+            <div className="w-12 h-12 rounded-2xl bg-pt-primary/10 ring-2 ring-pt-primary/30 flex items-center justify-center">
+              <Building2 className="w-6 h-6 text-pt-primary" />
             </div>
 
             <div className="flex-1">
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-xl font-black text-pt-text tracking-tight">
                 Registrar Clube
               </h2>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-xs text-pt-text-muted mt-1 font-bold">
                 Cadastre clubes e informações institucionais.
               </p>
 
@@ -70,18 +70,18 @@ export default function Registro() {
         <button
           type="button"
           onClick={() => navigate("/registro/competicoes")}
-          className="group text-left bg-[#0b1220] border border-slate-800 rounded-2xl p-5 hover:border-emerald-500/40 hover:bg-slate-900/30 transition"
+          className="group text-left bg-pt-surface border border-pt-slate/10 rounded-2xl p-6 hover:shadow-xl hover:shadow-pt-primary/5 hover:border-pt-primary/40 transition-all shadow-sm shadow-black/5"
         >
           <div className="flex items-start gap-4">
-            <div className="w-11 h-11 rounded-xl bg-sky-500/15 ring-1 ring-sky-500/25 flex items-center justify-center">
-              <Trophy className="w-5 h-5 text-sky-300" />
+            <div className="w-12 h-12 rounded-2xl bg-pt-primary/10 ring-2 ring-pt-primary/30 flex items-center justify-center">
+              <Trophy className="w-6 h-6 text-pt-primary" />
             </div>
 
             <div className="flex-1">
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-xl font-black text-pt-text tracking-tight">
                 Registrar Competições
               </h2>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-xs text-pt-text-muted mt-1 font-bold">
                 Cadastre campeonatos e torneios.
               </p>
 
@@ -96,22 +96,22 @@ export default function Registro() {
         <button
           type="button"
           onClick={() => navigate("/registro/tecnico")}
-          className="group text-left bg-[#0b1220] border border-slate-800 rounded-2xl p-5 hover:border-emerald-500/40 hover:bg-slate-900/30 transition"
+          className="group text-left bg-pt-surface border border-pt-slate/10 rounded-2xl p-6 hover:shadow-xl hover:shadow-pt-primary/5 hover:border-pt-primary/40 transition-all shadow-sm shadow-black/5"
         >
           <div className="flex items-start gap-4">
-            <div className="w-11 h-11 rounded-xl bg-amber-500/15 ring-1 ring-amber-500/25 flex items-center justify-center">
-              <UserCog className="w-5 h-5 text-amber-300" />
+            <div className="w-12 h-12 rounded-2xl bg-pt-primary/10 ring-2 ring-pt-primary/30 flex items-center justify-center">
+              <UserCog className="w-6 h-6 text-pt-primary" />
             </div>
 
             <div className="flex-1">
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-xl font-black text-pt-text tracking-tight">
                 Cadastrar Técnico
               </h2>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-xs text-pt-text-muted mt-1 font-bold">
                 Crie usuário treinador e vincule a um clube.
               </p>
 
-              <div className="mt-4 text-sm text-emerald-300 group-hover:text-emerald-200">
+              <div className="mt-4 text-xs text-pt-primary font-black uppercase tracking-widest group-hover:translate-x-1 transition-transform">
                 Abrir cadastro →
               </div>
             </div>
@@ -122,18 +122,18 @@ export default function Registro() {
         <button
           type="button"
           onClick={() => navigate("/registro/partidas")}
-          className="group text-left bg-[#0b1220] border border-slate-800 rounded-2xl p-5 hover:border-emerald-500/40 hover:bg-slate-900/30 transition"
+          className="group text-left bg-pt-surface border border-pt-slate/10 rounded-2xl p-6 hover:shadow-xl hover:shadow-pt-primary/5 hover:border-pt-primary/40 transition-all shadow-sm shadow-black/5"
         >
           <div className="flex items-start gap-4">
-            <div className="w-11 h-11 rounded-xl bg-rose-500/15 ring-1 ring-rose-500/25 flex items-center justify-center">
-              <Swords className="w-5 h-5 text-rose-300" />
+            <div className="w-12 h-12 rounded-2xl bg-pt-primary/10 ring-2 ring-pt-primary/30 flex items-center justify-center">
+              <Swords className="w-6 h-6 text-pt-primary" />
             </div>
 
             <div className="flex-1">
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-xl font-black text-pt-text tracking-tight">
                 Criar Partida
               </h2>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-xs text-pt-text-muted mt-1 font-bold">
                 Agende novos jogos e gerencie placares.
               </p>
               <div className="mt-4 text-sm text-emerald-300 group-hover:text-emerald-200">

@@ -143,8 +143,8 @@ export default function Escalacao() {
                 icon: 'warning',
                 title: 'Escalação padrão obrigatória',
                 text: 'Crie primeiro a escalação padrão para liberar as escalações defensiva e ofensiva.',
-                background: '#1e293b',
-                color: '#fff'
+                background: 'var(--pt-surface)',
+                color: 'var(--pt-text-primary)'
             });
             setDraggedItem(null);
             return;
@@ -158,8 +158,8 @@ export default function Escalacao() {
                 icon: 'warning',
                 title: 'Jogador não permitido',
                 text: 'Nas escalações defensiva e ofensiva, só é permitido usar jogadores da escalação padrão.',
-                background: '#1e293b',
-                color: '#fff'
+                background: 'var(--pt-surface)',
+                color: 'var(--pt-text-primary)'
             });
             setDraggedItem(null);
             return;
@@ -186,8 +186,8 @@ export default function Escalacao() {
                     icon: 'warning',
                     title: 'Posição inválida',
                     text: 'A linha do goleiro aceita apenas jogadores da posição Goleiro.',
-                    background: '#1e293b',
-                    color: '#fff'
+                    background: 'var(--pt-surface)',
+                    color: 'var(--pt-text-primary)'
                 });
                 setDraggedItem(null);
                 return;
@@ -198,8 +198,8 @@ export default function Escalacao() {
                     icon: 'warning',
                     title: 'Posição inválida',
                     text: 'O goleiro deve ser posicionado na linha do goleiro.',
-                    background: '#1e293b',
-                    color: '#fff'
+                    background: 'var(--pt-surface)',
+                    color: 'var(--pt-text-primary)'
                 });
                 setDraggedItem(null);
                 return;
@@ -210,11 +210,11 @@ export default function Escalacao() {
         const currentReservas = hydratedLineup.filter(l => l.status === 'RESERVA').length;
 
         if (targetZone === 'titulares' && origin !== 'titulares' && currentTitulares >= 11) {
-            Swal.fire({ icon: 'warning', title: 'Time Completo!', text: '11 titulares em campo.', background: '#1e293b', color: '#fff' });
+            Swal.fire({ icon: 'warning', title: 'Time Completo!', text: '11 titulares em campo.', background: 'var(--pt-surface)', color: 'var(--pt-text-primary)' });
             return;
         }
         if (targetZone === 'reservas' && origin !== 'reservas' && currentReservas >= 6) {
-            Swal.fire({ icon: 'warning', title: 'Banco Cheio!', text: '6 reservas selecionados.', background: '#1e293b', color: '#fff' });
+            Swal.fire({ icon: 'warning', title: 'Banco Cheio!', text: '6 reservas selecionados.', background: 'var(--pt-surface)', color: 'var(--pt-text-primary)' });
             return;
         }
 
@@ -276,15 +276,15 @@ export default function Escalacao() {
 
         } catch (error) {
             console.error("Erro ao mover:", error);
-            Swal.fire({ icon: 'error', title: 'Erro', text: 'Falha ao salvar.', background: '#1e293b', color: '#fff' });
+            Swal.fire({ icon: 'error', title: 'Erro', text: 'Falha ao salvar.', background: 'var(--pt-surface)', color: 'var(--pt-text-primary)' });
             setLineup(previousLineup);
         } finally {
             setDraggedItem(null);
         }
     };
 
-    if (loading && allPlayers.length === 0) return <div className="p-10 text-center text-white">Carregando...</div>;
-    if (!match) return <div className="p-10 text-center text-white">Partida não encontrada.</div>;
+    if (loading && allPlayers.length === 0) return <div className="p-10 text-center text-pt-text">Carregando...</div>;
+    if (!match) return <div className="p-10 text-center text-pt-text">Partida não encontrada.</div>;
 
     const basePlayerIds = new Set(baseLineup.map(item => (typeof item.jogador === 'object' ? item.jogador.id : item.jogador)));
     const isVariacao = activeTipo !== 'PADRAO';
@@ -300,24 +300,24 @@ export default function Escalacao() {
     const naoRelacionados = jogadoresPermitidos.filter(p => !relatedIds.has(p.id));
 
     return (
-        <div className="min-h-screen bg-[#0f172a] p-4 text-slate-200">
+        <div className="min-h-screen bg-pt-bg p-4 text-pt-text">
 
-            <header className="max-w-7xl mx-auto mb-6 flex justify-between items-center bg-[#1e293b] p-4 rounded-xl shadow-lg border border-slate-700">
+            <header className="max-w-7xl mx-auto mb-6 flex justify-between items-center bg-pt-surface p-6 rounded-2xl shadow-xl shadow-black/5 border border-pt-slate/10">
                 <div>
-                    <h1 className="text-xl md:text-2xl font-bold text-white">Escalação</h1>
-                    <p className="text-sm text-slate-400">
+                    <h1 className="text-xl md:text-2xl font-black text-pt-primary tracking-tight">Escalação</h1>
+                    <p className="text-sm text-pt-text-muted font-bold">
                         {match.mandante?.nome} vs {match.visitante?.nome}
                     </p>
-                    <p className="text-xs text-indigo-300 mt-1">
+                    <p className="text-xs text-pt-primary/60 mt-1 font-black uppercase tracking-widest">
                         Tipo atual: {TIPO_LABEL[activeTipo]}
                     </p>
                 </div>
-                <button onClick={() => navigate(-1)} className="text-slate-400 hover:text-white transition">
+                <button onClick={() => navigate(-1)} className="text-pt-text-muted hover:text-pt-primary font-bold transition">
                     Voltar
                 </button>
             </header>
 
-            <div className="max-w-7xl mx-auto mb-4 bg-[#1e293b] p-2 rounded-xl shadow-lg border border-slate-700 flex gap-2">
+            <div className="max-w-7xl mx-auto mb-4 bg-pt-surface p-2 rounded-2xl shadow-xl shadow-black/5 border border-pt-slate/10 flex gap-2">
                 {TIPOS_ESCALACAO.map((tab) => {
                     const active = activeTipo === tab.key;
                     return (
@@ -325,7 +325,7 @@ export default function Escalacao() {
                             key={tab.key}
                             type="button"
                             onClick={() => setActiveTipo(tab.key)}
-                            className={`px-3 py-2 rounded-lg text-sm font-semibold transition ${active ? 'bg-indigo-600 text-white' : 'bg-[#0f172a] text-slate-300 hover:text-white border border-slate-700'}`}
+                            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${active ? 'bg-pt-primary text-pt-bg shadow-lg shadow-pt-primary/20' : 'bg-pt-bg/30 text-pt-text-muted hover:text-pt-primary border border-transparent'}`}
                         >
                             {tab.label}
                         </button>
@@ -334,7 +334,7 @@ export default function Escalacao() {
             </div>
 
             {isVariacao && !escalaPadraoExiste && (
-                <div className="max-w-7xl mx-auto mb-4 rounded-xl border border-yellow-500/40 bg-[#1e293b] px-4 py-3 text-sm text-yellow-300">
+                <div className="max-w-7xl mx-auto mb-4 rounded-xl border border-yellow-500/40 bg-pt-surface px-4 py-3 text-sm text-yellow-300">
                     Para montar a escalação {TIPO_LABEL[activeTipo].toLowerCase()}, primeiro crie a escalação padrão desta partida.
                 </div>
             )}
@@ -343,12 +343,12 @@ export default function Escalacao() {
 
                 {/* --- NAO RELACIONADOS --- */}
                 <div
-                    className="bg-[#1e293b] rounded-xl p-4 border border-slate-700 flex flex-col h-[600px] shadow-xl"
+                    className="bg-pt-surface rounded-2xl p-4 border border-pt-slate/10 flex flex-col h-[600px] shadow-xl shadow-black/5"
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, 'nao-relacionados')}
                 >
-                    <h2 className="text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider flex justify-between">
-                        Disponíveis <span className="text-white">{naoRelacionados.length}</span>
+                    <h2 className="text-[10px] font-black text-pt-text-muted mb-4 uppercase tracking-widest flex justify-between">
+                        Disponíveis <span className="text-pt-primary">{naoRelacionados.length}</span>
                     </h2>
                     <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
                         {naoRelacionados.map(player => (
@@ -359,22 +359,22 @@ export default function Escalacao() {
                                     if (!podeEditarEscalacao) return;
                                     handleDragStart(e, player, 'nao-relacionados');
                                 }}
-                                className={`bg-[#0f172a] p-3 rounded-lg border border-slate-800 transition flex justify-between items-center ${podeEditarEscalacao ? 'cursor-grab hover:border-indigo-500/50' : 'cursor-not-allowed opacity-60'}`}
+                                className={`bg-pt-bg/30 p-3 rounded-xl border border-pt-slate/5 transition flex justify-between items-center ${podeEditarEscalacao ? 'cursor-grab hover:border-pt-primary/50' : 'cursor-not-allowed opacity-60'}`}
                             >
-                                <span className="font-bold text-sm text-slate-300">{player.nome}</span>
-                                <span className="text-[10px] text-slate-500 uppercase">{player.posicao}</span>
+                                <span className="font-bold text-sm text-pt-text">{player.nome}</span>
+                                <span className="text-[10px] text-pt-primary font-black uppercase">{player.posicao}</span>
                             </div>
                         ))}
                     </div>
                 </div>
 
                 <div className="lg:col-span-2">
-                    <div className="bg-[#1e293b] rounded-xl p-1 border border-slate-700 h-[600px] flex flex-col shadow-xl relative">
+                    <div className="bg-pt-surface rounded-2xl p-1 border border-pt-slate/10 h-[600px] flex flex-col shadow-xl shadow-black/5 relative">
 
-                        <div className="absolute top-4 left-4 z-20 bg-black/60 backdrop-blur px-3 py-1 rounded text-white text-xs font-mono">
+                        <div className="absolute top-4 left-4 z-20 bg-pt-bg/80 backdrop-blur px-3 py-1 rounded-lg text-pt-text text-[10px] font-black border border-pt-slate/10 uppercase tracking-widest">
                             {titulares.length}/11
                         </div>
-                        <div className="absolute top-4 right-4 z-20 bg-black/60 backdrop-blur px-3 py-1 rounded text-emerald-400 font-bold text-xl border border-emerald-500/30">
+                        <div className="absolute top-4 right-4 z-20 bg-pt-bg/80 backdrop-blur px-4 py-1.5 rounded-xl text-pt-primary font-black text-2xl border border-pt-primary shadow-lg shadow-pt-primary/10">
                             {formationName}
                         </div>
 
@@ -429,12 +429,12 @@ export default function Escalacao() {
 
                 {/* --- RESERVAS --- */}
                 <div
-                    className="bg-[#1e293b] rounded-xl p-4 border border-slate-700 flex flex-col h-[600px] shadow-xl"
+                    className="bg-pt-surface rounded-2xl p-4 border border-pt-slate/10 flex flex-col h-[600px] shadow-xl shadow-black/5"
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, 'reservas')}
                 >
-                    <h2 className="text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider flex justify-between">
-                        Reservas <span className="text-white">{reservas.length}/6</span>
+                    <h2 className="text-[10px] font-black text-pt-text-muted mb-4 uppercase tracking-widest flex justify-between">
+                        Reservas <span className="text-pt-primary">{reservas.length}/6</span>
                     </h2>
                     <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
                         {reservas.map(escalacao => (
@@ -445,11 +445,11 @@ export default function Escalacao() {
                                     if (!podeEditarEscalacao) return;
                                     handleDragStart(e, escalacao.jogador, 'reservas', escalacao.id);
                                 }}
-                                className={`bg-[#0f172a] p-3 rounded-lg border border-yellow-500/20 transition flex items-center gap-3 ${podeEditarEscalacao ? 'cursor-grab hover:border-yellow-500' : 'cursor-not-allowed opacity-60'}`}
+                                className={`bg-pt-bg/30 p-3 rounded-xl border border-pt-primary/10 transition flex items-center gap-3 ${podeEditarEscalacao ? 'cursor-grab hover:border-pt-primary' : 'cursor-not-allowed opacity-60'}`}
                             >
-                                <div className="w-6 h-6 rounded-full bg-yellow-500/20 text-yellow-500 flex items-center justify-center text-[10px] font-bold">R</div>
+                                <div className="w-6 h-6 rounded-full bg-pt-primary text-pt-bg flex items-center justify-center text-[10px] font-black">R</div>
                                 <div>
-                                    <p className="font-medium text-sm text-slate-300">{escalacao.jogador.nome}</p>
+                                    <p className="font-bold text-sm text-pt-text">{escalacao.jogador.nome}</p>
                                 </div>
                             </div>
                         ))}

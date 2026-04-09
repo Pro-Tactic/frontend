@@ -46,16 +46,16 @@ export default function Elenco() {
   return (
     <div className="max-w-6xl">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-pt-primary">
           Central do Elenco
         </h1>
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-pt-text-muted font-medium">
           Gerencie e acompanhe seus jogadores.
         </p>
       </div>
 
       {loading ? (
-        <div className="mt-6 text-sm text-slate-400">Carregando...</div>
+        <div className="mt-6 text-sm text-pt-text-muted">Carregando...</div>
       ) : error ? (
         <div className="mt-6 flex items-center gap-2 text-sm text-red-300">
           <AlertCircle className="w-4 h-4" />
@@ -72,7 +72,7 @@ export default function Elenco() {
             return (
               <div
                 key={jogador.id}
-                className="rounded-2xl border border-slate-800 bg-[#0b1220] p-5 flex gap-4"
+                className="rounded-2xl border border-pt-slate/10 bg-pt-surface p-5 flex gap-4 shadow-sm shadow-black/5 hover:shadow-lg hover:shadow-pt-primary/5 transition-all"
               >
                 {jogador.foto ? (
                   <img
@@ -81,15 +81,15 @@ export default function Elenco() {
                     className="w-16 h-16 rounded-xl object-cover"
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded-xl bg-slate-900 flex items-center justify-center">
-                    <Users className="w-5 h-5 text-slate-600" />
+                  <div className="w-16 h-16 rounded-xl bg-pt-bg/30 flex items-center justify-center">
+                    <Users className="w-6 h-6 text-pt-primary/60" />
                   </div>
                 )}
 
                 <div className="flex-1">
-                  <div className="text-lg font-semibold text-slate-100">{jogador.nome}</div>
-                  <div className="text-sm text-slate-400">{jogador.posicao}</div>
-                  <div className="mt-2 flex flex-wrap gap-3 text-xs text-slate-400">
+                  <div className="text-lg font-bold text-pt-text tracking-tight">{jogador.nome}</div>
+                  <div className="text-xs text-pt-primary font-black uppercase tracking-widest mb-2">{jogador.posicao}</div>
+                  <div className="mt-2 flex flex-wrap gap-3 text-xs text-pt-text-muted font-bold">
                     {idade !== null && <span>{idade} anos</span>}
                     {jogador.altura && <span>{jogador.altura} cm</span>}
                     {jogador.peso && <span>{jogador.peso} kg</span>}

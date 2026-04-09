@@ -37,14 +37,14 @@ export default function Inicio() {
   return (
     <div className="max-w-6xl">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">Início</h1>
-        <p className="text-sm text-slate-400">
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-pt-primary">Início</h1>
+        <p className="text-sm text-pt-text-muted font-medium">
           Visão geral do clube e informações do próximo jogo.
         </p>
       </div>
 
       {loading ? (
-        <div className="mt-6 text-sm text-slate-400">Carregando...</div>
+        <div className="mt-6 text-sm text-pt-text-muted">Carregando...</div>
       ) : error ? (
         <div className="mt-6 flex items-center gap-2 text-sm text-red-300">
           <AlertCircle className="w-4 h-4" />
@@ -52,24 +52,24 @@ export default function Inicio() {
         </div>
       ) : (
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <section className="bg-[#0b1220] border border-slate-800 rounded-2xl p-6">
-            <div className="flex items-center gap-3">
+          <section className="bg-pt-surface border border-pt-slate/10 rounded-2xl p-6 shadow-sm shadow-black/5">
+            <div className="flex items-center gap-4">
               {data?.clube?.escudo ? (
                 <img
                   src={data.clube.escudo}
                   alt={data.clube.nome}
-                  className="w-12 h-12 object-contain rounded-lg bg-white/5 p-1"
+                  className="w-14 h-14 object-contain rounded-xl bg-pt-bg/30 p-2"
                 />
               ) : (
-                <div className="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center">
-                  <Users className="w-5 h-5 text-slate-500" />
+                <div className="w-14 h-14 rounded-xl bg-pt-bg/30 flex items-center justify-center">
+                  <Users className="w-6 h-6 text-pt-primary/60" />
                 </div>
               )}
               <div>
-                <h2 className="text-lg font-semibold text-slate-100">{data?.clube?.nome}</h2>
-                <p className="text-xs text-slate-400">
+                <h2 className="text-xl font-bold text-pt-text">{data?.clube?.nome}</h2>
+                <p className="text-xs text-pt-text-muted font-semibold">
                   {data?.clube?.pais}
-                  {data?.clube?.data_criacao ? ` • Criado em ${new Date(data.clube.data_criacao).toLocaleDateString("pt-BR")}` : ""}
+                  {data?.clube?.data_criacao ? ` • ${new Date(data.clube.data_criacao).getFullYear()}` : ""}
                 </p>
               </div>
             </div>
@@ -80,24 +80,24 @@ export default function Inicio() {
               <StatBox label="Empates" value={data?.estatisticas?.empates} />
               <StatBox label="Derrotas" value={data?.estatisticas?.derrotas} />
             </div>
-            <div className="mt-4 text-xs text-slate-400">
-              Aproveitamento: <span className="text-slate-200 font-semibold">{data?.estatisticas?.aproveitamento}%</span>
+            <div className="mt-4 text-xs text-pt-text-muted font-medium">
+              Aproveitamento: <span className="text-pt-text font-bold">{data?.estatisticas?.aproveitamento}%</span>
             </div>
           </section>
 
-          <section className="lg:col-span-2 bg-[#0b1220] border border-slate-800 rounded-2xl p-6">
-            <div className="flex items-center gap-2 text-slate-200">
-              <Calendar className="w-5 h-5 text-emerald-400" />
-              <h2 className="text-lg font-semibold">Próximo jogo</h2>
+          <section className="lg:col-span-2 bg-pt-surface border border-pt-slate/10 rounded-2xl p-6 shadow-sm shadow-black/5">
+            <div className="flex items-center gap-2 text-pt-text">
+              <Calendar className="w-5 h-5 text-pt-primary" />
+              <h2 className="text-lg font-bold">Próximo jogo</h2>
             </div>
 
             {data?.proximo_jogo ? (
-              <div className="mt-4 rounded-xl border border-slate-800 bg-slate-900/40 px-4 py-4">
-                <div className="text-sm text-slate-400">{data.proximo_jogo.competicao || "Amistoso"}</div>
-                <div className="text-xl text-slate-100 font-semibold mt-1">
+              <div className="mt-4 rounded-xl border border-pt-slate/10 bg-pt-bg/20 px-4 py-4">
+                <div className="text-sm text-pt-text-muted font-bold tracking-wide">{data.proximo_jogo.competicao || "Amistoso"}</div>
+                <div className="text-2xl text-pt-text font-black mt-1">
                   {data.proximo_jogo.adversario} ({data.proximo_jogo.local})
                 </div>
-                <div className="text-sm text-slate-400 mt-2">
+                <div className="text-sm text-pt-text-muted mt-2 font-medium">
                   {new Date(data.proximo_jogo.data_hora).toLocaleString("pt-BR")}
                   {data.proximo_jogo.estadio ? ` • ${data.proximo_jogo.estadio}` : ""}
                 </div>
@@ -110,7 +110,7 @@ export default function Inicio() {
 
             <div className="mt-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-semibold text-slate-200">Provável escalação</h3>
+                <h3 className="text-base font-bold text-pt-text">Provável escalação</h3>
                 {data?.origem_escalacao && (
                   <span className="text-xs text-slate-500">
                     Origem: {data.origem_escalacao === "partida" ? "próximo jogo" : "histórico"}
@@ -123,12 +123,12 @@ export default function Inicio() {
                   {data.provavel_escalacao.map((jogador) => (
                     <div
                       key={jogador.jogador_id}
-                      className="rounded-xl border border-slate-800 bg-slate-900/40 px-4 py-3"
+                      className="rounded-xl border border-pt-slate/10 bg-pt-bg/20 px-4 py-3"
                     >
-                      <div className="text-slate-100 font-semibold">{jogador.nome}</div>
-                      <div className="text-xs text-slate-400">{jogador.posicao}</div>
+                      <div className="text-pt-text font-bold">{jogador.nome}</div>
+                      <div className="text-xs text-pt-text-muted font-semibold">{jogador.posicao}</div>
                       {jogador.frequencia_titular && (
-                        <div className="text-[11px] text-slate-500 mt-1">
+                        <div className="text-[11px] text-pt-text-muted/70 mt-1 font-medium italic">
                           Aparições como titular: {jogador.frequencia_titular}
                         </div>
                       )}
@@ -150,9 +150,9 @@ export default function Inicio() {
 
 function StatBox({ label, value }) {
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/40 px-4 py-3">
-      <div className="text-xs text-slate-400 uppercase tracking-wide">{label}</div>
-      <div className="text-2xl font-semibold text-slate-100">{value ?? 0}</div>
+    <div className="rounded-xl border border-pt-slate/10 bg-pt-bg/20 px-4 py-3">
+      <div className="text-[10px] text-pt-text-muted uppercase font-bold tracking-widest mb-1">{label}</div>
+      <div className="text-2xl font-black text-pt-text">{value ?? 0}</div>
     </div>
   );
 }
