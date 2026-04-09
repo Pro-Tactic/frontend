@@ -58,8 +58,7 @@ export default function Registro() {
               <p className="text-xs text-pt-text-muted mt-1 font-bold">
                 Cadastre clubes e informações institucionais.
               </p>
-
-              <div className="mt-4 text-sm text-emerald-300 group-hover:text-emerald-200">
+              <div className="mt-4 text-xs text-pt-primary font-black uppercase tracking-widest group-hover:translate-x-1 transition-transform">
                 Abrir registro →
               </div>
             </div>
@@ -85,7 +84,7 @@ export default function Registro() {
                 Cadastre campeonatos e torneios.
               </p>
 
-              <div className="mt-4 text-sm text-emerald-300 group-hover:text-emerald-200">
+              <div className="mt-4 text-xs text-pt-primary font-black uppercase tracking-widest group-hover:translate-x-1 transition-transform">
                 Abrir registro →
               </div>
             </div>
@@ -136,7 +135,7 @@ export default function Registro() {
               <p className="text-xs text-pt-text-muted mt-1 font-bold">
                 Agende novos jogos e gerencie placares.
               </p>
-              <div className="mt-4 text-sm text-emerald-300 group-hover:text-emerald-200">
+              <div className="mt-4 text-xs text-pt-primary font-black uppercase tracking-widest group-hover:translate-x-1 transition-transform">
                 Abrir registro →
               </div>
             </div>

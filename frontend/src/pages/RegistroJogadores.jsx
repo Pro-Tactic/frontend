@@ -93,7 +93,7 @@ export default function RegistroJogadores() {
 
     } catch (error) {
       console.error("Erro ao registrar jogador:", error);
-      
+
       Swal.fire({
         icon: 'error',
         title: 'Erro ao registrar',
