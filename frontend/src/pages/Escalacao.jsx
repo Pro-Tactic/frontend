@@ -2,17 +2,18 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api, extractList } from "../services/api";
 import Swal from 'sweetalert2';
+import { ArrowLeft, Users, Shield, Target, Zap } from "lucide-react";
 
 const TIPOS_ESCALACAO = [
-    { key: 'PADRAO', label: 'Escalação padrão' },
-    { key: 'DEFENSIVA', label: 'Escalação defensiva' },
-    { key: 'OFENSIVA', label: 'Escalação ofensiva' },
+    { key: 'PADRAO', label: 'TÁTICA PADRÃO' },
+    { key: 'DEFENSIVA', label: 'VARIAÇÃO DEFENSIVA' },
+    { key: 'OFENSIVA', label: 'VARIAÇÃO OFENSIVA' },
 ];
 
 const TIPO_LABEL = {
-    PADRAO: 'Padrão',
-    DEFENSIVA: 'Defensiva',
-    OFENSIVA: 'Ofensiva',
+    PADRAO: 'PADRÃO',
+    DEFENSIVA: 'DEFENSIVA',
+    OFENSIVA: 'OFENSIVA',
 };
 
 export default function Escalacao() {
@@ -80,44 +81,18 @@ export default function Escalacao() {
 
     const calculateFormation = (currentLineup) => {
         const titulares = currentLineup.filter(l => l.status === 'TITULAR');
-
-        let def = 0;
-        let mid = 0;
-        let att = 0;
+        let def = 0, mid = 0, att = 0;
 
         titulares.forEach(l => {
-            // If coordinate exists, use it. If not (legacy data), maybe skip or default.
-            // Assuming Y is 0 (top/attack) to 100 (bottom/defense) or vice-versa.
-            // Let's assume Top (0%) is Attack (Goal opposite side) or Defense (Goalie side)?
-            // Usually simpler: Goalie at bottom or top.
-            // Let's adopt: 
-            // 0% -> Top (Attack)
-            // 100% -> Bottom (Defense/Goalie)
-
-            // Wait, standard tactic board: Goalie is usually at bottom or top.
-            // Let's assume standard intuitive view: Goalkeeer at bottom (100% or ~90%).
-            // Attackers at top (< 35%).
-
-            // Coordinates might be null initially.
             if (l.y === null || l.y === undefined) return;
-
-            // Exclude Goalie from 4-4-2 count usually?
-            // Logic: Goalie is usually very distinct.
-            // Let's rely on position name or explicit check if close to goal line.
-            // Or simply: check if user manually assigned GK position. 
-            // Simplest: If player.posicao == 'Goleiro' -> Ignore from count.
             if (l.jogador.posicao === 'Goleiro') return;
 
-            // Y thresholds
-            // 0 ------- 35 (Attack) ------- 60 (Mid) ------- 90 (Def) ----- 100 (GK)
             if (l.y < 35) {
                 att++;
             } else if (l.y < 65) {
                 mid++;
             } else if (l.y < 90) {
                 def++;
-            } else {
-                // Goalkeeper zone (>= 90%) - Ignore from count
             }
         });
 
@@ -138,71 +113,40 @@ export default function Escalacao() {
         e.preventDefault();
         if (!draggedItem) return;
 
+        const basePlayerIds = new Set(baseLineup.map(item => (typeof item.jogador === 'object' ? item.jogador.id : item.jogador)));
+        const swalConfig = { background: '#0B0B0B', color: '#FEFEFE', confirmButtonColor: '#A2FF01' };
+
         if (activeTipo !== 'PADRAO' && basePlayerIds.size === 0) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Escalação padrão obrigatória',
-                text: 'Crie primeiro a escalação padrão para liberar as escalações defensiva e ofensiva.',
-                background: '#1e293b',
-                color: '#fff'
-            });
+            Swal.fire({ icon: 'warning', title: 'CONFIGURAÇÃO BLOQUEADA', text: 'A tática padrão deve ser definida antes de qualquer variação estratégica.', ...swalConfig });
             setDraggedItem(null);
             return;
         }
 
         const { player, origin, escalacaoId } = draggedItem;
-        const previousLineup = lineup;
 
         if (origin === 'nao-relacionados' && activeTipo !== 'PADRAO' && !basePlayerIds.has(player.id)) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Jogador não permitido',
-                text: 'Nas escalações defensiva e ofensiva, só é permitido usar jogadores da escalação padrão.',
-                background: '#1e293b',
-                color: '#fff'
-            });
+            Swal.fire({ icon: 'warning', title: 'ATLETA INDISPONÍVEL', text: 'Apenas jogadores da tática padrão podem ser utilizados em variações.', ...swalConfig });
             setDraggedItem(null);
             return;
         }
 
-        let newX = null;
-        let newY = null;
+        let newX = null, newY = null;
 
-        if (targetZone === 'titulares') {
-            if (fieldRef.current) {
-                const rect = fieldRef.current.getBoundingClientRect();
-                const rawX = e.clientX - rect.left;
-                const rawY = e.clientY - rect.top;
-
-                newX = Math.max(0, Math.min(100, (rawX / rect.width) * 100));
-                newY = Math.max(0, Math.min(100, (rawY / rect.height) * 100));
-            }
+        if (targetZone === 'titulares' && fieldRef.current) {
+            const rect = fieldRef.current.getBoundingClientRect();
+            newX = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+            newY = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
 
             const isGoleiro = (player?.posicao || '').trim() === 'Goleiro';
-            const naLinhaDoGoleiro = newY !== null && newY >= 90;
+            const naLinhaDoGoleiro = newY >= 90;
 
             if (!isGoleiro && naLinhaDoGoleiro) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Posição inválida',
-                    text: 'A linha do goleiro aceita apenas jogadores da posição Goleiro.',
-                    background: '#1e293b',
-                    color: '#fff'
-                });
-                setDraggedItem(null);
-                return;
+                Swal.fire({ icon: 'warning', title: 'POSICIONAMENTO ILÍCITO', text: 'Esta zona é exclusiva para a heráldica de Goleiro.', ...swalConfig });
+                setDraggedItem(null); return;
             }
-
             if (isGoleiro && !naLinhaDoGoleiro) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Posição inválida',
-                    text: 'O goleiro deve ser posicionado na linha do goleiro.',
-                    background: '#1e293b',
-                    color: '#fff'
-                });
-                setDraggedItem(null);
-                return;
+                Swal.fire({ icon: 'warning', title: 'CENTRO DE DEFESA', text: 'O Goleiro deve ser alocado em sua área de atuação primária.', ...swalConfig });
+                setDraggedItem(null); return;
             }
         }
 
@@ -210,11 +154,11 @@ export default function Escalacao() {
         const currentReservas = hydratedLineup.filter(l => l.status === 'RESERVA').length;
 
         if (targetZone === 'titulares' && origin !== 'titulares' && currentTitulares >= 11) {
-            Swal.fire({ icon: 'warning', title: 'Time Completo!', text: '11 titulares em campo.', background: '#1e293b', color: '#fff' });
+            Swal.fire({ icon: 'warning', title: 'LIMITE ATINGIDO', text: 'O sistema não admite exceder 11 combatentes em campo.', ...swalConfig });
             return;
         }
         if (targetZone === 'reservas' && origin !== 'reservas' && currentReservas >= 6) {
-            Swal.fire({ icon: 'warning', title: 'Banco Cheio!', text: '6 reservas selecionados.', background: '#1e293b', color: '#fff' });
+            Swal.fire({ icon: 'warning', title: 'BANCO OVERLOAD', text: 'Limite de suporte estratégico atingido (6 atletas).', ...swalConfig });
             return;
         }
 
@@ -226,65 +170,40 @@ export default function Escalacao() {
                 const status = targetZone === 'titulares' ? 'TITULAR' : 'RESERVA';
                 const payload = { status, tipo: activeTipo };
                 if (targetZone === 'titulares' && newX !== null) {
-                    payload.x = newX;
-                    payload.y = newY;
+                    payload.x = newX; payload.y = newY;
                 }
 
                 if (origin === 'nao-relacionados') {
-                    const tempId = `tmp:${partidaId}:${player.id}:${activeTipo}`;
-
-                    setLineup(prev => ([
-                        ...prev,
-                        {
-                            id: tempId,
-                            partida: partidaId,
-                            jogador: player.id,
-                            tipo: activeTipo,
-                            status,
-                            x: payload.x ?? null,
-                            y: payload.y ?? null,
-                        }
-                    ]));
-
-                    const response = await api.post('/escalacoes/', {
-                        partida: partidaId,
-                        jogador: player.id,
-                        ...payload
-                    });
-
-                    setLineup(prev => prev.map(item => (
-                        item.id === tempId ? response.data : item
-                    )));
+                    const tempId = `tmp:${player.id}`;
+                    setLineup(prev => ([...prev, { id: tempId, partida: partidaId, jogador: player.id, tipo: activeTipo, status, x: payload.x ?? null, y: payload.y ?? null }]));
+                    const res = await api.post('/escalacoes/', { partida: partidaId, jogador: player.id, ...payload });
+                    setLineup(prev => prev.map(item => (item.id === tempId ? res.data : item)));
                 } else {
                     setLineup(prev => prev.map(item => {
                         if (item.id !== escalacaoId) return item;
-                        return {
-                            ...item,
-                            status,
-                            x: targetZone === 'titulares' ? (payload.x ?? item.x) : null,
-                            y: targetZone === 'titulares' ? (payload.y ?? item.y) : null,
-                        };
+                        return { ...item, status, x: targetZone === 'titulares' ? (payload.x ?? item.x) : null, y: targetZone === 'titulares' ? (payload.y ?? item.y) : null };
                     }));
-
-                    const response = await api.patch(`/escalacoes/${escalacaoId}/`, payload);
-
-                    setLineup(prev => prev.map(item => (
-                        item.id === escalacaoId ? response.data : item
-                    )));
+                    const res = await api.patch(`/escalacoes/${escalacaoId}/`, payload);
+                    setLineup(prev => prev.map(item => (item.id === escalacaoId ? res.data : item)));
                 }
             }
-
         } catch (error) {
             console.error("Erro ao mover:", error);
-            Swal.fire({ icon: 'error', title: 'Erro', text: 'Falha ao salvar.', background: '#1e293b', color: '#fff' });
-            setLineup(previousLineup);
+            Swal.fire({ icon: 'error', title: 'ERRO TÁTICO', text: 'Sincronização falhou.', background: '#0B0B0B', color: '#FEFEFE', confirmButtonColor: '#FF4B4B' });
+            fetchData();
         } finally {
             setDraggedItem(null);
         }
     };
 
-    if (loading && allPlayers.length === 0) return <div className="p-10 text-center text-white">Carregando...</div>;
-    if (!match) return <div className="p-10 text-center text-white">Partida não encontrada.</div>;
+    if (loading && allPlayers.length === 0) return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-pt-bg text-pt-primary gap-4">
+        <div className="w-12 h-12 border-4 border-pt-primary/30 border-t-pt-primary rounded-full animate-spin" />
+        <span className="font-black text-[10px] uppercase tracking-[0.3em] italic">Carregando Sala de Comando...</span>
+      </div>
+    );
+
+    if (!match) return <div className="min-h-screen bg-pt-bg flex items-center justify-center font-black text-white italic">DADOS INCONSISTENTES.</div>;
 
     const basePlayerIds = new Set(baseLineup.map(item => (typeof item.jogador === 'object' ? item.jogador.id : item.jogador)));
     const isVariacao = activeTipo !== 'PADRAO';
@@ -294,173 +213,159 @@ export default function Escalacao() {
     const titulares = hydratedLineup.filter(l => l.status === 'TITULAR');
     const reservas = hydratedLineup.filter(l => l.status === 'RESERVA');
     const relatedIds = new Set(hydratedLineup.map(l => l.jogador.id));
-    const jogadoresPermitidos = isVariacao
-        ? allPlayers.filter(p => basePlayerIds.has(p.id))
-        : allPlayers;
+    const jogadoresPermitidos = isVariacao ? allPlayers.filter(p => basePlayerIds.has(p.id)) : allPlayers;
     const naoRelacionados = jogadoresPermitidos.filter(p => !relatedIds.has(p.id));
 
     return (
-        <div className="min-h-screen bg-[#0f172a] p-4 text-slate-200">
-
-            <header className="max-w-7xl mx-auto mb-6 flex justify-between items-center bg-[#1e293b] p-4 rounded-xl shadow-lg border border-slate-700">
-                <div>
-                    <h1 className="text-xl md:text-2xl font-bold text-white">Escalação</h1>
-                    <p className="text-sm text-slate-400">
-                        {match.mandante?.nome} vs {match.visitante?.nome}
-                    </p>
-                    <p className="text-xs text-indigo-300 mt-1">
-                        Tipo atual: {TIPO_LABEL[activeTipo]}
-                    </p>
+        <div className="min-h-screen bg-pt-bg p-8 space-y-10 animate-in fade-in duration-700">
+            <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div className="flex items-center gap-6">
+                    <button onClick={() => navigate(-1)} className="w-12 h-12 rounded-[18px] bg-pt-surface border border-pt-white/10 text-pt-text-muted hover:text-pt-primary hover:border-pt-primary/30 flex items-center justify-center transition-all shadow-xl">
+                        <ArrowLeft className="w-5 h-5" />
+                    </button>
+                    <div className="space-y-2">
+                        <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic">Quadro Tático</h1>
+                        <p className="text-pt-text-muted font-bold text-sm uppercase tracking-widest flex items-center gap-2">
+                            {(match.nome_mandante || 'MANDANTE').toUpperCase()} <span className="text-pt-primary">VS</span> {(match.nome_visitante || 'VISITANTE').toUpperCase()}
+                        </p>
+                    </div>
                 </div>
-                <button onClick={() => navigate(-1)} className="text-slate-400 hover:text-white transition">
-                    Voltar
-                </button>
-            </header>
-
-            <div className="max-w-7xl mx-auto mb-4 bg-[#1e293b] p-2 rounded-xl shadow-lg border border-slate-700 flex gap-2">
-                {TIPOS_ESCALACAO.map((tab) => {
-                    const active = activeTipo === tab.key;
-                    return (
+                
+                <div className="flex items-center gap-2 p-1 bg-pt-surface border border-pt-white/10 rounded-[20px] shadow-2xl">
+                    {TIPOS_ESCALACAO.map((tab) => (
                         <button
                             key={tab.key}
-                            type="button"
                             onClick={() => setActiveTipo(tab.key)}
-                            className={`px-3 py-2 rounded-lg text-sm font-semibold transition ${active ? 'bg-indigo-600 text-white' : 'bg-[#0f172a] text-slate-300 hover:text-white border border-slate-700'}`}
+                            className={`px-6 py-2.5 rounded-[16px] text-[10px] font-black tracking-widest transition-all ${activeTipo === tab.key ? 'bg-pt-primary text-pt-bg shadow-xl' : 'text-pt-text-muted hover:text-white'}`}
                         >
                             {tab.label}
                         </button>
-                    );
-                })}
-            </div>
+                    ))}
+                </div>
+            </header>
 
-            {isVariacao && !escalaPadraoExiste && (
-                <div className="max-w-7xl mx-auto mb-4 rounded-xl border border-yellow-500/40 bg-[#1e293b] px-4 py-3 text-sm text-yellow-300">
-                    Para montar a escalação {TIPO_LABEL[activeTipo].toLowerCase()}, primeiro crie a escalação padrão desta partida.
+            {!podeEditarEscalacao && (
+                <div className="bg-yellow-500/10 border border-yellow-500/20 p-6 rounded-[24px] flex items-center gap-4 animate-in slide-in-from-top-4">
+                    <Zap className="w-6 h-6 text-yellow-500" />
+                    <p className="font-black text-[10px] uppercase tracking-widest text-yellow-500/80">Bloqueio Operacional: Defina a tática padrão antes de acessar variações.</p>
                 </div>
             )}
 
-            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
-
-                {/* --- NAO RELACIONADOS --- */}
-                <div
-                    className="bg-[#1e293b] rounded-xl p-4 border border-slate-700 flex flex-col h-[600px] shadow-xl"
-                    onDragOver={handleDragOver}
-                    onDrop={(e) => handleDrop(e, 'nao-relacionados')}
-                >
-                    <h2 className="text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider flex justify-between">
-                        Disponíveis <span className="text-white">{naoRelacionados.length}</span>
-                    </h2>
-                    <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+            <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_300px] gap-8 h-[720px]">
+                <div className="bg-pt-surface border border-pt-white/10 rounded-[40px] p-6 flex flex-col shadow-2xl overflow-hidden relative" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, 'nao-relacionados')}>
+                    <div className="flex items-center justify-between mb-8 px-2">
+                        <div className="space-y-1">
+                            <h2 className="text-[10px] font-black text-white uppercase tracking-[0.2em] italic">Disponíveis</h2>
+                            <p className="text-[9px] font-bold text-pt-text-muted uppercase tracking-widest">Base de Dados</p>
+                        </div>
+                        <div className="w-10 h-10 rounded-xl bg-pt-bg border border-pt-white/5 flex items-center justify-center text-pt-primary font-black text-xs">{naoRelacionados.length}</div>
+                    </div>
+                    
+                    <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
                         {naoRelacionados.map(player => (
                             <div
-                                key={player.id}
-                                draggable={podeEditarEscalacao}
-                                onDragStart={(e) => {
-                                    if (!podeEditarEscalacao) return;
-                                    handleDragStart(e, player, 'nao-relacionados');
-                                }}
-                                className={`bg-[#0f172a] p-3 rounded-lg border border-slate-800 transition flex justify-between items-center ${podeEditarEscalacao ? 'cursor-grab hover:border-indigo-500/50' : 'cursor-not-allowed opacity-60'}`}
+                                key={player.id} draggable={podeEditarEscalacao}
+                                onDragStart={(e) => podeEditarEscalacao && handleDragStart(e, player, 'nao-relacionados')}
+                                className={`group p-4 rounded-2xl bg-pt-bg/50 border border-pt-white/5 transition-all ${podeEditarEscalacao ? 'cursor-grab hover:border-pt-primary/40 hover:bg-pt-primary/5 active:cursor-grabbing' : 'grayscale opacity-30 cursor-not-allowed'}`}
                             >
-                                <span className="font-bold text-sm text-slate-300">{player.nome}</span>
-                                <span className="text-[10px] text-slate-500 uppercase">{player.posicao}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                <div className="lg:col-span-2">
-                    <div className="bg-[#1e293b] rounded-xl p-1 border border-slate-700 h-[600px] flex flex-col shadow-xl relative">
-
-                        <div className="absolute top-4 left-4 z-20 bg-black/60 backdrop-blur px-3 py-1 rounded text-white text-xs font-mono">
-                            {titulares.length}/11
-                        </div>
-                        <div className="absolute top-4 right-4 z-20 bg-black/60 backdrop-blur px-3 py-1 rounded text-emerald-400 font-bold text-xl border border-emerald-500/30">
-                            {formationName}
-                        </div>
-
-                        <div
-                            ref={fieldRef}
-                            className="relative flex-1 bg-[#1a472a] rounded-lg overflow-hidden border border-slate-800 m-1 shadow-inner group"
-                            onDragOver={handleDragOver}
-                            onDrop={(e) => handleDrop(e, 'titulares')}
-                            style={{
-                                backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(255,255,255,0.03) 20px), repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(255,255,255,0.03) 20px)'
-                            }}
-                        >
-                            <div className="absolute top-1/2 left-1/2 w-32 h-32 border-2 border-white/20 rounded-full transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
-                            <div className="absolute top-1/2 left-0 w-full h-px bg-white/20 transform -translate-y-1/2 pointer-events-none"></div>
-                            <div className="absolute top-0 left-0 w-full h-[35%] border-b border-dashed border-white/5 pointer-events-none"></div>
-                            <div className="absolute top-0 left-0 w-full h-[35%] border-b border-dashed border-white/5 pointer-events-none"></div>
-                            <div className="absolute bottom-0 left-0 w-full h-[35%] border-t border-dashed border-white/5 pointer-events-none"></div>
-                            <div className="absolute bottom-0 left-0 w-full h-[10%] border-t border-dotted border-yellow-500/20 pointer-events-none"></div>
-
-                            {/* Players on Field */}
-                            {titulares.map((escalacao) => {
-                                // Default to center if no coords
-                                const top = escalacao.y !== null ? `${escalacao.y}%` : '50%';
-                                const left = escalacao.x !== null ? `${escalacao.x}%` : '50%';
-
-                                return (
-                                    <div
-                                        key={escalacao.id}
-                                        className="absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center cursor-move z-10"
-                                        style={{ top, left }}
-                                        draggable={podeEditarEscalacao}
-                                        onDragStart={(e) => {
-                                            if (!podeEditarEscalacao) return;
-                                            handleDragStart(e, escalacao.jogador, 'titulares', escalacao.id);
-                                        }}
-                                    >
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold shadow-lg border-2 transition ${escalacao.jogador.posicao === 'Goleiro' ? 'bg-yellow-500 text-black border-yellow-300' : 'bg-white text-slate-900 border-white'}`}>
-                                            {escalacao.jogador.posicao === 'Goleiro' ? '1' : ''}
-                                            {escalacao.jogador.posicao !== 'Goleiro' && (
-                                                <span className="text-xs">{escalacao.jogador.nome.substring(0, 2).toUpperCase()}</span>
-                                            )}
-                                        </div>
-                                        <div className="mt-1 px-2 py-0.5 bg-black/70 backdrop-blur rounded text-[9px] text-white whitespace-nowrap">
-                                            {escalacao.jogador.nome}
-                                        </div>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    </div>
-                </div>
-
-                {/* --- RESERVAS --- */}
-                <div
-                    className="bg-[#1e293b] rounded-xl p-4 border border-slate-700 flex flex-col h-[600px] shadow-xl"
-                    onDragOver={handleDragOver}
-                    onDrop={(e) => handleDrop(e, 'reservas')}
-                >
-                    <h2 className="text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider flex justify-between">
-                        Reservas <span className="text-white">{reservas.length}/6</span>
-                    </h2>
-                    <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
-                        {reservas.map(escalacao => (
-                            <div
-                                key={escalacao.id}
-                                draggable={podeEditarEscalacao}
-                                onDragStart={(e) => {
-                                    if (!podeEditarEscalacao) return;
-                                    handleDragStart(e, escalacao.jogador, 'reservas', escalacao.id);
-                                }}
-                                className={`bg-[#0f172a] p-3 rounded-lg border border-yellow-500/20 transition flex items-center gap-3 ${podeEditarEscalacao ? 'cursor-grab hover:border-yellow-500' : 'cursor-not-allowed opacity-60'}`}
-                            >
-                                <div className="w-6 h-6 rounded-full bg-yellow-500/20 text-yellow-500 flex items-center justify-center text-[10px] font-bold">R</div>
-                                <div>
-                                    <p className="font-medium text-sm text-slate-300">{escalacao.jogador.nome}</p>
+                                <div className="flex items-center justify-between">
+                                    <span className="font-black text-xs text-white uppercase tracking-wider">{player.nome}</span>
+                                    <span className="text-[9px] text-pt-primary px-2 py-1 bg-pt-primary/10 rounded-lg font-black">{player.posicao.toUpperCase()}</span>
                                 </div>
                             </div>
                         ))}
-                        {reservas.length === 0 && (
-                            <p className="text-center text-slate-600 text-xs mt-10">
-                                {podeEditarEscalacao ? 'Arraste reservas pra cá' : 'Disponível após criar a escalação padrão'}
-                            </p>
-                        )}
                     </div>
                 </div>
 
+                <div className="flex flex-col gap-6 relative">
+                    <div className="bg-pt-surface border border-pt-white/10 rounded-[40px] p-4 flex-1 shadow-2xl relative overflow-hidden flex flex-col">
+                        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-12 pointer-events-none">
+                            <div className="flex flex-col items-center">
+                                <span className="text-[40px] font-black italic text-white/5 leading-none">{titulares.length}</span>
+                                <span className="text-[9px] font-black text-pt-primary tracking-[0.3em] -mt-2">UNID. ATIVAS</span>
+                            </div>
+                            <div className="bg-pt-bg border border-pt-primary/20 px-6 py-4 rounded-[24px] shadow-2xl flex flex-col items-center gap-1">
+                                <span className="text-3xl font-black italic text-pt-primary tracking-tighter tabular-nums leading-none">{formationName}</span>
+                                <span className="text-[8px] font-black text-pt-text-muted tracking-[0.2em] uppercase">Set-up Tático</span>
+                            </div>
+                        </div>
+
+                        <div
+                            ref={fieldRef} onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, 'titulares')}
+                            className="relative flex-1 bg-gradient-to-b from-[#090909] to-[#0D150B] rounded-[32px] overflow-hidden border border-pt-white/5 m-2 shadow-inner group"
+                            style={{ backgroundImage: 'radial-gradient(circle at center, rgba(162, 255, 1, 0.03) 0%, transparent 70%), repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(255,255,255,0.01) 20px), repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(255,255,255,0.01) 20px)' }}
+                        >
+                            <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
+                                <Shield className="w-96 h-96 text-pt-primary" />
+                            </div>
+                            <div className="absolute top-1/2 left-1/2 w-48 h-48 border border-pt-primary/20 rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+                            <div className="absolute top-1/2 left-0 w-full h-px bg-pt-primary/10 -translate-y-1/2 pointer-events-none" />
+                            <div className="absolute inset-y-0 left-1/2 w-px bg-pt-primary/5 pointer-events-none" />
+
+                            {titulares.map((escalacao) => (
+                                <div
+                                    key={escalacao.id}
+                                    style={{ top: `${escalacao.y}%`, left: `${escalacao.x}%` }}
+                                    draggable={podeEditarEscalacao}
+                                    onDragStart={(e) => podeEditarEscalacao && handleDragStart(e, escalacao.jogador, 'titulares', escalacao.id)}
+                                    className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group/player z-10 p-2 cursor-grab active:cursor-grabbing hover:scale-110 transition-transform duration-300"
+                                >
+                                    <div className={`relative w-14 h-14 rounded-[20px] bg-pt-bg border-4 transition-all shadow-2xl flex items-center justify-center group-hover/player:shadow-pt-primary/20 ${escalacao.jogador.posicao === 'Goleiro' ? 'border-pt-primary bg-pt-primary/5 shadow-pt-primary/10' : 'border-pt-white/10 group-hover/player:border-pt-primary/40'}`}>
+                                        <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-pt-primary blur-[4px] opacity-0 group-hover/player:opacity-100 transition-opacity" />
+                                        <Users className={`w-5 h-5 ${escalacao.jogador.posicao === 'Goleiro' ? 'text-pt-primary' : 'text-pt-text-muted'}`} />
+                                    </div>
+                                    <div className="mt-3 px-3 py-1.5 bg-pt-bg/90 backdrop-blur-md border border-pt-white/10 rounded-xl text-center shadow-2xl relative min-w-[80px]">
+                                        <p className="text-[10px] font-black text-white uppercase tracking-tighter whitespace-nowrap">{escalacao.jogador.nome.split(' ')[0]}</p>
+                                        <div className="flex items-center justify-center gap-1 mt-0.5 opacity-60">
+                                            <Target className="w-2 h-2 text-pt-primary" />
+                                            <span className="text-[7px] font-black text-pt-primary uppercase tracking-[0.1em]">{escalacao.jogador.posicao}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-pt-surface border border-pt-white/10 rounded-[40px] p-6 flex flex-col shadow-2xl overflow-hidden relative" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, 'reservas')}>
+                    <div className="flex items-center justify-between mb-8 px-2">
+                        <div className="space-y-1">
+                            <h2 className="text-[10px] font-black text-white uppercase tracking-[0.2em] italic">Reservas</h2>
+                            <p className="text-[9px] font-bold text-pt-text-muted uppercase tracking-widest">Suporte Tático</p>
+                        </div>
+                        <div className="w-10 h-10 rounded-xl bg-pt-bg border border-pt-white/5 flex items-center justify-center text-pt-primary font-black text-xs">{reservas.length}/6</div>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
+                        {reservas.map(escalacao => (
+                            <div
+                                key={escalacao.id} draggable={podeEditarEscalacao}
+                                onDragStart={(e) => podeEditarEscalacao && handleDragStart(e, escalacao.jogador, 'reservas', escalacao.id)}
+                                className={`group p-4 rounded-2xl bg-pt-bg border border-pt-primary/10 transition-all ${podeEditarEscalacao ? 'cursor-grab hover:border-pt-primary hover:bg-pt-primary/5' : 'opacity-30'}`}
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="w-8 h-8 rounded-lg bg-pt-primary flex items-center justify-center text-pt-bg font-black text-[10px]">R</div>
+                                    <div className="space-y-0.5">
+                                        <p className="font-black text-xs text-white uppercase tracking-wide">{escalacao.jogador.nome}</p>
+                                        <p className="text-[8px] font-black text-pt-primary uppercase tracking-[0.2em]">{escalacao.jogador.posicao}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+
+                        {reservas.length === 0 && (
+                            <div className="flex flex-col items-center justify-center h-48 opacity-20 text-center gap-4">
+                                <Users className="w-10 h-10" />
+                                <p className="text-[9px] font-black uppercase tracking-[0.2em]">Célula Vazia</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="mt-6 pt-6 border-t border-pt-white/5 flex items-center justify-between opacity-30">
+                        <span className="text-[8px] font-black uppercase tracking-widest leading-none">PT-TACTIC ENGINE v4.0</span>
+                        <Target className="w-3 h-3 text-pt-primary" />
+                    </div>
+                </div>
             </div>
         </div>
     );

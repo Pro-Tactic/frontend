@@ -1,149 +1,98 @@
 import { useNavigate } from "react-router-dom";
-import { UserPlus, Trophy, Building2, Swords, UserCog } from "lucide-react";
+import { UserPlus, Trophy, Building2, Swords, UserCog, ChevronRight, Zap } from "lucide-react";
 
 export default function Registro() {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-6xl mx-auto w-full">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">
-          Registro
-        </h1>
-        <p className="text-sm text-slate-400">
-          Cadastre jogadores e competições manualmente.
+    <div className="max-w-6xl mx-auto w-full space-y-12 animate-in fade-in duration-700">
+      <header className="space-y-3">
+        <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-[24px] bg-pt-primary/10 flex items-center justify-center border border-pt-primary/30 shadow-xl shadow-pt-primary/10">
+                <Zap className="text-pt-primary w-8 h-8" />
+            </div>
+            <h1 className="text-5xl font-black text-white tracking-tighter uppercase italic">Registro Central</h1>
+        </div>
+        <p className="text-pt-text-muted font-black text-[10px] uppercase tracking-[0.4em] ml-2">
+            Protocolos de inserção de dados e gestão institucional.
         </p>
+      </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <RegistryCard 
+          onClick={() => navigate("/registro/jogadores")}
+          icon={<UserPlus className="w-7 h-7" />}
+          title="Atletas"
+          desc="Inserção de novas unidades táticas e status."
+        />
+
+        <RegistryCard 
+          onClick={() => navigate("/registro/clube")}
+          icon={<Building2 className="w-7 h-7" />}
+          title="Clube"
+          desc="Gestão de identidades e infraestrutura."
+        />
+
+        <RegistryCard 
+          onClick={() => navigate("/registro/competicoes")}
+          icon={<Trophy className="w-7 h-7" />}
+          title="Competições"
+          desc="Arquivamento de torneios e ligas."
+        />
+
+        <RegistryCard 
+          onClick={() => navigate("/registro/tecnico")}
+          icon={<UserCog className="w-7 h-7" />}
+          title="Comissão"
+          desc="Vínculo de novos perfis de comando."
+        />
+
+        <RegistryCard 
+          onClick={() => navigate("/registro/partidas")}
+          icon={<Swords className="w-7 h-7" />}
+          title="Partidas"
+          desc="Agendamento e protocolos de combate."
+        />
+
       </div>
 
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        <button
-          type="button"
-          onClick={() => navigate("/registro/jogadores")}
-          className="group text-left bg-[#0b1220] border border-slate-800 rounded-2xl p-5 hover:border-emerald-500/40 hover:bg-slate-900/30 transition"
-        >
-          <div className="flex items-start gap-4">
-            <div className="w-11 h-11 rounded-xl bg-emerald-500/15 ring-1 ring-emerald-500/25 flex items-center justify-center">
-              <UserPlus className="w-5 h-5 text-emerald-300" />
-            </div>
-
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold text-white">
-                Registrar Jogadores
-              </h2>
-              <p className="text-sm text-slate-400 mt-1">
-                Adicione atletas com informações básicas e status.
-              </p>
-              <div className="mt-4 text-sm text-emerald-300 group-hover:text-emerald-200">
-                Abrir registro →
-              </div>
-            </div>
-          </div>
-        </button>
-
-        {/* Card - Clube */}
-        <button
-          type="button"
-          onClick={() => navigate("/registro/clube")}
-          className="group text-left bg-[#0b1220] border border-slate-800 rounded-2xl p-5 hover:border-emerald-500/40 hover:bg-slate-900/30 transition"
-        >
-          <div className="flex items-start gap-4">
-            <div className="w-11 h-11 rounded-xl bg-indigo-500/15 ring-1 ring-indigo-500/25 flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-indigo-300" />
-            </div>
-
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold text-white">
-                Registrar Clube
-              </h2>
-              <p className="text-sm text-slate-400 mt-1">
-                Cadastre clubes e informações institucionais.
-              </p>
-
-              <div className="mt-4 text-sm text-emerald-300 group-hover:text-emerald-200">
-                Abrir registro →
-              </div>
-            </div>
-          </div>
-        </button>
-
-        {/* Card - Competições */}
-        <button
-          type="button"
-          onClick={() => navigate("/registro/competicoes")}
-          className="group text-left bg-[#0b1220] border border-slate-800 rounded-2xl p-5 hover:border-emerald-500/40 hover:bg-slate-900/30 transition"
-        >
-          <div className="flex items-start gap-4">
-            <div className="w-11 h-11 rounded-xl bg-sky-500/15 ring-1 ring-sky-500/25 flex items-center justify-center">
-              <Trophy className="w-5 h-5 text-sky-300" />
-            </div>
-
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold text-white">
-                Registrar Competições
-              </h2>
-              <p className="text-sm text-slate-400 mt-1">
-                Cadastre campeonatos e torneios.
-              </p>
-
-              <div className="mt-4 text-sm text-emerald-300 group-hover:text-emerald-200">
-                Abrir registro →
-              </div>
-            </div>
-          </div>
-        </button>
-
-        {/* Card - Técnico */}
-        <button
-          type="button"
-          onClick={() => navigate("/registro/tecnico")}
-          className="group text-left bg-[#0b1220] border border-slate-800 rounded-2xl p-5 hover:border-emerald-500/40 hover:bg-slate-900/30 transition"
-        >
-          <div className="flex items-start gap-4">
-            <div className="w-11 h-11 rounded-xl bg-amber-500/15 ring-1 ring-amber-500/25 flex items-center justify-center">
-              <UserCog className="w-5 h-5 text-amber-300" />
-            </div>
-
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold text-white">
-                Cadastrar Técnico
-              </h2>
-              <p className="text-sm text-slate-400 mt-1">
-                Crie usuário treinador e vincule a um clube.
-              </p>
-
-              <div className="mt-4 text-sm text-emerald-300 group-hover:text-emerald-200">
-                Abrir cadastro →
-              </div>
-            </div>
-          </div>
-        </button>
-
-        {/*Card - Partida */}
-        <button
-          type="button"
-          onClick={() => navigate("/registro/partidas")}
-          className="group text-left bg-[#0b1220] border border-slate-800 rounded-2xl p-5 hover:border-emerald-500/40 hover:bg-slate-900/30 transition"
-        >
-          <div className="flex items-start gap-4">
-            <div className="w-11 h-11 rounded-xl bg-rose-500/15 ring-1 ring-rose-500/25 flex items-center justify-center">
-              <Swords className="w-5 h-5 text-rose-300" />
-            </div>
-
-            <div className="flex-1">
-              <h2 className="text-lg font-semibold text-white">
-                Criar Partida
-              </h2>
-              <p className="text-sm text-slate-400 mt-1">
-                Agende novos jogos e gerencie placares.
-              </p>
-              <div className="mt-4 text-sm text-emerald-300 group-hover:text-emerald-200">
-                Abrir registro →
-              </div>
-            </div>
-          </div>
-        </button>
-
+      <div className="flex items-center gap-4 opacity-20 justify-center pt-8">
+          <div className="w-1.5 h-1.5 rounded-full bg-pt-white/40" />
+          <div className="w-1.5 h-1.5 rounded-full bg-pt-white/40" />
       </div>
     </div>
+  );
+}
+
+function RegistryCard({ onClick, icon, title, desc }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group text-left bg-pt-surface border border-pt-white/10 rounded-[32px] p-8 hover:border-pt-primary/40 transition-all shadow-2xl relative overflow-hidden active:scale-[0.98]"
+    >
+      <div className="absolute top-0 right-0 w-32 h-32 bg-pt-primary/5 rounded-full blur-[80px] -mr-16 -mt-16 group-hover:bg-pt-primary/10 transition-all duration-700" />
+      
+      <div className="relative z-10 flex flex-col h-full">
+        <div className="w-16 h-16 rounded-[22px] bg-pt-bg border border-pt-white/10 flex items-center justify-center text-pt-primary mb-8 group-hover:border-pt-primary/30 transition-all shadow-inner group-hover:bg-pt-primary/5">
+          {icon}
+        </div>
+
+        <div className="flex-1 space-y-2">
+          <h2 className="text-2xl font-black text-white tracking-tighter uppercase italic">
+            {title}
+          </h2>
+          <p className="text-[10px] text-pt-text-muted font-bold uppercase tracking-widest leading-relaxed">
+            {desc}
+          </p>
+        </div>
+
+        <div className="mt-8 flex items-center gap-2 text-[10px] font-black text-pt-primary uppercase tracking-[0.2em] transform group-hover:translate-x-2 transition-all">
+          Protocolo de Acesso
+          <ChevronRight className="w-4 h-4" />
+        </div>
+      </div>
+    </button>
   );
 }

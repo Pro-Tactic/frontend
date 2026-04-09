@@ -3,9 +3,9 @@ import { api } from "../services/api";
 import { fetchNavigation } from "../services/navigation";
 import { clearSession, saveSession } from "../services/auth";
 import { prefetchAdminLandingRoute, prefetchCoachLandingRoute } from "../services/routePrefetch";
-import { User, Lock, Eye, EyeOff, ChevronRight } from "lucide-react";
+import { User, Lock, Eye, EyeOff, ChevronRight, Zap, ShieldCheck, Activity, Brain } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
-import logoImg from "../assets/logo-protactic.png";
+import logoImg from "../../icon/logo-protactic.png";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
@@ -25,8 +25,8 @@ export default function Login() {
     showConfirmButton: false,
     timer: 3000,
     timerProgressBar: true,
-    background: '#0f172a', // Slate-900
-    color: '#e2e8f0',      // Slate-200
+    background: '#0B0B0B',
+    color: '#FEFEFE',
     didOpen: (toast) => {
       toast.addEventListener('mouseenter', Swal.stopTimer)
       toast.addEventListener('mouseleave', Swal.resumeTimer)
@@ -45,9 +45,9 @@ export default function Login() {
         password,
       });
 
-      const { access, refresh, user_type } = response.data;
+      const { access, refresh, user_type, first_name, last_name, clube_nome } = response.data;
 
-      saveSession({ access, refresh, user_type });
+      saveSession({ access, refresh, user_type, first_name, last_name, clube_nome });
 
       if (user_type === "ADMIN") {
         prefetchAdminLandingRoute();
@@ -57,14 +57,12 @@ export default function Login() {
 
       Toast.fire({
         icon: 'success',
-        title: 'Login realizado com sucesso!'
+        title: 'ACESSO VALIDADO. BEM-VINDO AO COMANDO.'
       });
 
-      // Navigate immediately to avoid blocking login on an extra API call.
-      const target = user_type === "ADMIN" ? "/registro" : "/inicio";
+      const target = user_type === "ADMIN" ? "/registro" : "/clube";
       navigate(target, { replace: true });
 
-      // Warm up sidebar navigation in background for the first protected screen.
       fetchNavigation({ preferCache: false }).catch((navErr) => {
         console.error("Falha ao pré-carregar navegação:", navErr);
       });
@@ -73,7 +71,7 @@ export default function Login() {
       console.error(err);
       Toast.fire({
         icon: 'error',
-        title: 'Credenciais inválidas ou erro no servidor.'
+        title: 'CREDENCIAIS INVÁLIDAS OU ERRO DE PROTOCOLO.'
       });
     } finally {
       setLoading(false);
@@ -81,96 +79,114 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-green-500/10 rounded-full blur-[100px]" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-blue-500/10 rounded-full blur-[100px]" />
+    <div className="min-h-screen bg-pt-bg text-pt-text flex items-center justify-center p-6 lg:p-12 relative overflow-hidden font-sans selection:bg-pt-primary selection:text-pt-bg">
+      {/* Dynamic Background Elements */}
+      <div className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-pt-primary/5 rounded-full blur-[140px] animate-pulse pointer-events-none" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-pt-primary/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <main className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center z-10">
-        <div className="flex flex-col items-center lg:items-center text-center space-y-8">
-          <div className="flex flex-col items-center mb-4">
-            <img src={logoImg} alt="Logo ProTactic" className="w-64 h-auto" />
+      <main className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-16 items-center z-10 animate-in fade-in zoom-in-95 duration-700">
+        
+        {/* Left Side: Branding & Intelligence */}
+        <div className="flex flex-col items-center lg:items-start space-y-12">
+          <div className="flex flex-col items-center lg:items-start scale-110 lg:scale-125 origin-left">
+            <img src={logoImg} alt="ProTactic" className="w-64 h-auto brightness-110 drop-shadow-2xl mb-2" />
           </div>
 
-          <div className="space-y-4 max-w-lg">
-            <h2 className="text-2xl font-medium tracking-wide">
-              ASSISTENTE TÉCNICO VIRTUAL
-            </h2>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Análise tática avançada, gestão de elenco inteligente e preparação
-              completa para cada adversário.
+          <div className="space-y-6 max-w-xl text-center lg:text-left pt-6">
+            <div className="flex items-center justify-center lg:justify-start gap-3 opacity-80">
+               <Zap className="w-5 h-5 text-pt-primary animate-pulse" />
+               <h2 className="text-[10px] font-black tracking-[0.4em] uppercase text-pt-primary italic leading-none">
+                 Comando de Inteligência Artificial
+               </h2>
+            </div>
+            
+            <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-white uppercase italic leading-[0.9]">
+              Decodificando <br />
+              <span className="text-pt-primary">a Vitória.</span>
+            </h1>
+            
+            <p className="text-pt-text-muted text-sm md:text-base leading-relaxed font-bold uppercase tracking-widest opacity-60 max-w-md">
+              Geração de táticas avançadas, gestão preditiva de elenco e inteligência estatística para o futebol de elite.
             </p>
-            <button
-              onClick={() => navigate("/sobre")}
-              type="button"
-              className="border border-slate-700 px-6 py-2 rounded-lg text-sm hover:bg-slate-800 transition-colors"
-            >
-              Sobre
-            </button>
+            
+            <div className="pt-4">
+              <button
+                onClick={() => navigate("/sobre")}
+                type="button"
+                className="group flex items-center gap-3 bg-pt-surface border border-pt-white/10 px-10 py-4 rounded-[20px] text-xs font-black uppercase tracking-widest hover:border-pt-primary/40 hover:bg-pt-primary hover:text-pt-bg transition-all shadow-2xl"
+              >
+                Explorar Ecossistema
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 w-full max-w-lg mt-8">
-            <StatCard value="500k+" label="Análises Táticas" />
-            <StatCard value="350k+" label="Jogadores Geridos" />
-            <StatCard value="24/7" label="Suporte Tático" />
+          {/* Stats Bar */}
+          <div className="grid grid-cols-3 gap-6 w-full max-w-xl pt-8 hidden md:grid">
+            <StatCard icon={<Brain className="w-4 h-4" />} value="1.2M+" label="SIMULAÇÕES" />
+            <StatCard icon={<Activity className="w-4 h-4" />} value="85k+" label="ATLETAS" />
+            <StatCard icon={<ShieldCheck className="w-4 h-4" />} value="99.9%" label="PRECISÃO" />
           </div>
         </div>
+
+        {/* Right Side: Login Terminal */}
         <div className="flex justify-center w-full">
-          <div className="w-full max-w-md bg-[#0f172a] border border-slate-800 rounded-2xl p-8 shadow-2xl">
-            <div className="mb-8">
-              <h2 className="text-2xl font-semibold text-white">BEM-VINDO</h2>
-              <p className="text-slate-400 text-sm mt-1">
-                Acesse sua área de trabalho
+          <div className="w-full max-w-lg bg-pt-surface border border-pt-white/10 rounded-[44px] p-12 md:p-16 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8)] backdrop-blur-md relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-pt-primary/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none group-hover:opacity-100 opacity-50 transition-opacity" />
+            
+            <div className="mb-14 text-center">
+              <h2 className="text-4xl font-black text-white tracking-tighter italic uppercase">Comando</h2>
+              <p className="text-pt-text-muted text-[10px] mt-2 font-black uppercase tracking-[0.3em] italic">
+                Acesse o Terminal Estratégico
               </p>
             </div>
 
-            <form onSubmit={handleLogin} className="flex flex-col gap-5">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300">
-                  Login
+            <form onSubmit={handleLogin} className="space-y-8">
+              <div className="space-y-3">
+                <label className="text-[9px] font-black text-pt-text-muted uppercase tracking-[0.25em] ml-2">
+                  Identificador de Operação
                 </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 h-5 w-5" />
+                <div className="relative group/field">
+                  <User className="absolute left-5 top-1/2 -translate-y-1/2 text-pt-primary h-5 w-5 z-10 group-focus-within/field:scale-110 transition-transform" />
                   <input
                     type="text"
-                    placeholder="Digite seu login"
+                    placeholder="LOGIN_ID"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full bg-[#1e293b] border border-slate-700 rounded-lg py-3 pl-10 pr-4 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
+                    className="w-full bg-pt-bg border border-pt-white/10 rounded-[22px] py-5 pl-14 pr-6 text-pt-text font-black text-xs uppercase tracking-widest placeholder:text-pt-white/5 focus:outline-none focus:border-pt-primary transition-all shadow-inner"
+                    required
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-300">
-                  Senha
+              <div className="space-y-3">
+                <label className="text-[9px] font-black text-pt-text-muted uppercase tracking-[0.25em] ml-2">
+                  Chave de Acesso
                 </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 h-5 w-5" />
+                <div className="relative group/field">
+                  <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-pt-primary h-5 w-5 z-10 group-focus-within/field:scale-110 transition-transform" />
                   <input
                     type={showPassword ? "text" : "password"}
-                    placeholder="Digite sua senha"
+                    placeholder="SECURITY_PASSWORD"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-[#1e293b] border border-slate-700 rounded-lg py-3 pl-10 pr-10 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
+                    className="w-full bg-pt-bg border border-pt-white/10 rounded-[22px] py-5 pl-14 pr-16 text-pt-text font-black text-xs uppercase tracking-widest placeholder:text-pt-white/5 focus:outline-none focus:border-pt-primary transition-all shadow-inner"
+                    required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                    className="absolute right-5 top-1/2 -translate-y-1/2 text-pt-text-muted hover:text-pt-primary transition-colors z-10 p-1"
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5" />
-                    ) : (
-                      <Eye className="h-5 w-5" />
-                    )}
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
-                <div className="flex justify-end">
+                <div className="flex justify-end pr-2">
                   <Link 
                     to="/forgot-password" 
-                    className="text-xs text-slate-400 hover:text-green-500 transition-colors"
+                    className="text-[9px] text-pt-text-muted font-black hover:text-pt-primary transition-all uppercase tracking-widest italic hover:translate-x-1"
                   >
-                    Esqueci minha senha
+                    Recuperar Acesso //
                   </Link>
                 </div>
               </div>
@@ -178,27 +194,42 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-3 rounded-lg mt-2 flex items-center justify-center gap-2 transition-all transform active:scale-95"
+                className="w-full bg-pt-primary hover:bg-pt-primary/90 text-pt-bg font-black py-6 rounded-[24px] mt-6 flex items-center justify-center gap-3 transition-all transform active:scale-95 shadow-xl shadow-pt-primary/20 uppercase tracking-[0.2em] text-sm group"
               >
-                {loading ? "Entrando..." : "Entrar"}
-                {!loading && <ChevronRight className="h-5 w-5" />}
+                {loading ? (
+                  <div className="w-5 h-5 border-2 border-pt-bg/30 border-t-pt-bg rounded-full animate-spin" />
+                ) : (
+                  <>
+                    AUTENTICAR COMANDO
+                    <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
               </button>
             </form>
-          </div>
-          <div className="text-center absolute bottom-4 text-[10px] text-slate-600 w-full lg:w-auto">
-            © 2025 ProTactic. Todos os direitos reservados.
+
+            <div className="mt-14 pt-8 border-t border-pt-white/5 flex items-center justify-between opacity-30">
+               <ShieldCheck className="w-4 h-4 text-pt-primary" />
+               <span className="text-[8px] font-black uppercase tracking-[0.3em] font-mono italic">Encryption Stack: V4-AES</span>
+            </div>
           </div>
         </div>
       </main>
+
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-10 text-[9px] text-pt-text-muted/20 font-black uppercase tracking-[0.4em] pointer-events-none whitespace-nowrap hidden lg:flex">
+          <span>ProTactic © 2026</span>
+          <span className="w-1 h-1 bg-pt-primary/20 rounded-full" />
+          <span>Nó Institucional // Operacional</span>
+      </div>
     </div>
   );
 }
 
-function StatCard({ value, label }) {
+function StatCard({ icon, value, label }) {
   return (
-    <div className="bg-[#0f172a] border border-slate-800 p-4 rounded-xl flex flex-col items-center justify-center text-center">
-      <span className="text-green-500 font-bold text-xl">{value}</span>
-      <span className="text-slate-500 text-xs mt-1">{label}</span>
+    <div className="bg-pt-surface/40 backdrop-blur-sm border border-pt-white/5 p-5 rounded-[24px] flex flex-col items-center justify-center text-center shadow-2xl hover:border-pt-primary/30 transition-all group">
+      <div className="text-pt-primary/40 mb-3 group-hover:text-pt-primary transition-colors">{icon}</div>
+      <span className="text-white font-black text-xl tracking-tighter leading-none italic">{value}</span>
+      <span className="text-pt-text-muted font-black text-[8px] uppercase mt-2 tracking-widest opacity-60 leading-none">{label}</span>
     </div>
   );
 }

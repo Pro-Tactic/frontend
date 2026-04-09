@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, User, Mail, Lock, Shield, ChevronDown, Check, Zap } from "lucide-react";
 import Swal from "sweetalert2";
 import { api } from "../services/api";
 
@@ -39,14 +39,19 @@ export default function RegistroTecnico() {
   async function handleSubmit(e) {
     e.preventDefault();
 
+    const swalConfig = {
+      background: '#0B0B0B',
+      color: '#FEFEFE',
+      confirmButtonColor: '#A2FF01',
+      confirmButtonText: 'ENTENDIDO'
+    };
+
     if (!form.username || !form.password || !form.clube) {
       Swal.fire({
         icon: "warning",
-        title: "Campos obrigatórios",
-        text: "Preencha login, senha e clube.",
-        background: "#0f172a",
-        color: "#e2e8f0",
-        confirmButtonColor: "#f59e0b",
+        title: "DADOS INCOMPLETOS",
+        text: "Login, senha e clube são requisitos mandatórios.",
+        ...swalConfig
       });
       return;
     }
@@ -64,11 +69,12 @@ export default function RegistroTecnico() {
 
       Swal.fire({
         icon: "success",
-        title: "Técnico cadastrado",
-        text: "Usuário treinador criado com sucesso.",
-        background: "#0f172a",
-        color: "#e2e8f0",
-        confirmButtonColor: "#10b981",
+        title: "TÉCNICO INTEGRADO",
+        text: "Usuário treinador configurado no sistema ProTactic.",
+        background: '#0B0B0B',
+        color: '#FEFEFE',
+        confirmButtonColor: '#A2FF01',
+        confirmButtonText: 'EXCELENTE'
       });
 
       setForm({
@@ -84,15 +90,15 @@ export default function RegistroTecnico() {
         error?.response?.data?.username?.[0] ||
         error?.response?.data?.clube?.[0] ||
         error?.response?.data?.detail ||
-        "Não foi possível cadastrar o técnico.";
+        "Não foi possível processar o registro tático.";
 
       Swal.fire({
         icon: "error",
-        title: "Erro",
+        title: "FALHA NO REGISTRO",
         text: msg,
-        background: "#0f172a",
-        color: "#e2e8f0",
-        confirmButtonColor: "#ef4444",
+        background: '#0B0B0B',
+        color: '#FEFEFE',
+        confirmButtonColor: '#FF4B4B',
       });
     } finally {
       setLoading(false);
@@ -100,63 +106,79 @@ export default function RegistroTecnico() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto w-full">
-      <div className="flex items-center gap-4 mb-8">
-        <button
-          onClick={() => navigate(-1)}
-          type="button"
-          className="p-2 rounded-xl bg-[#0f172a] border border-slate-800 text-slate-400 hover:text-white hover:border-emerald-500/40 transition"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <div>
-          <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">Cadastrar Técnico</h1>
-          <p className="text-sm text-slate-400 mt-2">Crie um usuário com perfil TREINADOR e vincule a um clube.</p>
+    <div className="space-y-10 animate-in fade-in duration-700">
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="flex items-center gap-6">
+          <button
+            onClick={() => navigate(-1)}
+            type="button"
+            className="w-12 h-12 rounded-[18px] bg-pt-surface border border-pt-white/10 text-pt-text-muted hover:text-pt-primary hover:border-pt-primary/30 flex items-center justify-center transition-all shadow-xl"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div className="space-y-2">
+            <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic">Novo Estrategista</h1>
+            <p className="text-pt-text-muted font-bold text-sm uppercase tracking-widest">Atribuição de comando técnico e privilégios de acesso.</p>
+          </div>
         </div>
-      </div>
+      </header>
 
       <form
         onSubmit={handleSubmit}
-        className="mt-8 bg-[#0b1220] border border-slate-800 rounded-2xl p-6 md:p-8 space-y-4"
+        className="mt-8 bg-pt-surface border border-pt-white/10 rounded-[40px] p-8 md:p-12 shadow-2xl space-y-8 relative overflow-hidden group"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field label="Login *" name="username" value={form.username} onChange={handleChange} />
-          <Field label="Email" name="email" type="email" value={form.email} onChange={handleChange} />
+        <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+           <User className="w-52 h-52 text-pt-primary" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field label="Nome" name="first_name" value={form.first_name} onChange={handleChange} />
-          <Field label="Sobrenome" name="last_name" value={form.last_name} onChange={handleChange} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+          <Field label="Identificação / Login" name="username" value={form.username} onChange={handleChange} icon={<User className="w-4 h-4" />} placeholder="TRAINER_LOG" />
+          <Field label="Correio Eletrônico" name="email" type="email" value={form.email} onChange={handleChange} icon={<Mail className="w-4 h-4" />} placeholder="COACH@PROTACTIC.COM" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field label="Senha *" name="password" type="password" value={form.password} onChange={handleChange} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+          <Field label="Prenome" name="first_name" value={form.first_name} onChange={handleChange} placeholder="NOME" />
+          <Field label="Alcunha / Sobrenome" name="last_name" value={form.last_name} onChange={handleChange} placeholder="SOBRENOME" />
+        </div>
 
-          <div>
-            <label className="block text-sm text-slate-300 font-medium mb-2">Clube *</label>
-            <select
-              name="clube"
-              value={form.clube}
-              onChange={handleChange}
-              className="w-full bg-[#0f172a] border border-slate-800 rounded-xl py-3 px-4 text-slate-200 focus:outline-none focus:border-emerald-500/60"
-            >
-              <option value="">Selecione o clube</option>
-              {clubes.map((clube) => (
-                <option key={clube.id} value={clube.id}>
-                  {clube.nome}
-                </option>
-              ))}
-            </select>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+          <Field label="Código de Acesso" name="password" type="password" value={form.password} onChange={handleChange} icon={<Lock className="w-4 h-4" />} />
+
+          <div className="space-y-2.5">
+            <label className="block text-[10px] font-black text-pt-text-muted uppercase tracking-[0.25em] ml-1">Clube de Comando</label>
+            <div className="relative">
+              <select
+                name="clube"
+                value={form.clube}
+                onChange={handleChange}
+                className="appearance-none w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 pl-12 pr-12 text-pt-text font-black text-xs uppercase tracking-widest focus:outline-none focus:border-pt-primary transition-all cursor-pointer shadow-inner"
+              >
+                <option value="">SELECIONAR ENTIDADE...</option>
+                {clubes.map((clube) => (
+                  <option key={clube.id} value={clube.id}>
+                    {clube.nome.toUpperCase()}
+                  </option>
+                ))}
+              </select>
+              <Shield className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-pt-primary" />
+              <ChevronDown className="w-5 h-5 text-pt-text-muted absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
           </div>
         </div>
 
-        <div className="pt-2 flex justify-end">
-          <button
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+           <div className="flex items-center gap-3 opacity-30">
+              <Zap className="w-4 h-4 text-pt-primary" />
+              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-pt-text-muted italic">Módulo de Autenticação Tática v2.4</span>
+           </div>
+           
+           <button
             type="submit"
             disabled={loading}
-            className="px-8 py-3 rounded-xl bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 hover:bg-emerald-500/25 transition disabled:opacity-50"
+            className="w-full md:w-auto bg-pt-primary hover:bg-pt-primary/90 text-pt-bg font-black py-5 px-16 rounded-[24px] uppercase tracking-widest text-sm shadow-xl shadow-pt-primary/10 hover:shadow-pt-primary/20 transition-all active:scale-95 flex items-center justify-center gap-3 disabled:opacity-50"
           >
-            {loading ? "Salvando..." : "Cadastrar Técnico"}
+            {loading ? "PROCESSANDO..." : "Vincular Estrategista"}
+            {!loading && <Check className="w-5 h-5" />}
           </button>
         </div>
       </form>
@@ -164,14 +186,17 @@ export default function RegistroTecnico() {
   );
 }
 
-function Field({ label, ...props }) {
+function Field({ label, icon, ...props }) {
   return (
-    <div>
-      <label className="block text-sm text-slate-300 font-medium mb-2">{label}</label>
-      <input
-        className="w-full bg-[#0f172a] border border-slate-800 rounded-xl py-3 px-4 text-slate-200 focus:outline-none focus:border-emerald-500/60"
-        {...props}
-      />
+    <div className="space-y-2.5">
+      <label className="block text-[10px] font-black text-pt-text-muted uppercase tracking-[0.25em] ml-1">{label}</label>
+      <div className="relative">
+        <input
+          className={`w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 ${icon ? 'pl-12' : 'px-6'} pr-6 text-pt-text font-black text-xs uppercase tracking-widest placeholder:text-pt-white/10 focus:outline-none focus:border-pt-primary transition-all shadow-inner`}
+          {...props}
+        />
+        {icon && <div className="absolute left-5 top-1/2 -translate-y-1/2 text-pt-primary">{icon}</div>}
+      </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown } from "lucide-react";
+import { ArrowLeft, ChevronDown, Trophy, Globe, Layout, Users2, DollarSign, Award, Zap, Check } from "lucide-react";
 import { api } from "../services/api";
 import Swal from 'sweetalert2';
 import { COUNTRIES } from "../data/countries";
@@ -26,12 +26,18 @@ export default function RegistroCompeticoes() {
     }));
   };
 
-  const handleCheckbox = (e) => {
-    const { name, checked } = e.target;
-    setForm({ ...form, [name]: checked });
+  const handleCheckbox = (name, checked) => {
+    setForm(prev => ({ ...prev, [name]: checked }));
   };
 
   async function handleRegistrar() {
+    const swalConfig = {
+      background: '#0B0B0B',
+      color: '#FEFEFE',
+      confirmButtonColor: '#A2FF01',
+      confirmButtonText: 'ENTENDIDO'
+    };
+
     try {
       const payload = {
         nome: form.nome,
@@ -46,32 +52,25 @@ export default function RegistroCompeticoes() {
       await api.post("/competicoes/", payload);
       
       Swal.fire({
-        title: 'Sucesso!',
-        text: 'Competição registrada.',
+        title: 'COMPETIÇÃO REGISTRADA!',
+        text: 'O campeonato foi incorporado ao sistema tático.',
         icon: 'success',
-        background: '#0f172a',
-        color: '#e2e8f0',
-        confirmButtonColor: '#10b981',
+        background: '#0B0B0B',
+        color: '#FEFEFE',
+        confirmButtonColor: '#A2FF01',
+        confirmButtonText: 'EXCELENTE'
       });
 
     } catch (error) {
       console.error(error);
-      if (error.response && error.response.status === 401) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Sessão Expirada',
-            text: 'Faça login novamente para continuar.',
-            background: '#0f172a', color: '#e2e8f0', confirmButtonColor: '#ef4444'
-          });
-      } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Erro!',
-            text: 'Não foi possível registrar a competição.',
-            toast: true, position: 'top-end',
-            background: '#0f172a', color: '#e2e8f0', showConfirmButton: false, timer: 4000
-          });
-      }
+      Swal.fire({
+        icon: 'error',
+        title: 'FALHA NO REGISTRO',
+        text: error.response?.data?.detail || 'Não foi possível cadastrar a competição.',
+        background: '#0B0B0B',
+        color: '#FEFEFE',
+        confirmButtonColor: '#FF4B4B',
+      });
     }
   }
 
@@ -95,209 +94,201 @@ export default function RegistroCompeticoes() {
 
   const placeholderLocalidade =
     form.tamanho === "Mundial"
-      ? "Não aplicável"
+      ? "NÃO APLICÁVEL"
       : !form.tamanho
-      ? "Selecione o tamanho primeiro"
-      : "Selecione";
+      ? "AGUARDANDO TAMANHO..."
+      : "SELECIONAR REGIÃO";
 
   return (
-    <div className="max-w-6xl mx-auto w-full">
-      <div className="flex items-center gap-4 mb-8">
-        <button
-          onClick={() => navigate(-1)}
-          type="button"
-          className="p-2 rounded-xl bg-[#0f172a] border border-slate-800 text-slate-400 hover:text-white hover:border-emerald-500/40 transition"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <div>
-          <h1 className="text-3xl md:text-4xl font-semibold tracking-wide">
-            Registrar Competições
-          </h1>
-          <p className="text-sm text-slate-400 mt-2">
-            Cadastre campeonatos e torneios.
-          </p>
-        </div>
-      </div>
-
-      <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-[#0b1220] border border-slate-800 rounded-2xl p-5 space-y-4">
-          
-          <Field 
-            label="Nome da Competição" 
-            placeholder="Digite o nome"
-            name="nome"
-            value={form.nome}
-            onChange={handleChange}
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SelectField
-              label="Tamanho"
-              name="tamanho"
-              value={form.tamanho}
-              onChange={handleChange}
-            >
-              <option value="" disabled>Selecione</option>
-              <option>Mundial</option>
-              <option>Continental</option>
-              <option>Nacional</option>
-              <option>Regional</option>
-              <option>Estadual</option>
-            </SelectField>
-
-            <SelectField
-              label={labelLocalidade || "Localidade"}
-              name="localidade"
-              value={form.localidade}
-              onChange={handleChange}
-              disabled={form.tamanho === "Mundial" || !form.tamanho}
-            >
-              <option value="">{placeholderLocalidade}</option>
-              {localidadeOptions.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </SelectField>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SelectField 
-                label="Participantes"
-                name="tipo_participantes"
-                value={form.tipo_participantes}
-                onChange={handleChange}
-            >
-              <option value="" disabled>Selecione</option>
-              <option>Seleções</option>
-              <option>Clubes</option>
-            </SelectField>
-
-            <SelectField 
-                label="Divisão"
-                name="divisao"
-                value={form.divisao}
-                onChange={handleChange}
-            >
-              <option value="" disabled>Selecione</option>
-              <option>1ª Divisão</option>
-              <option>2ª Divisão</option>
-              <option>3ª Divisão</option>
-              <option>4ª Divisão</option>
-              <option>5ª Divisão</option>
-              <option>Sem Divisão</option>
-            </SelectField>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SelectField 
-                label="Tipo"
-                name="tipo_formato"
-                value={form.tipo_formato}
-                onChange={handleChange}
-            >
-              <option value="" disabled>Selecione</option>
-              <option>Torneio</option>
-              <option>Liga</option>
-              <option>Outro</option>
-            </SelectField>
-
-            <Field
-              label="Número de Participantes"
-              placeholder="Ex.: 20"
-              type="number"
-              name="qtd_participantes"
-              value={form.qtd_participantes}
-              onChange={handleChange}
-            />
+    <div className="space-y-10 animate-in fade-in duration-700">
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="flex items-center gap-6">
+          <button
+            onClick={() => navigate(-1)}
+            className="w-12 h-12 rounded-[18px] bg-pt-surface border border-pt-white/10 text-pt-text-muted hover:text-pt-primary hover:border-pt-primary/30 flex items-center justify-center transition-all shadow-xl"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div className="space-y-2">
+            <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic">Novo Torneio</h1>
+            <p className="text-pt-text-muted font-bold text-sm uppercase tracking-widest">Configuração de parâmetros para competições oficiais.</p>
           </div>
         </div>
+      </header>
 
-        <div className="bg-[#0b1220] border border-slate-800 rounded-2xl p-6 flex flex-col space-y-6">
-          <h2 className="text-2xl md:text-3xl font-semibold text-slate-200 text-center">
-            Premiação
-          </h2>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        {/* Lado Esquerdo - Parâmetros Técnicos */}
+        <div className="lg:col-span-8 space-y-8">
+           <div className="bg-pt-surface border border-pt-white/10 rounded-[40px] p-10 shadow-2xl space-y-8 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                 <Trophy className="w-40 h-40 text-pt-primary" />
+              </div>
 
-          <Checkbox 
-            label="Troféu" 
-            name="tem_trofeu"
-            checked={form.tem_trofeu}
-            onChange={handleCheckbox}
-          />
+              <div className="relative z-10">
+                <Field label="Identificação da Competição" placeholder="EX: UEFA CHAMPIONS LEAGUE" name="nome" value={form.nome} onChange={handleChange} />
+              </div>
 
-          <Checkbox
-            label="Premiação em dinheiro"
-            name="tem_premiacao_financeira"
-            checked={form.tem_premiacao_financeira}
-            onChange={handleCheckbox}
-          />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                <SelectField label="Escala Territorial" name="tamanho" value={form.tamanho} onChange={handleChange}>
+                  <option value="" disabled>SELECIONAR...</option>
+                  <option>Mundial</option>
+                  <option>Continental</option>
+                  <option>Nacional</option>
+                  <option>Regional</option>
+                  <option>Estadual</option>
+                </SelectField>
 
-          {form.tem_premiacao_financeira && (
-            <Field
-              label="Valor monetário"
-              placeholder="Ex.: 500000"
-              type="number"
-              name="valor_premiacao"
-              value={form.valor_premiacao}
-              onChange={handleChange}
-            />
-          )}
+                <SelectField
+                  label={labelLocalidade || "Localidade Específica"}
+                  name="localidade"
+                  value={form.localidade}
+                  onChange={handleChange}
+                  disabled={form.tamanho === "Mundial" || !form.tamanho}
+                >
+                  <option value="">{placeholderLocalidade}</option>
+                  {localidadeOptions.map((item) => (
+                    <option key={item} value={item}>{item.toUpperCase()}</option>
+                  ))}
+                </SelectField>
+              </div>
 
-          <Checkbox
-            label="Garante vaga em outra competição"
-            name="garante_vaga"
-            checked={form.garante_vaga}
-            onChange={handleCheckbox}
-          />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                <SelectField label="Categorização de Ligas" name="tipo_participantes" value={form.tipo_participantes} onChange={handleChange}>
+                  <option value="" disabled>SELECIONAR...</option>
+                  <option>Seleções</option>
+                  <option>Clubes</option>
+                </SelectField>
 
-          {form.garante_vaga && (
-            <SelectField label="Competição garantida">
-              <option value="" disabled>Selecione (Em breve)</option>
-            </SelectField>
-          )}
+                <SelectField label="Hierarquia / Divisão" name="divisao" value={form.divisao} onChange={handleChange}>
+                  <option value="" disabled>SELECIONAR...</option>
+                  <option>1ª Divisão</option>
+                  <option>2ª Divisão</option>
+                  <option>3ª Divisão</option>
+                  <option>4ª Divisão</option>
+                  <option>5ª Divisão</option>
+                  <option>Sem Divisão</option>
+                </SelectField>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                <SelectField label="Formato de Disputa" name="tipo_formato" value={form.tipo_formato} onChange={handleChange}>
+                  <option value="" disabled>SELECIONAR...</option>
+                  <option>Torneio</option>
+                  <option>Liga</option>
+                  <option>Outro</option>
+                </SelectField>
+
+                <Field label="Quotas de Participação" placeholder="20" type="number" name="qtd_participantes" value={form.qtd_participantes} onChange={handleChange} />
+              </div>
+           </div>
         </div>
-      </div>
 
-      <div className="mt-6 flex justify-end">
-        <button
-          type="button"
-          onClick={handleRegistrar}
-          className="px-8 py-3 rounded-xl bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 hover:bg-emerald-500/25 transition"
-        >
-          Registrar
-        </button>
+        {/* Lado Direito - Recompensas e Fluxo */}
+        <div className="lg:col-span-4 space-y-8">
+           <div className="bg-pt-surface border border-pt-white/10 rounded-[40px] p-10 shadow-2xl flex flex-col space-y-8 relative overflow-hidden group">
+              <div className="flex items-center gap-3 mb-2">
+                 <Award className="w-5 h-5 text-pt-primary" />
+                 <h3 className="font-black text-white text-xs uppercase tracking-widest italic">Incentivos & Glória</h3>
+              </div>
+
+              <div className="space-y-4">
+                <Checkbox label="Troféu Físico / Digital" name="tem_trofeu" checked={form.tem_trofeu} onChange={(c) => handleCheckbox('tem_trofeu', c)} />
+                <Checkbox label="Aporte Financeiro" name="tem_premiacao_financeira" checked={form.tem_premiacao_financeira} onChange={(c) => handleCheckbox('tem_premiacao_financeira', c)} />
+                
+                {form.tem_premiacao_financeira && (
+                  <div className="pt-2 animate-in slide-in-from-left-2 duration-300">
+                    <Field label="Montante (USD/BRL)" placeholder="0.00" type="number" name="valor_premiacao" value={form.valor_premiacao} onChange={handleChange} icon={<DollarSign className="w-4 h-4" />} />
+                  </div>
+                )}
+
+                <div className="pt-4 mt-4 border-t border-pt-white/5 space-y-4">
+                  <Checkbox label="Vaga em Outras Séries" name="garante_vaga" checked={form.garante_vaga} onChange={(c) => handleCheckbox('garante_vaga', c)} />
+                  {form.garante_vaga && (
+                    <div className="animate-in slide-in-from-left-2 duration-300">
+                      <SelectField label="Competição Destino">
+                        <option value="" disabled>EM DESENVOLVIMENTO...</option>
+                      </SelectField>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-auto pt-6 border-t border-pt-white/5 opacity-30 flex items-center justify-between">
+                 <span className="text-[9px] font-black uppercase tracking-widest">Módulo PT-Comp v1.2</span>
+                 <Zap className="w-3 h-3 text-pt-primary" />
+              </div>
+           </div>
+
+           <div className="pt-4">
+              <button
+                onClick={handleRegistrar}
+                className="w-full bg-pt-primary hover:bg-pt-primary/90 text-pt-bg font-black py-5 rounded-[24px] uppercase tracking-widest text-sm shadow-xl shadow-pt-primary/10 hover:shadow-pt-primary/20 transition-all active:scale-95 flex items-center justify-center gap-3"
+              >
+                Ativar Competição
+                <Check className="w-5 h-5" />
+              </button>
+           </div>
+        </div>
       </div>
     </div>
   );
 }
 
-function Field({ label, ...props }) {
-    return (
-      <div>
-        <label className="block text-sm text-slate-300 font-medium mb-2">{label}</label>
-        <input className="w-full bg-[#0f172a] border border-slate-800 rounded-xl py-3 px-4 text-slate-200 focus:outline-none focus:border-emerald-500/60" {...props} />
+function Field({ label, placeholder, type = "text", icon, ...props }) {
+  return (
+    <div className="space-y-2.5">
+      <label className="block text-[10px] font-black text-pt-text-muted uppercase tracking-[0.25em] ml-1">
+        {label}
+      </label>
+      <div className="relative">
+        <input
+          type={type}
+          placeholder={placeholder}
+          className={`w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 ${icon ? 'pl-12' : 'px-6'} pr-6 text-pt-text font-black text-xs uppercase tracking-widest placeholder:text-pt-white/10 focus:outline-none focus:border-pt-primary transition-all shadow-inner tabular-nums`}
+          {...props}
+        />
+        {icon && <div className="absolute left-5 top-1/2 -translate-y-1/2 text-pt-primary">{icon}</div>}
       </div>
-    );
+    </div>
+  );
 }
 
 function SelectField({ label, children, ...props }) {
-    return (
-        <div className="relative">
-            <label className="block text-sm text-slate-300 font-medium mb-2">{label}</label>
-            <select className="appearance-none w-full bg-[#0f172a] border border-slate-800 rounded-xl py-3 pl-4 pr-10 text-slate-200 focus:outline-none focus:border-emerald-500/60" {...props}>
-                {children}
-            </select>
-            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-4 top-[46px] pointer-events-none" />
-        </div>
-    );
+  return (
+    <div className="space-y-2.5 relative">
+      <label className="block text-[10px] font-black text-pt-text-muted uppercase tracking-[0.25em] ml-1">{label}</label>
+      <div className="relative">
+        <select
+          className="appearance-none w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 pl-6 pr-12 text-pt-text font-black text-xs uppercase tracking-widest focus:outline-none focus:border-pt-primary transition-all cursor-pointer shadow-inner disabled:opacity-40 disabled:cursor-not-allowed"
+          {...props}
+        >
+          {children}
+        </select>
+        <ChevronDown className="w-5 h-5 text-pt-primary absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none" />
+      </div>
+    </div>
+  );
 }
 
-function Checkbox({ label, ...props }) {
-    return (
-      <label className="flex items-center gap-3 text-sm text-slate-300 cursor-pointer">
-        <input type="checkbox" className="appearance-none w-5 h-5 rounded-md border border-slate-600 bg-[#0f172a] checked:bg-emerald-500 checked:after:content-['✓'] checked:after:text-black flex items-center justify-center" {...props} />
+function Checkbox({ label, checked, onChange, name }) {
+  return (
+    <label className="flex items-center gap-4 cursor-pointer group bg-pt-bg/30 border border-pt-white/5 p-4 rounded-2xl hover:border-pt-primary/30 transition-all">
+      <div className="relative">
+        <input
+          type="checkbox"
+          className="sr-only peer"
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+          name={name}
+        />
+        <div className={`w-6 h-6 rounded-lg border-2 transition-all flex items-center justify-center ${checked ? 'bg-pt-primary border-pt-primary shadow-[0_0_10px_rgba(162,255,1,0.2)]' : 'border-pt-white/10 group-hover:border-pt-primary/40'}`}>
+           {checked && <Check className="w-4 h-4 text-pt-bg" />}
+        </div>
+      </div>
+      <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${checked ? 'text-white' : 'text-pt-text-muted'}`}>
         {label}
-      </label>
-    );
+      </span>
+    </label>
+  );
 }

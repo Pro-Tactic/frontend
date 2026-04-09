@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { api } from "../services/api";
-import { User, ChevronRight, ArrowLeft, Mail } from "lucide-react";
+import { ChevronRight, ArrowLeft, Mail, Zap, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import logoImg from "../assets/logo-protactic.png";
+import logoImg from "../../icon/logo-protactic.png";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
@@ -13,14 +13,21 @@ export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const swalConfig = {
+    background: '#0B0B0B',
+    color: '#FEFEFE',
+    confirmButtonColor: '#A2FF01',
+    confirmButtonText: 'ENTENDIDO'
+  };
+
   const Toast = MySwal.mixin({
     toast: true,
     position: 'top-end',
     showConfirmButton: false,
     timer: 3000,
     timerProgressBar: true,
-    background: '#0f172a',
-    color: '#e2e8f0',
+    background: '#0B0B0B',
+    color: '#FEFEFE',
     didOpen: (toast) => {
       toast.addEventListener('mouseenter', Swal.stopTimer)
       toast.addEventListener('mouseleave', Swal.resumeTimer)
@@ -32,7 +39,7 @@ export default function ForgotPassword() {
     if (!email) {
       Toast.fire({
         icon: 'warning',
-        title: 'Por favor, digite seu e-mail.'
+        title: 'INSIRA SEU E-MAIL OPERACIONAL.'
       });
       return;
     }
@@ -43,12 +50,10 @@ export default function ForgotPassword() {
       await api.post("/password-reset/", { email });
 
       MySwal.fire({
-        title: 'E-mail enviado!',
-        text: 'Se este e-mail estiver cadastrado, você receberá um link para redefinir sua senha.',
+        title: 'PROTOCOLO INICIADO',
+        text: 'Se o e-mail estiver na base de dados, as instruções de recuperação foram enviadas.',
         icon: 'success',
-        background: '#0f172a',
-        color: '#e2e8f0',
-        confirmButtonColor: '#22c55e',
+        ...swalConfig
       }).then(() => {
         navigate("/");
       });
@@ -57,7 +62,7 @@ export default function ForgotPassword() {
       console.error(err);
       Toast.fire({
         icon: 'error',
-        title: 'Erro ao processar solicitação.'
+        title: 'FALHA NA SOLICITAÇÃO.'
       });
     } finally {
       setLoading(false);
@@ -65,59 +70,74 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-green-500/10 rounded-full blur-[100px]" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-blue-500/10 rounded-full blur-[100px]" />
+    <div className="min-h-screen bg-pt-bg text-white flex items-center justify-center p-6 relative overflow-hidden font-sans">
+      {/* Background Glows */}
+      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-pt-primary/5 rounded-full blur-[120px] animate-pulse" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-pt-primary/5 rounded-full blur-[100px]" />
 
-      <main className="w-full max-w-md bg-[#0f172a] border border-slate-800 rounded-2xl p-8 shadow-2xl z-10">
-        <div className="flex flex-col items-center mb-8">
-          <img src={logoImg} alt="Logo ProTactic" className="w-48 h-auto mb-6" />
-          <div className="text-center">
-            <h2 className="text-2xl font-semibold text-white uppercase tracking-wider">Recuperar Senha</h2>
-            <p className="text-slate-400 text-sm mt-2">
-              Digite seu e-mail para receber as instruções de recuperação.
+      <main className="w-full max-w-lg bg-pt-surface border border-pt-white/10 rounded-[40px] p-10 md:p-14 shadow-2xl relative z-10 backdrop-blur-sm">
+        <div className="flex flex-col items-center mb-12">
+          <img src={logoImg} alt="ProTactic" className="w-56 h-auto mb-10 brightness-110 drop-shadow-2xl" />
+          <div className="text-center space-y-3">
+            <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter">Recuperar Acesso</h2>
+            <p className="text-pt-text-muted text-[10px] font-black uppercase tracking-[0.2em]">
+              Sincronização de credenciais de elite.
             </p>
           </div>
         </div>
 
-        <form onSubmit={handleRequestReset} className="flex flex-col gap-6">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300">
-              E-mail
+        <form onSubmit={handleRequestReset} className="space-y-10">
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-pt-text-muted uppercase tracking-[0.25em] ml-1">
+              E-mail de Operação
             </label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 h-5 w-5" />
+            <div className="relative group">
+              <div className="absolute left-5 top-1/2 -translate-y-1/2 text-pt-primary group-focus-within:scale-110 transition-transform">
+                <Mail className="h-5 w-5" />
+              </div>
               <input
                 type="email"
-                placeholder="Digite seu e-mail cadastrado"
+                placeholder="SEU_EMAIL@DOMINIO.COM"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[#1e293b] border border-slate-700 rounded-lg py-3 pl-10 pr-4 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all font-medium"
+                className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-5 pl-14 pr-6 text-pt-text font-black text-xs uppercase tracking-widest placeholder:text-pt-white/5 focus:outline-none focus:border-pt-primary transition-all shadow-inner"
                 required
               />
             </div>
           </div>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-5 pt-4">
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-green-500 hover:bg-green-600 text-slate-900 font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all transform active:scale-95 shadow-lg shadow-green-500/20"
+              className="w-full bg-pt-primary hover:bg-pt-primary/90 text-pt-bg font-black py-5 rounded-[24px] flex items-center justify-center gap-3 uppercase tracking-[0.15em] text-sm shadow-xl shadow-pt-primary/10 hover:shadow-pt-primary/20 transition-all active:scale-95 disabled:opacity-50"
             >
-              {loading ? "Enviando..." : "Enviar link de recuperação"}
-              {!loading && <ChevronRight className="h-5 w-5" />}
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-pt-bg/30 border-t-pt-bg rounded-full animate-spin" />
+              ) : (
+                <>
+                  <Zap className="h-5 w-5" />
+                  Restaurar Credenciais
+                  <ChevronRight className="h-5 w-5" />
+                </>
+              )}
             </button>
 
             <button
               type="button"
               onClick={() => navigate("/")}
-              className="w-full bg-transparent border border-slate-700 text-slate-300 hover:bg-slate-800 font-medium py-3 rounded-lg flex items-center justify-center gap-2 transition-all"
+              className="w-full group py-4 flex items-center justify-center gap-3 transition-all"
             >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar para o login
+              <ArrowLeft className="h-4 w-4 text-pt-text-muted group-hover:text-pt-primary transition-colors" />
+              <span className="text-[10px] font-black text-pt-text-muted uppercase tracking-widest group-hover:text-white transition-colors">Voltar para Central de Comando</span>
             </button>
           </div>
         </form>
+
+        <div className="mt-12 pt-8 border-t border-pt-white/5 flex items-center justify-between opacity-30">
+           <ShieldCheck className="w-4 h-4 text-pt-primary" />
+           <span className="text-[8px] font-black uppercase tracking-[0.3em] font-mono italic">Nó de Segurança: Ativo</span>
+        </div>
       </main>
     </div>
   );

@@ -46,7 +46,7 @@ function ProtectedRoute({ children }) {
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
     const userType = localStorage.getItem("user_type");
-    const target = userType === "ADMIN" ? "/registro" : "/inicio";
+    const target = userType === "ADMIN" ? "/registro" : "/clube";
     return <Navigate to={target} replace />;
   }
 
@@ -55,7 +55,7 @@ function GuestRoute({ children }) {
 
 function RouteFallback() {
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-300 flex items-center justify-center">
+    <div className="min-h-screen bg-pt-bg text-pt-text flex items-center justify-center">
       Carregando tela...
     </div>
   );
