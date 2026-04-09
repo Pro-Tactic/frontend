@@ -202,11 +202,6 @@ export default function Login() {
                 )}
               </button>
             </form>
-
-            <div className="mt-14 pt-8 border-t border-pt-white/5 flex items-center justify-between opacity-30">
-              <ShieldCheck className="w-4 h-4 text-pt-primary" />
-              <span className="text-[8px] font-black uppercase tracking-[0.3em] font-mono italic">Protocolo de Segurança: V4-AES</span>
-            </div>
           </div>
         </div>
       </main>
