@@ -240,7 +240,7 @@ export default function Notas() {
             <div className="relative group/field">
               <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-pt-primary h-5 w-5 group-focus-within/field:scale-110 transition-transform" />
               <select
-                className="w-full bg-pt-bg border border-pt-white/10 rounded-[28px] py-6 pl-16 pr-12 text-pt-text font-black text-xs uppercase tracking-widest focus:outline-none focus:border-pt-primary appearance-none cursor-pointer shadow-inner hover:bg-pt-bg/80 transition-all"
+                className="w-full bg-pt-bg border border-pt-white/10 rounded-[28px] py-6 pl-16 pr-12 text-pt-text focus:outline-none focus:border-pt-primary appearance-none cursor-pointer shadow-inner hover:bg-pt-bg/80 transition-all font-semibold"
                 value={partidaSelecionada}
                 onChange={(e) => setPartidaSelecionada(e.target.value)}
               >
@@ -427,7 +427,7 @@ function InputField({ value, onChange, step = "1", highlight = false, color = "t
         placeholder="0"
         value={value || ""}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full bg-pt-bg/50 border border-pt-white/10 rounded-[18px] py-4 text-center font-black transition-all focus:outline-none focus:border-pt-primary/50 focus:ring-1 focus:ring-pt-primary/30 shadow-inner group-hover/input:bg-pt-bg/80 ${highlight ? 'text-pt-primary text-xl italic' : `${color} text-sm`}`}
+        className={`w-full bg-pt-bg/50 border border-pt-white/10 rounded-[18px] py-4 text-center font-semibold transition-all focus:outline-none focus:border-pt-primary/50 focus:ring-1 focus:ring-pt-primary/30 shadow-inner group-hover/input:bg-pt-bg/80 ${highlight ? 'text-pt-primary text-xl italic font-black' : `${color} text-sm`}`}
       />
     </div>
   );

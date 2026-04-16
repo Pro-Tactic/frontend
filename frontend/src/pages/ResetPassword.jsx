@@ -130,7 +130,7 @@ export default function ResetPassword() {
                   placeholder="MÍNIMO 8 CARACTERES"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-5 pl-14 pr-12 text-pt-text font-black text-xs tracking-widest placeholder:text-pt-white/5 focus:outline-none focus:border-pt-primary transition-all shadow-inner"
+                  className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-5 pl-14 pr-12 text-pt-text focus:outline-none focus:border-pt-primary transition-all shadow-inner"
                   required
                 />
                 <button
@@ -154,7 +154,7 @@ export default function ResetPassword() {
                   placeholder="REPITA A SENHA"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-5 pl-14 pr-12 text-pt-text font-black text-xs tracking-widest placeholder:text-pt-white/5 focus:outline-none focus:border-pt-primary transition-all shadow-inner"
+                  className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-5 pl-14 pr-12 text-pt-text focus:outline-none focus:border-pt-primary transition-all shadow-inner"
                   required
                 />
               </div>

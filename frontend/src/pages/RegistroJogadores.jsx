@@ -222,7 +222,7 @@ function Field({ label, placeholder, type = "text", ...props }) {
       <input
         type={type}
         placeholder={placeholder}
-        className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 px-6 text-pt-text font-black text-xs uppercase tracking-widest placeholder:text-pt-white/10 focus:outline-none focus:border-pt-primary focus:ring-1 focus:ring-pt-primary/20 transition-all shadow-inner tabular-nums"
+        className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 px-6 text-pt-text focus:outline-none focus:border-pt-primary focus:ring-1 focus:ring-pt-primary/20 transition-all shadow-inner tabular-nums"
         {...props}
       />
     </div>
@@ -238,7 +238,7 @@ function SelectField({ label, children, ...props }) {
       <div className="relative">
         <select
           {...props}
-          className="appearance-none w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 pl-6 pr-12 text-pt-text font-black text-xs uppercase tracking-widest focus:outline-none focus:border-pt-primary focus:ring-1 focus:ring-pt-primary/20 transition-all shadow-inner cursor-pointer"
+          className="appearance-none w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 pl-6 pr-12 text-pt-text focus:outline-none focus:border-pt-primary focus:ring-1 focus:ring-pt-primary/20 transition-all shadow-inner cursor-pointer"
         >
           {children}
         </select>
@@ -332,7 +332,7 @@ function CountryMultiSelect({ label, value = [], onChange }) {
           <div className="relative mb-4">
              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-pt-text-muted w-4 h-4" />
              <input
-                className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl pl-10 pr-4 py-3 text-[10px] font-black text-white uppercase tracking-widest focus:outline-none focus:border-pt-primary/40"
+                className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-pt-primary/40 shadow-inner"
                 placeholder="BUSCAR PAÍS..."
                 value={query}
                 autoFocus

@@ -14,6 +14,25 @@
   --pt-surface: var(--pt-surface-dark);
   --pt-text-primary: var(--pt-white);
   --pt-text-muted: #94a3b8;
+  --pt-font-writing: 15px;
+}
+
+/* ================================
+   Global Font for Writing
+   ================================ */
+input, select, textarea {
+  text-transform: none !important;
+  font-size: var(--pt-font-writing) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.025em !important;
+}
+
+input::placeholder, textarea::placeholder {
+  text-transform: uppercase !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.2em !important;
+  opacity: 0.3 !important;
 }
 
 html, body, #root {
