@@ -24,31 +24,48 @@ function SelectField({ label, value, onChange, options, placeholder, disabled = 
 }
 
 function normalizeCoordinates(player, index, side) {
-  if (player.x !== undefined && player.y !== undefined && player.x !== null && player.y !== null) {
-    return player;
-  }
+  let db_x = player.x !== undefined && player.x !== null ? player.x : null;
+  let db_y = player.y !== undefined && player.y !== null ? player.y : null;
 
-  let x = 50;
-  let y = 50;
+  let final_x, final_y;
 
-  if (side === "meu") {
-    // Meu time (Lado Direito - Defesa na Direita, Ataca para Esquerda)
-    if (index === 0) { x = 93; y = 50; } // GK
-    else if (index <= 4) { x = 78; y = [15, 38, 62, 85][index - 1]; } // DEF
-    else if (index <= 8) { x = 62; y = [15, 38, 62, 85][index - 5]; } // MID
-    else { x = 52; y = [35, 65][index - 9]; } // ATT
+  // Se o jogador possui coordenadas do BD (x=esq-dir, y=topo-base em um campo vertical)
+  // precisamos converter para o campo horizontal.
+  if (db_x !== null && db_y !== null) {
+    if (side === "meu") {
+      // Meu time: dono da página ataca da esquerda para a direita
+      // Y original (0-100, Goleiro ~85-100 na vertical) -> mapeia para X horizontal (esquerda ~15-0)
+      final_x = 100 - db_y;
+      // X original (0-100) -> mapeia para Y horizontal (topo-base)
+      final_y = db_x;
+    } else {
+      // Adversário: ataca da direita para a esquerda
+      // Y original (Goleiro ~85-100 na vertical) -> mapeia para X horizontal (direita ~85-100)
+      final_x = db_y;
+      // X original no campo vertical -> Y horizontal invertido 
+      final_y = 100 - db_x;
+    }
   } else {
-    // Adversário (Lado Esquerdo - Defesa na Esquerda, Ataca para Direita)
-    if (index === 0) { x = 7; y = 50; } // GK
-    else if (index <= 4) { x = 22; y = [15, 38, 62, 85][index - 1]; } // DEF
-    else if (index <= 8) { x = 38; y = [15, 38, 62, 85][index - 5]; } // MID
-    else { x = 48; y = [35, 65][index - 9]; } // ATT
+    // Coordenadas default caso não existam no BD
+    if (side === "meu") {
+      // Meu time (Lado Esquerdo - Defesa na Esquerda, Ataca para Direita)
+      if (index === 0) { final_x = 7; final_y = 50; } // GK
+      else if (index <= 4) { final_x = 22; final_y = [15, 38, 62, 85][index - 1] ?? 50; } // DEF
+      else if (index <= 8) { final_x = 38; final_y = [15, 38, 62, 85][index - 5] ?? 50; } // MID
+      else { final_x = 48; final_y = [20, 50, 80][index - 9] ?? 50; } // ATT
+    } else {
+      // Adversário (Lado Direito - Defesa na Direita, Ataca para Esquerda)
+      if (index === 0) { final_x = 93; final_y = 50; } // GK
+      else if (index <= 4) { final_x = 78; final_y = [15, 38, 62, 85][index - 1] ?? 50; } // DEF
+      else if (index <= 8) { final_x = 62; final_y = [15, 38, 62, 85][index - 5] ?? 50; } // MID
+      else { final_x = 52; final_y = [20, 50, 80][index - 9] ?? 50; } // ATT
+    }
   }
 
   return {
     ...player,
-    x,
-    y,
+    x: final_x,
+    y: final_y,
   };
 }
 
