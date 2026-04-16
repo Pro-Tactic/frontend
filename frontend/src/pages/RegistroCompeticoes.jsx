@@ -245,7 +245,7 @@ function Field({ label, placeholder, type = "text", icon, ...props }) {
         <input
           type={type}
           placeholder={placeholder}
-          className={`w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 ${icon ? 'pl-12' : 'px-6'} pr-6 text-pt-text font-black text-xs uppercase tracking-widest placeholder:text-pt-white/10 focus:outline-none focus:border-pt-primary transition-all shadow-inner tabular-nums`}
+          className={`w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 ${icon ? 'pl-12' : 'px-6'} pr-6 text-pt-text focus:outline-none focus:border-pt-primary transition-all shadow-inner tabular-nums`}
           {...props}
         />
         {icon && <div className="absolute left-5 top-1/2 -translate-y-1/2 text-pt-primary">{icon}</div>}
@@ -260,7 +260,7 @@ function SelectField({ label, children, ...props }) {
       <label className="block text-[10px] font-black text-pt-text-muted uppercase tracking-[0.25em] ml-1">{label}</label>
       <div className="relative">
         <select
-          className="appearance-none w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 pl-6 pr-12 text-pt-text font-black text-xs uppercase tracking-widest focus:outline-none focus:border-pt-primary transition-all cursor-pointer shadow-inner disabled:opacity-40 disabled:cursor-not-allowed"
+          className="appearance-none w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 pl-6 pr-12 text-pt-text focus:outline-none focus:border-pt-primary transition-all cursor-pointer shadow-inner disabled:opacity-40 disabled:cursor-not-allowed"
           {...props}
         >
           {children}

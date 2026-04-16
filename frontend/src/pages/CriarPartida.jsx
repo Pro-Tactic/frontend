@@ -143,7 +143,7 @@ export default function CriarPartida() {
                   value={formData.mandante}
                   onChange={handleChange}
                   required
-                  className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-5 pl-14 pr-12 text-pt-text font-black text-xs uppercase tracking-widest focus:outline-none focus:border-pt-primary transition-all appearance-none shadow-inner cursor-pointer"
+                  className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-5 pl-14 pr-12 text-pt-text focus:outline-none focus:border-pt-primary transition-all appearance-none shadow-inner cursor-pointer"
                 >
                   <option value="">Selecionar...</option>
                   {clubes.map(clube => (
@@ -187,7 +187,7 @@ export default function CriarPartida() {
                   value={formData.visitante}
                   onChange={handleChange}
                   required
-                  className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-5 pl-14 pr-12 text-pt-text font-black text-xs uppercase tracking-widest focus:outline-none focus:border-pt-primary transition-all appearance-none shadow-inner cursor-pointer"
+                  className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-5 pl-14 pr-12 text-pt-text focus:outline-none focus:border-pt-primary transition-all appearance-none shadow-inner cursor-pointer"
                 >
                   <option value="">Selecionar...</option>
                   {clubes.map(clube => (
@@ -230,7 +230,7 @@ export default function CriarPartida() {
                   value={formData.competicao}
                   onChange={handleChange}
                   required
-                  className="appearance-none w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 pl-12 pr-12 text-pt-text font-black text-xs uppercase tracking-widest focus:outline-none focus:border-pt-primary transition-all shadow-inner cursor-pointer"
+                  className="appearance-none w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 pl-12 pr-12 text-pt-text focus:outline-none focus:border-pt-primary transition-all shadow-inner cursor-pointer"
                 >
                   <option value="">FILTRAR COMPETIÇÕES...</option>
                   {competicoes.map(comp => (
@@ -251,7 +251,7 @@ export default function CriarPartida() {
                   value={formData.local}
                   onChange={handleChange}
                   placeholder="DIGITE O ESTÁDIO"
-                  className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 pl-12 pr-6 text-pt-text font-black text-xs uppercase tracking-widest placeholder:text-pt-white/5 focus:outline-none focus:border-pt-primary transition-all shadow-inner"
+                  className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 pl-12 pr-6 text-pt-text focus:outline-none focus:border-pt-primary transition-all shadow-inner"
                 />
                 <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-pt-primary" />
               </div>
@@ -266,7 +266,7 @@ export default function CriarPartida() {
                   value={formData.data_hora}
                   onChange={handleChange}
                   required
-                  className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 px-6 text-pt-text font-black text-xs uppercase tracking-widest focus:outline-none focus:border-pt-primary transition-all [color-scheme:dark] shadow-inner"
+                  className="w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 px-6 text-pt-text focus:outline-none focus:border-pt-primary transition-all [color-scheme:dark] shadow-inner"
                 />
               </div>
             </div>

@@ -149,7 +149,7 @@ export default function Login() {
                     placeholder="LOGIN"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full bg-pt-bg border border-pt-white/10 rounded-[22px] py-5 pl-14 pr-6 text-pt-text font-black text-xs tracking-widest placeholder:text-pt-white/5 focus:outline-none focus:border-pt-primary transition-all shadow-inner"
+                    className="w-full bg-pt-bg border border-pt-white/10 rounded-[22px] py-5 pl-14 pr-6 text-pt-text focus:outline-none focus:border-pt-primary transition-all shadow-inner"
                     required
                   />
                 </div>
@@ -166,7 +166,7 @@ export default function Login() {
                     placeholder="SENHA"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-pt-bg border border-pt-white/10 rounded-[22px] py-5 pl-14 pr-16 text-pt-text font-black text-xs tracking-widest placeholder:text-pt-white/5 focus:outline-none focus:border-pt-primary transition-all shadow-inner"
+                    className="w-full bg-pt-bg border border-pt-white/10 rounded-[22px] py-5 pl-14 pr-16 text-pt-text focus:outline-none focus:border-pt-primary transition-all shadow-inner"
                     required
                   />
                   <button

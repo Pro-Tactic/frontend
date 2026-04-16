@@ -151,7 +151,7 @@ export default function RegistroTecnico() {
                 name="clube"
                 value={form.clube}
                 onChange={handleChange}
-                className="appearance-none w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 pl-12 pr-12 text-pt-text font-black text-xs uppercase tracking-widest focus:outline-none focus:border-pt-primary transition-all cursor-pointer shadow-inner"
+                className="appearance-none w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 pl-12 pr-12 text-pt-text focus:outline-none focus:border-pt-primary transition-all cursor-pointer shadow-inner"
               >
                 <option value="">SELECIONAR ENTIDADE...</option>
                 {clubes.map((clube) => (
@@ -192,7 +192,7 @@ function Field({ label, icon, ...props }) {
       <label className="block text-[10px] font-black text-pt-text-muted uppercase tracking-[0.25em] ml-1">{label}</label>
       <div className="relative">
         <input
-          className={`w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 ${icon ? 'pl-12' : 'px-6'} pr-6 text-pt-text font-black text-xs uppercase tracking-widest placeholder:text-pt-white/10 focus:outline-none focus:border-pt-primary transition-all shadow-inner`}
+          className={`w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 ${icon ? 'pl-12' : 'px-6'} pr-6 text-pt-text focus:outline-none focus:border-pt-primary transition-all shadow-inner`}
           {...props}
         />
         {icon && <div className="absolute left-5 top-1/2 -translate-y-1/2 text-pt-primary">{icon}</div>}

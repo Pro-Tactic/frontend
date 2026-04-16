@@ -178,7 +178,7 @@ export default function RegistroClube() {
                   <select
                     value={pais}
                     onChange={(e) => setPais(e.target.value)}
-                    className="appearance-none w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 pl-12 pr-12 text-pt-text font-black text-xs uppercase tracking-widest focus:outline-none focus:border-pt-primary transition-all cursor-pointer"
+                    className="appearance-none w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 pl-12 pr-12 text-pt-text focus:outline-none focus:border-pt-primary transition-all cursor-pointer shadow-inner"
                   >
                     <option value="">Brasil...</option>
                     {COUNTRIES.map((c) => (
@@ -258,7 +258,7 @@ export default function RegistroClube() {
               <select
                 value={competicaoSelecionada}
                 onChange={(e) => setCompeticaoSelecionada(e.target.value)}
-                className="appearance-none w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 px-6 text-pt-text font-black text-xs uppercase tracking-widest focus:outline-none focus:border-pt-primary transition-all cursor-pointer shadow-inner"
+                className="appearance-none w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 px-6 text-pt-text focus:outline-none focus:border-pt-primary transition-all cursor-pointer shadow-inner"
               >
                 <option value="">BUSCAR SÉRIE / COPA...</option>
                 {competicoesDisponiveis
@@ -304,7 +304,7 @@ function Field({ label, placeholder, type = "text", value, onChange, icon }) {
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={`w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 ${icon ? 'pl-12' : 'px-6'} pr-6 text-pt-text font-black text-xs uppercase tracking-widest placeholder:text-pt-white/10 focus:outline-none focus:border-pt-primary transition-all shadow-inner`}
+          className={`w-full bg-pt-bg border border-pt-white/10 rounded-2xl py-4 ${icon ? 'pl-12' : 'px-6'} pr-6 text-pt-text focus:outline-none focus:border-pt-primary transition-all shadow-inner`}
         />
         {icon && <div className="absolute left-5 top-1/2 -translate-y-1/2 text-pt-primary">{icon}</div>}
       </div>

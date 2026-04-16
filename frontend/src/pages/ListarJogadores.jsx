@@ -62,7 +62,7 @@ export default function ListarJogadores() {
             placeholder="BUSCAR ATLETA..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-pt-surface border border-pt-white/10 rounded-[24px] py-5 pl-16 pr-8 text-pt-text font-black text-xs uppercase tracking-widest focus:outline-none focus:border-pt-primary appearance-none transition-all shadow-inner hover:bg-pt-surface/80"
+            className="w-full bg-pt-surface border border-pt-white/10 rounded-[24px] py-5 pl-16 pr-8 text-pt-text appearance-none transition-all shadow-inner hover:bg-pt-surface/80"
           />
         </div>
       </header>
