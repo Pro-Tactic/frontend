@@ -17,7 +17,6 @@ const Adversario = lazy(() => import("./pages/Adversario"));
 const TempoReal = lazy(() => import("./pages/TempoReal"));
 const Clube = lazy(() => import("./pages/Clube"));
 const CriarPartida = lazy(() => import("./pages/CriarPartida"));
-const ListarJogadores = lazy(() => import("./pages/ListarJogadores"));
 const Notas = lazy(() => import("./pages/Notas"));
 const Escalacao = lazy(() => import("./pages/Escalacao"));
 const Competicoes = lazy(() => import("./pages/Competicoes"));
@@ -111,7 +110,6 @@ export default function App() {
             <Route path="/registro/clube" element={<RegistroClube />} />
             <Route path="/registro/competicoes" element={<RegistroCompeticoes />} />
             <Route path="/registro/tecnico" element={<RegistroTecnico />} />
-            <Route path="/listar-jogadores" element={<ListarJogadores />} />
             <Route path="/registro/partidas" element={<CriarPartida />} />
             <Route path="/notas" element={<Notas />} />
             <Route path="/escalacao/:partidaId" element={<Escalacao />} />
